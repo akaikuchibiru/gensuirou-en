@@ -437,8 +437,12 @@ html[lang="zh"] .hero-block .cap .title { font-family: var(--font-zh); }
 /* Sub-page hero — same fold, still photograph */
 .page-hero {
   position: relative;
-  height: 52svh;
-  min-height: 22rem;
+  /* Source mains are 1200×300 (4:1) after the baked-title crop. Matching the
+     ratio means no upscaling on desktop; min-height keeps the fold on phones,
+     where object-fit crops the sides instead. */
+  aspect-ratio: 4 / 1;
+  min-height: 18rem;
+  max-height: 60svh;
   overflow: hidden;
   display: flex;
   align-items: flex-end;
