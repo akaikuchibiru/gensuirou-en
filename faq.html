@@ -10,14 +10,16 @@
 <link rel="stylesheet" href="tokens.css" />
 <link rel="stylesheet" href="assets/site.css" />
 <style>
-  .faq{max-width:800px;margin:0 auto;padding:20px 0}
-  .faq details{border:1px solid rgba(166,134,86,.25);background:rgba(0,0,0,.35);margin-bottom:12px;padding:0}
-  .faq summary{padding:18px 22px;cursor:pointer;color:#f2d999;font-size:15px;letter-spacing:.06em;list-style:none}
+  /* Page-local, but every value still comes through a token (gate 48). */
+  .faq{max-width:50rem;margin:0 auto;padding:var(--space-md) 0}
+  .faq details{border:var(--rule-hair) solid var(--color-rule);background:oklch(var(--ch-shade) / 0.35);margin-bottom:var(--space-xs)}
+  .faq summary{padding:var(--space-md);cursor:pointer;color:var(--color-accent-hi);font-size:var(--text-base);letter-spacing:.06em;list-style:none;min-height:2.75rem}
   .faq summary::-webkit-details-marker{display:none}
-  .faq summary::before{content:'＋';display:inline-block;width:20px;color:#a68656;font-family:sans-serif}
+  .faq summary::before{content:'＋';display:inline-block;width:1.25rem;color:var(--color-accent);font-family:var(--font-wordmark)}
+  .faq summary:focus-visible{outline:var(--rule-bold) solid var(--color-focus);outline-offset:-2px}
   .faq details[open] summary::before{content:'－'}
-  .faq details[open] summary{border-bottom:1px solid rgba(166,134,86,.2)}
-  .faq .ans{padding:18px 22px;color:#dcd4c1;font-size:14px;line-height:2}
+  .faq details[open] summary{border-bottom:var(--rule-hair) solid var(--color-rule-2)}
+  .faq .ans{padding:var(--space-md);color:var(--color-ink-2);font-size:var(--text-base);line-height:var(--leading-loose)}
 </style>
 </head>
 <body data-page="faq">
@@ -25,12 +27,9 @@
 <div id="siteHeader"></div>
 <main id="main">
 
-<div class="page-hero">
-    <img class="bg" src="assets/imgs_1080_570/03_s.jpg" alt="" fetchpriority="high" decoding="async">
-    <div class="cap">
-      <div class="en"><span data-ja>よくある質問</span><span data-en>FAQ</span><span data-zh>常见问题</span></div>
-      <div class="ja"><span data-ja>ご滞在について</span><span data-en>About your stay</span><span data-zh>入住相关</span></div>
-    </div>
+<div class="page-head">
+  <div class="ja"><span data-ja>ご滞在について</span><span data-en>About your stay</span><span data-zh>入住相关</span></div>
+  <div class="en"><span data-ja>よくある質問</span><span data-en>Questions</span><span data-zh>常见问题</span></div>
 </div>
 
 <div class="shell">

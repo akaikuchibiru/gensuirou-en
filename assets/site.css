@@ -480,6 +480,35 @@ html[lang="zh"] .page-hero .cap .en { font-family: var(--font-zh); letter-spacin
   margin-bottom: var(--space-xs);
 }
 
+/* Typographic page head — for pages where no photograph earns its place.
+   The Photographic macrostructure says avoid the image fold without real
+   photography; FAQ has none at usable resolution, so it opens on type. */
+.page-head {
+  padding: calc(var(--space-2xl) + var(--space-lg)) var(--page-gutter) var(--space-xl);
+  border-bottom: var(--rule-hair) solid var(--color-rule-2);
+  position: relative;
+  z-index: var(--z-raised);
+}
+.page-head .ja {
+  font-family: var(--font-wordmark);
+  font-size: var(--text-xs);
+  letter-spacing: 0.46em;
+  color: var(--color-accent-hi);
+  text-transform: uppercase;
+  margin-bottom: var(--space-xs);
+}
+.page-head .en {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  line-height: var(--leading-display);
+  letter-spacing: 0.12em;
+  color: var(--color-ink);
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+html[lang="ja"] .page-head .en { font-family: var(--font-ja); letter-spacing: 0.24em; }
+html[lang="zh"] .page-head .en { font-family: var(--font-zh); letter-spacing: 0.2em; }
+
 /* ============================================================
    Sections — S2 hanging heads
    The heading hangs in negative space at the start of the measure.
@@ -778,12 +807,22 @@ html[lang="zh"] .price-card h4 { font-family: var(--font-zh); letter-spacing: 0.
    ============================================================ */
 .form-section {
   background: oklch(var(--ch-shade) / 0.55);
-  padding: var(--space-2xl) var(--page-gutter);
+  padding: var(--space-2xl) 0;
   margin-top: var(--space-2xl);
   border-block: var(--rule-hair) solid var(--color-rule-2);
   position: relative;
   z-index: var(--z-raised);
 }
+/* The section sits in .shell but outside .inner, so without this its content
+   started 88px left of every other block on the page at 1440. Mirror .inner's
+   geometry exactly so the form shares the page's content column. */
+.form-section .form-wrap {
+  width: 71rem;
+  max-width: 100%;
+  margin-inline: auto;
+  padding-inline: var(--page-gutter);
+}
+.form-wrap form { max-width: 42rem; }
 .form-section h3 {
   font-family: var(--font-ja);
   font-size: var(--text-xl);
@@ -795,7 +834,6 @@ html[lang="zh"] .price-card h4 { font-family: var(--font-zh); letter-spacing: 0.
 html[lang="en"] .form-section h3 { font-family: var(--font-latin); letter-spacing: 0.03em; font-size: var(--text-2xl); }
 html[lang="zh"] .form-section h3 { font-family: var(--font-zh); }
 .form-sub { color: var(--color-muted); font-size: var(--text-base); margin-bottom: var(--space-lg); line-height: var(--leading-loose); max-width: var(--measure); }
-.form-wrap { max-width: 42rem; }
 .field { margin-bottom: var(--space-md); }
 .field label {
   display: block;
