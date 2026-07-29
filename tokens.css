@@ -50,8 +50,8 @@
   --font-body:     var(--font-latin);
 
   /* ── Scale · 1.25 major third, 16px base ─────────────────────────── */
-  --text-xs:   0.75rem;
-  --text-sm:   0.8125rem;
+  --text-xs:   0.8125rem;
+  --text-sm:   0.9375rem;
   --text-base: 1rem;
   --text-md:   1.25rem;
   --text-lg:   1.5625rem;
@@ -108,4 +108,18 @@
   --rule-bold: 2px;
   --radius-none: 0;
   --radius-sm:   2px;
+}
+
+/* ── Per-language type scale ──────────────────────────────────────────
+   Measured x-height per 1em: Cormorant Garamond 0.386 · Sawarabi Mincho
+   0.500 · system-ui 0.508. At an identical px size the Latin face reads
+   about a third smaller than the CJK ones — which is why the English
+   pages felt undersized. Lift the reading sizes for `en` only; the
+   display clamps are already large and stay put. */
+html[lang="en"] {
+  --text-xs:   0.9375rem;
+  --text-sm:   1rem;
+  --text-base: 1.125rem;
+  --text-md:   1.375rem;
+  --text-lg:   1.75rem;
 }

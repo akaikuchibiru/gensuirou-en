@@ -1,4 +1,4 @@
-// Run: python3 -m http.server 8793  (from repo root), then: node scripts/check-gates.mjs
+// Run: python3 -m http.server 8793 (from repo root), then: node scripts/check-gates.mjs
 import { chromium } from 'playwright-core';
 
 const BASE = 'http://127.0.0.1:8793/';
@@ -16,7 +16,8 @@ for (const p of PAGES) {
     page.on('console', m => { if (m.type() === 'error' && !/net::ERR_/.test(m.text())) consoleErrors.push(m.text()); });
     page.on('pageerror', e => consoleErrors.push('pageerror: ' + e.message));
     await page.goto(BASE + p, { waitUntil: 'load' });
-    await page.waitForTimeout(350);
+    await page.waitForSelector('.skip', { state: 'attached', timeout: 10000 });
+    await page.waitForTimeout(150);
 
     const r = await page.evaluate(() => {
       const de = document.documentElement;
