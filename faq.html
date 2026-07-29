@@ -2,11 +2,12 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <title>よくある質問 FAQ ｜ 源翠瓏</title>
 <meta name="description" content="源翠瓏のよくあるご質問。チェックイン・お子様・送迎・お食事など。" />
 <link rel="icon" href="assets/imgs/logo_gensuirou.png" />
 <link href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&family=Noto+Serif+SC:wght@400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="tokens.css" />
 <link rel="stylesheet" href="assets/site.css" />
 <style>
   .faq{max-width:800px;margin:0 auto;padding:20px 0}
@@ -22,15 +23,17 @@
 <body data-page="faq">
 <h1 class="seo"><span data-ja>源翠瓏 よくあるご質問</span><span data-en>Gensuirou FAQ</span><span data-zh>源翠瓏 · 常见问题</span></h1>
 <div id="siteHeader"></div>
+<main id="main">
 
-<div class="shell">
-  <div class="page-hero">
-    <img class="bg" src="assets/imgs_1080_570/03_s.jpg" alt="">
+<div class="page-hero">
+    <img class="bg" src="assets/imgs_1080_570/03_s.jpg" alt="" fetchpriority="high" decoding="async">
     <div class="cap">
       <div class="en"><span data-ja>よくある質問</span><span data-en>FAQ</span><span data-zh>常见问题</span></div>
       <div class="ja"><span data-ja>ご滞在について</span><span data-en>About your stay</span><span data-zh>入住相关</span></div>
     </div>
-  </div>
+</div>
+
+<div class="shell">
 
   <div class="inner">
     <section class="block">
@@ -115,6 +118,7 @@
   </div>
 </div>
 
+</main>
 <div id="siteFooter"></div>
 <script src="assets/site.js"></script>
 </body>

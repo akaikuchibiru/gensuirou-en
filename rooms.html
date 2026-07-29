@@ -2,26 +2,28 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <title>客室 Rooms ｜ 源翠瓏 - 全12室の露天風呂付き離れ客室</title>
 <meta name="description" content="源翠瓏の全12室・全室離れ露天風呂付き客室のご紹介。紫、葵、華、碧、瑩、結、凛、宙、瑞、皇、禅、想。" />
 <link rel="icon" href="assets/imgs/logo_gensuirou.png" />
 <link href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&family=Noto+Serif+SC:wght@400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="tokens.css" />
 <link rel="stylesheet" href="assets/site.css" />
 </head>
 <body data-page="rooms">
 <h1 class="seo"><span data-ja>阿蘇の全室離れ露天風呂付き温泉旅館 源翠瓏 客室のご案内</span><span data-en>Gensuirou — the twelve detached villas</span><span data-zh>源翠瓏 · 十二栋独立温泉别墅介绍</span></h1>
 <div id="siteHeader"></div>
+<main id="main">
 
-<div class="shell">
-  <!-- page hero -->
-  <div class="page-hero">
-    <img class="bg" src="assets/rooms_main.jpg" alt="">
+<div class="page-hero">
+    <img class="bg" src="assets/rooms_main.jpg" alt="" fetchpriority="high" decoding="async">
     <div class="cap">
       <div class="en"><span data-ja>客室</span><span data-en>Rooms</span><span data-zh>客房</span></div>
       <div class="ja"><span data-ja>十二の趣</span><span data-en>Twelve Moods</span><span data-zh>十二种情致</span></div>
     </div>
-  </div>
+</div>
+
+<div class="shell">
 
   <div class="inner">
     <div class="fade anim">
@@ -55,7 +57,6 @@
     <!-- Featured room detail: 紫 Shiori (as sample) -->
     <section class="block anim" id="shiori-detail" style="border-top:1px solid rgba(166,134,86,.25);margin-top:40px">
       <div class="section-title">
-        <div class="kicker"><span data-ja>featured 客室</span><span data-en>featured villa</span><span data-zh>特色客房</span></div>
         <h2><span data-ja>紫 - Shiori -</span><span data-en>Shiori — The Purple Villa</span><span data-zh>紫 - Shiori -</span></h2>
         <p>
           <span data-ja>小国杉を使った数寄屋造りの中、柾割竹で作られた扉により異彩を放つ美しさと共に開放感を感じられます。離れの囲炉裏の間もあり、プライベート感のあるお部屋です。</span>
@@ -122,6 +123,7 @@
   </div>
 </div>
 
+</main>
 <div id="siteFooter"></div>
 <script src="assets/site.js"></script>
 </body>

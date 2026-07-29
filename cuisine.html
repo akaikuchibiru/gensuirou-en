@@ -2,25 +2,28 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <title>料理 Cuisine ｜ 源翠瓏 - 九州山海の幸を厳選した創作フレンチ和食</title>
 <meta name="description" content="源翠瓏の創作フレンチ和食。熊本県産を中心に山海の幸を用いたおもてなし料理。" />
 <link rel="icon" href="assets/imgs/logo_gensuirou.png" />
 <link href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&family=Noto+Serif+SC:wght@400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="tokens.css" />
 <link rel="stylesheet" href="assets/site.css" />
 </head>
 <body data-page="cuisine">
 <h1 class="seo"><span data-ja>源翠瓏の創作フレンチ和食 - 阿蘇の温泉旅館</span><span data-en>Gensuirou Cuisine — French-Japanese, from Kyushu's mountains and seas</span><span data-zh>源翠瓏 · 融合和法的创作料理</span></h1>
 <div id="siteHeader"></div>
+<main id="main">
 
-<div class="shell">
-  <div class="page-hero">
-    <img class="bg" src="assets/cuisine_main.jpg" alt="">
+<div class="page-hero">
+    <img class="bg" src="assets/cuisine_main.jpg" alt="" fetchpriority="high" decoding="async">
     <div class="cap">
       <div class="en"><span data-ja>料理</span><span data-en>Cuisine</span><span data-zh>料理</span></div>
       <div class="ja"><span data-ja>創作フレンチ和食</span><span data-en>French–Japanese</span><span data-zh>创作法式和食</span></div>
     </div>
-  </div>
+</div>
+
+<div class="shell">
 
   <div class="inner">
     <div class="fade anim">
@@ -44,7 +47,6 @@
 
     <section class="block">
       <div class="section-title">
-        <div class="kicker"><span data-ja>創作料理</span><span data-en>Signature</span><span data-zh>主厨料理</span></div>
         <h2><span data-ja>食の宝庫、九州の食材満載の創作フレンチ和食</span><span data-en>A Kyushu-based French–Japanese menu</span><span data-zh>宝库九州 · 精选食材的创作法式和食</span></h2>
         <p>
           <span data-ja>熊本県産を中心に、山海の幸に恵まれた九州の食材を主に取り扱った「創作フレンチ和食」。季節や時季によって食材はもちろん調理法も変わり、いつご来館頂いても楽しめる料理を御提供致します。</span>
@@ -54,7 +56,6 @@
       </div>
 
       <div class="section-title" style="margin-top:60px">
-        <div class="kicker"><span data-ja>お料理の追加オプション</span><span data-en>Optional add-ons</span><span data-zh>加菜可选</span></div>
         <h2><span data-ja>追加のお料理</span><span data-en>Additional dishes</span><span data-zh>加点料理</span></h2>
         <p style="font-size:12px;color:#a68656"><span data-ja>※事前予約が必要なメニューがございます。当日はご確認下さい。</span><span data-en>Some items require advance reservation.</span><span data-zh>部分菜品需提前预约。</span></p>
       </div>
@@ -120,6 +121,7 @@
   </div>
 </div>
 
+</main>
 <div id="siteFooter"></div>
 <script src="assets/site.js"></script>
 </body>

@@ -1,0 +1,12 @@
+{
+  "scanned": "2026-07-29",
+  "framework": "vanilla HTML/CSS/JS, no build step, Cloudflare Pages",
+  "fontStack": ["Cormorant Garamond", "Sawarabi Mincho", "Noto Serif SC"],
+  "fontSource": "Google Fonts <link> in each page head",
+  "palette": "hex custom properties in assets/site.css :root (pre-Hallmark)",
+  "motionLibrary": null,
+  "motionStance": "motion-cut (IntersectionObserver + CSS keyframes only)",
+  "spacingScale": null,
+  "preserved": ["font stack", "brand gold anchor", "8 routes", "site.js chrome injection", "real figures"],
+  "introduced": ["OKLCH tokens", "4pt spacing scale", "8-state interactions", "mobile non-negotiables", "58-gate slop test"]
+}

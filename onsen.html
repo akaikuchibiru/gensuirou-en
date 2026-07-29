@@ -2,25 +2,28 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <title>温泉 Onsen ｜ 源翠瓏 - 阿蘇の地下1000mから湧く天然温泉</title>
 <meta name="description" content="源翠瓏の天然温泉。アルカリ性単純温泉『美肌の湯』、源泉かけ流し。" />
 <link rel="icon" href="assets/imgs/logo_gensuirou.png" />
 <link href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&family=Noto+Serif+SC:wght@400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="tokens.css" />
 <link rel="stylesheet" href="assets/site.css" />
 </head>
 <body data-page="onsen">
 <h1 class="seo"><span data-ja>熊本阿蘇の地下から湧く温泉 源翠瓏</span><span data-en>Gensuirou natural onsen from 1,000 m below Aso</span><span data-zh>源翠瓏 · 阿苏地下 1,000 米涌出的天然温泉</span></h1>
 <div id="siteHeader"></div>
+<main id="main">
 
-<div class="shell">
-  <div class="page-hero">
-    <img class="bg" src="assets/onsen_main.jpg" alt="">
+<div class="page-hero">
+    <img class="bg" src="assets/onsen_main.jpg" alt="" fetchpriority="high" decoding="async">
     <div class="cap">
       <div class="en"><span data-ja>温泉</span><span data-en>Onsen</span><span data-zh>温泉</span></div>
       <div class="ja"><span data-ja>阿蘇の名湯</span><span data-en>Waters of Aso</span><span data-zh>阿苏名汤</span></div>
     </div>
-  </div>
+</div>
+
+<div class="shell">
 
   <div class="inner">
     <div class="fade anim">
@@ -44,7 +47,6 @@
 
     <section class="block">
       <div class="section-title">
-        <div class="kicker"><span data-ja>泉質</span><span data-en>Spring Type</span><span data-zh>泉质</span></div>
         <h2><span data-ja>アルカリ性単純温泉 - 美肌の湯</span><span data-en>Simple Alkaline Spring — "Beauty Water"</span><span data-zh>碱性单纯温泉 · 美肌之汤</span></h2>
         <p>
           <span data-ja>肌触りが柔らかく肌への刺激が少ないのが特徴で、入浴すると肌がすべすべする感触があり角質を取る働きがあるため「美肌の湯」とも呼ばれます。</span>
@@ -84,6 +86,7 @@
   </div>
 </div>
 
+</main>
 <div id="siteFooter"></div>
 <script src="assets/site.js"></script>
 </body>

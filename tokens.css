@@ -1,0 +1,111 @@
+/* Hallmark · tokens · Gensuirou
+ * theme: custom (tuned) · vibe: "阿蘇の夜、金と墨、静けさ"
+ * Portable token layer. Every colour / font / space / duration in site.css
+ * references a name from this file. No inline values downstream.
+ */
+
+:root {
+  /* ── Channel triplets ────────────────────────────────────────────────
+     Overlays and scrims need the same hue at many alphas. Naming the
+     channels lets the stylesheet compose `oklch(var(--ch-shade) / 0.55)`
+     without ever writing a raw colour value downstream (gate 48).       */
+  --ch-paper:  13% 0.010 70;
+  --ch-shade:   9% 0.008 68;
+  --ch-accent: 74% 0.120 82;
+
+  /* ── Colour · dark paper, gold anchor (hue ~78–85) ───────────────────
+     Anchored on the existing brand gold #c9a25a, lifted to chroma 0.12
+     so it reads as a signal rather than a wash. Paper is lifted off pure
+     black to L 13% and tinted warm — #0e0c0a was effectively #000.      */
+  --color-paper:        oklch(13% 0.010 70);
+  --color-paper-2:      oklch(17% 0.012 72);
+  --color-paper-3:      oklch(21% 0.012 74);
+
+  --color-ink:          oklch(93% 0.012 85);
+  --color-ink-2:        oklch(78% 0.014 82);
+  --color-muted:        oklch(62% 0.014 80);
+  --color-neutral:      oklch(48% 0.012 78);
+
+  --color-rule:         oklch(30% 0.014 75);
+  --color-rule-2:       oklch(25% 0.012 75);
+  --color-rule-strong:  oklch(44% 0.022 78);   /* UI boundaries — ≥3:1 */
+
+  --color-accent:       oklch(74% 0.120 82);
+  --color-accent-hi:    oklch(84% 0.090 84);
+  --color-accent-ink:   oklch(13% 0.010 70);   /* text on accent fill */
+  --color-focus:        oklch(78% 0.180 82);
+
+  --color-scrim:        oklch(var(--ch-shade) / 0.72);
+  --color-scrim-soft:   oklch(var(--ch-shade) / 0.32);
+  --color-invalid:      oklch(64% 0.160 28);
+
+  /* ── Type · three faces, language-scoped ──────────────────────────────
+     At most two families render at once: the Latin wordmark register
+     always Cormorant, the reading face switching by <html lang>.        */
+  --font-latin:    'Cormorant Garamond', ui-serif, Georgia, serif;
+  --font-ja:       'Sawarabi Mincho', ui-serif, serif;
+  --font-zh:       'Noto Serif SC', ui-serif, serif;
+  --font-wordmark: var(--font-latin);
+  --font-display:  var(--font-latin);
+  --font-body:     var(--font-latin);
+
+  /* ── Scale · 1.25 major third, 16px base ─────────────────────────── */
+  --text-xs:   0.75rem;
+  --text-sm:   0.8125rem;
+  --text-base: 1rem;
+  --text-md:   1.25rem;
+  --text-lg:   1.5625rem;
+  --text-xl:   1.9531rem;
+  --text-2xl:  2.4414rem;
+  --text-3xl:  3.0518rem;
+  --text-display:   clamp(2.75rem, 5vw + 1rem, 5.25rem);
+  --text-display-s: clamp(2rem, 3.5vw + 0.5rem, 3.25rem);
+
+  --leading-display: 1.08;
+  --leading-body:    1.65;
+  --leading-loose:   1.9;
+
+  --track-display: 0.02em;
+  --track-label:   0.34em;
+  --track-body:    0.01em;
+
+  /* ── Space · 4pt scale ───────────────────────────────────────────── */
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.5rem;
+  --space-xs:  0.75rem;
+  --space-sm:  1rem;
+  --space-md:  1.5rem;
+  --space-lg:  2.5rem;
+  --space-xl:  4rem;
+  --space-2xl: 6rem;
+  --space-3xl: 9rem;
+
+  --page-gutter: clamp(1.25rem, 5vw, 4rem);
+  --measure:     65ch;
+  --shell:       82rem;
+
+  /* ── Motion · three named easings ────────────────────────────────── */
+  --ease-out:    cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-in:     cubic-bezier(0.55, 0, 1, 0.45);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --dur-instant:  0ms;
+  --dur-short:    160ms;
+  --dur-med:      320ms;
+  --dur-long:     640ms;
+  --dur-entrance: 1100ms;
+
+  /* ── Stacking · six named levels, no magic numbers ───────────────── */
+  --z-base:    0;
+  --z-raised:  10;
+  --z-sticky:  100;
+  --z-overlay: 200;
+  --z-modal:   300;
+  --z-toast:   400;
+
+  /* ── Rules & radii · luxury reads sharp ──────────────────────────── */
+  --rule-hair: 1px;
+  --rule-bold: 2px;
+  --radius-none: 0;
+  --radius-sm:   2px;
+}
