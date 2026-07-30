@@ -883,27 +883,31 @@ html[lang="zh"] .price-card h4 { font-family: var(--font-zh); letter-spacing: 0.
   position: relative;
   z-index: var(--z-raised);
 }
-/* The section sits in .shell but outside .inner, so without this its content
-   started 88px left of every other block on the page at 1440. Mirror .inner's
-   geometry exactly so the form shares the page's content column. */
+/* The section sits in .shell but outside .inner, so it needs .inner's geometry
+   to share the page's content column. The form itself is only 42rem wide, so
+   left-aligning it inside a full-bleed band left a large void on the right and
+   read as broken — centre the 42rem column and let heading, lede and fields
+   share one left edge. */
 .form-section .form-wrap {
   width: 71rem;
   max-width: 100%;
   margin-inline: auto;
   padding-inline: var(--page-gutter);
 }
-.form-wrap form { max-width: 42rem; }
+.form-wrap > * {
+  max-width: 42rem;
+  margin-inline: auto;
+}
 .form-section h3 {
   font-family: var(--font-ja);
   font-size: var(--text-xl);
   color: var(--color-ink);
   letter-spacing: 0.14em;
   margin-bottom: var(--space-xs);
-  max-width: 40rem;
 }
 html[lang="en"] .form-section h3 { font-family: var(--font-latin); letter-spacing: 0.03em; font-size: var(--text-2xl); }
 html[lang="zh"] .form-section h3 { font-family: var(--font-zh); }
-.form-sub { color: var(--color-muted); font-size: var(--text-base); margin-bottom: var(--space-lg); line-height: var(--leading-loose); max-width: var(--measure); }
+.form-sub { color: var(--color-muted); font-size: var(--text-base); margin-bottom: var(--space-lg); line-height: var(--leading-loose); }
 .field { margin-bottom: var(--space-md); }
 .field label {
   display: block;
@@ -1090,7 +1094,9 @@ option [data-en], option [data-zh], option [data-ja] { display: inline; }
   .numbers .n .k { font-size: var(--text-xl); }
   .thumbs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .info-block td:first-child { width: 6.5rem; }
-  .form-section { padding: var(--space-xl) var(--page-gutter); }
+  /* padding-inline stays 0 — .form-wrap already carries the gutter, and
+     re-adding it here indented the form 40px against the page's 20px. */
+  .form-section { padding-block: var(--space-xl); }
   /* Three language chips + Reserve + Menu will not fit a phone bar without
      colliding with the wordmark. The language switch moves into the index
      panel, where it has room; the bar keeps wordmark · Reserve · Menu. */
