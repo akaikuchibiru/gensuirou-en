@@ -89,6 +89,16 @@ Cloudflare の 2 本に変更を申し込む。
 - WADAX は申し込みフォーム経由なので即時ではありません。**リードタイムを見込むこと。**
 - TTL を事前に下げる作業は不要です。Phase 1 でゾーンを**同一に**作ってあるので、
   切替中にどちらの NS が答えても結果が変わりません。
+- **DNSSEC は無効であることを実測済み** (2026-08-24: 親 .com に DS 無し / DNSKEY 0 件 /
+  AD=false、Google と Cloudflare の DoH 2 系統で一致)。有効なまま NS を切り替えると
+  検証が失敗してドメインごと SERVFAIL になり、サイトとメールが同時に落ちるが、
+  今回はその危険は無い。WADAX 側で DNSSEC を触る作業は不要。
+- Cloudflare が勧める **「Only allow Cloudflare IP addresses at your origin」は実行しない。**
+  (a) 全レコードが DNS only なので Cloudflare 経由の通信が存在せず、閉じるとサイトが全滅する。
+  (b) Phase 4 以降も、メールサーバは世界中の任意の送信元から SMTP を受ける必要がある。
+  この推奨は「サイトを全部プロキシ配下に置く構成」が前提で、メール同居の今回には当たらない。
+- 活性化前に Cloudflare が「not fully protected」と催促してくるが **「I'll do this later」** でよい。
+  全件 DNS only は意図した状態。
 - 巻き戻しは NS を WADAX に戻すだけですが、**即座ではありません。** ゾーンの NS TTL が
   21600 秒（6 時間）、`.com` の委任 TTL は最大 48 時間です。だから「壊れたら戻す」
   ではなく「壊れない状態で切り替える」が唯一の正解になります。
