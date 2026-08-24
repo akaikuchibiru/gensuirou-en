@@ -1,0 +1,19 @@
+# gensuirou.com — 移管前の権威ゾーン スナップショット
+# 取得: 2026-08-24T15:34:34Z UTC  権威 NS: nsmg101.wadax-sv.jp
+# SOA serial: 2026022501
+# 用途: Cloudflare へ移す前の原本。切替後にこの全件を突合すること。
+
+gensuirou.com.		14069	IN	A	153.123.7.215
+gensuirou.com.		14070	IN	MX	10 mail.gensuirou.com.
+gensuirou.com.		14070	IN	TXT	"v=spf1 ip4:153.123.7.215 mx a +include:wpmx.wadax.ne.jp +include:_spf-mg.wadax-sv.jp ~all"
+gensuirou.com.		14070	IN	TXT	"google-site-verification=Tc1om5xtcZ7atoqKONO0rbhsgxVfIi0Cr36M3hPM8cY"
+gensuirou.com.		14067	IN	NS	nsmg101.wadax-sv.jp.
+gensuirou.com.		14067	IN	NS	alp102.wadax-sv.jp.
+www.gensuirou.com.	14067	IN	A	153.123.7.215
+mail.gensuirou.com.	14080	IN	A	153.123.7.215
+webmail.gensuirou.com.	14080	IN	A	153.123.7.215
+smtp.gensuirou.com.	14080	IN	CNAME	mail.gensuirou.com.
+pop.gensuirou.com.	14079	IN	CNAME	mail.gensuirou.com.
+_dmarc.gensuirou.com.	14068	IN	TXT	"v=DMARC1; p=none"
+default._domainkey.gensuirou.com. 14071	IN TXT	"v=DKIM1; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlgi3iCb8v6PDwoyY/vYLBGQxARLbRCR1wO8fCzDowhFPEMuvNeh0TvO736BVet6+bcsgqsN59F0Zz3RIp9tZK0jjV5UIRS/lBe1HREpqT4lHPjibOhKdxQMdfhP+7sgA+KP8UY/mPL9g15NP3Fqc+7/Q2aKHgWB2xvfHaAlVP/7WUr3w+MUfa7fy9iVLFSQ/cjJaRHRX" "fafd/QP+dBvM+tbRimFtx6LEi1HsLJEobllXfvBlGlIrZX8lvU7S2LoaO4PKzP2gM7pBgN9sXKJTFvWQCZk+SGid58PYHAdfn3/YZJBBsU9oLpwOkMLfkvDVb1WyNCeJR4f6ph8ZaDSFFQIDAQAB;"
+_domainkey.gensuirou.com. 14340	IN	TXT	"o=-"

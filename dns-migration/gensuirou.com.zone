@@ -1,0 +1,29 @@
+;; gensuirou.com — Cloudflare 取り込み用 BIND ゾーンファイル
+;; 出典: 公開リゾルバ 3 系統 (ローカル / Cloudflare DoH / Google DoH) が一致した値を 2026-08-24 15:36 UTC に取得 (SOA serial 2026022501)
+;; DKIM は openssl で 2048bit RSA 公開鍵 (2048 bit) として復号できることを確認済み。
+;;
+;; ※ 権威 NS への直接問い合わせではない。この作業環境は 53/udp を横取りしており、
+;;    dig @<NS> を指定しても応答に aa が立たず SERVER 欄に別リゾルバが出る (2026-08-24 実測)。
+;;    権威そのものを確かめたい場合は、この環境の外のシェルから dig を実行すること。
+;;
+;; ⚠ 取り込み後、Cloudflare 上で必ず確認すること:
+;;    1. 全レコードを DNS only (グレー雲) にする。mail / webmail / smtp / pop を
+;;       プロキシすると SMTP・POP・IMAP が通らなくなり、旅館のメールが止まる。
+;;    2. apex と www は「今と同じ 153.123.7.215」のまま切り替える。
+;;       サイトの向き先変更は NS 切替と別手順にする (同時だと切り分けができない)。
+;;    3. _dmarc は p=none 据え置き。Email Sending が勧める p=reject は当面入れない
+;;       (Plesk から出ている旅館の正規メールが弾かれ得る)。
+$ORIGIN gensuirou.com.
+$TTL 3600
+@                   IN  A      153.123.7.215
+www                 IN  A      153.123.7.215
+mail                IN  A      153.123.7.215
+webmail             IN  A      153.123.7.215
+smtp                IN  CNAME  mail.gensuirou.com.
+pop                 IN  CNAME  mail.gensuirou.com.
+@                   IN  MX  10 mail.gensuirou.com.
+@                   IN  TXT    "v=spf1 ip4:153.123.7.215 mx a +include:wpmx.wadax.ne.jp +include:_spf-mg.wadax-sv.jp ~all"
+@                   IN  TXT    "google-site-verification=Tc1om5xtcZ7atoqKONO0rbhsgxVfIi0Cr36M3hPM8cY"
+_dmarc              IN  TXT    "v=DMARC1; p=none"
+_domainkey          IN  TXT    "o=-"
+default._domainkey  IN  TXT    "v=DKIM1; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlgi3iCb8v6PDwoyY/vYLBGQxARLbRCR1wO8fCzDowhFPEMuvNeh0TvO736BVet6+bcsgqsN59F0Zz3RIp9tZK0jjV5UIRS/lBe1HREpqT4lHPjibOhKdxQMdfhP+7sgA+KP8UY/mPL9g15NP3Fqc+7/Q2aKHgWB2xvfHaAlVP/7WUr3w+MUfa7fy9iVLFSQ/cjJaRHRX" "fafd/QP+dBvM+tbRimFtx6LEi1HsLJEobllXfvBlGlIrZX8lvU7S2LoaO4PKzP2gM7pBgN9sXKJTFvWQCZk+SGid58PYHAdfn3/YZJBBsU9oLpwOkMLfkvDVb1WyNCeJR4f6ph8ZaDSFFQIDAQAB;"
