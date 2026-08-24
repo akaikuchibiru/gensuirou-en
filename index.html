@@ -171,35 +171,18 @@
     <div class="form-wrap">
       <h3><span data-ja>ご予約・お問い合わせ</span><span data-en>Reservation &amp; Enquiry</span><span data-zh>预约 · 咨询</span></h3>
       <div class="form-sub">
-        <span data-ja>下記フォームよりお気軽にお問い合わせ下さいませ。担当者よりご連絡いたします。</span>
-        <span data-en>Please send us an enquiry below. A member of our staff will be in touch.</span>
-        <span data-zh>请通过下方表单咨询，我们的工作人员将与您联络。</span>
+        <span data-ja>オンラインでのお問い合わせフォームは、ただいま準備を進めております。ご予約・ご相談は、お電話にて承っております。</span>
+        <span data-en>Our online enquiry form is currently in preparation. For reservations and enquiries, please contact us by telephone.</span>
+        <span data-zh>在线咨询表单正在准备中。预约与咨询，请通过电话与我们联络。</span>
       </div>
-      <form id="enquiryForm" onsubmit="return _submitEnquiry(event)">
-        <div class="row2">
-          <div class="field"><label><span data-ja>お名前</span><span data-en>Name</span><span data-zh>姓名</span></label><input name="name" required></div>
-          <div class="field"><label><span data-ja>ご住所（国／地域）</span><span data-en>Country</span><span data-zh>国家 / 地区</span></label><input name="country"></div>
-        </div>
-        <div class="row2">
-          <div class="field"><label><span data-ja>メールアドレス</span><span data-en>Email</span><span data-zh>邮箱</span></label><input type="email" name="email" required></div>
-          <div class="field"><label><span data-ja>お電話番号</span><span data-en>Phone</span><span data-zh>电话</span></label><input type="tel" name="phone"></div>
-        </div>
-        <div class="row2">
-          <div class="field"><label><span data-ja>チェックイン希望日</span><span data-en>Check-in</span><span data-zh>入住日期</span></label><input type="date" name="checkin"></div>
-          <div class="field"><label><span data-ja>宿泊日数</span><span data-en>Nights</span><span data-zh>入住晚数</span></label><select name="nights"><option>1</option><option>2</option><option>3</option><option>4+</option></select></div>
-        </div>
-        <div class="row2">
-          <div class="field"><label><span data-ja>人数</span><span data-en>Guests</span><span data-zh>人数</span></label><select name="guests"><option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option></select></div>
-          <div class="field"><label><span data-ja>ご希望のお部屋</span><span data-en>Preferred Villa</span><span data-zh>希望客房</span></label><select name="villa"><option value="">— <span data-ja>おまかせ</span><span data-en>Any</span><span data-zh>任意</span> —</option><option>紫 Shiori</option><option>葵 Aoi</option><option>華 Hana</option><option>碧 Midori</option><option>瑩 Ei</option><option>結 Yui</option><option>凛 Rin</option><option>宙 Sora</option><option>瑞 Zui</option><option>皇 Sumeragi</option><option>禅 Zen</option><option>想 Sou</option></select></div>
-        </div>
-        <div class="field"><label><span data-ja>お問い合わせ内容</span><span data-en>Message</span><span data-zh>留言</span></label><textarea name="message" placeholder="アレルギー・記念日・送迎希望など"></textarea></div>
-        <button type="submit"><span data-ja>お問合せを送信</span><span data-en>Send Enquiry</span><span data-zh>发送咨询</span></button>
-        <div class="form-note" id="formNote">
-          <span data-ja>※ モック表示です。バックエンド接続後、実送信に切替わります。</span>
-          <span data-en>Mock form — enquiries are logged once wired to the backend.</span>
-          <span data-zh>示范表单 — 接入后端后将记录咨询内容。</span>
-        </div>
-      </form>
+      <div class="standby">
+        <a class="reserve-btn" href="tel:+81962791800">TEL +81 (0)96-279-1800</a>
+        <p class="standby-hours">
+          <span data-ja>受付時間 10:00–18:00（日本時間）</span>
+          <span data-en>Telephone hours 10:00–18:00 JST</span>
+          <span data-zh>受理时间 10:00–18:00（日本时间）</span>
+        </p>
+      </div>
     </div>
   </div>
 

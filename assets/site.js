@@ -221,22 +221,7 @@ window.addEventListener('scroll', function(){
 }, {passive:true});
 
 // ---- enquiry form ----
-function _submitEnquiry(e){
-  e.preventDefault();
-  var fd = new FormData(e.target);
-  var data = {}; fd.forEach(function(v,k){ data[k]=v; });
-  console.log('[Gensuirou enquiry]', data);
-  var note = document.getElementById('formNote');
-  // No turnaround promise — the site can't commit staff to a reply window.
-  var msg = GS.lang === 'zh'
-    ? '✓ 咨询已送出。稍后将由工作人员与您联络。'
-    : GS.lang === 'ja'
-      ? '✓ お問い合わせを送信しました。担当者よりご連絡いたします。'
-      : '✓ Enquiry sent. A member of our staff will be in touch.';
-  if(note){
-    note.textContent = msg;
-    note.dataset.state = 'sent';
-  }
-  e.target.reset();
-  return false;
-}
+// Removed 2026-08-24. The form was a mock: it logged to the console and always
+// printed "送信しました". On a site taking real reservations that is a lie, so
+// the section now offers the telephone instead. Restore the markup from
+// `git show 70174bb:index.html` when the /api/enquiry endpoint is live.

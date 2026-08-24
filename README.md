@@ -35,5 +35,15 @@ open index.html
 npx wrangler pages deploy . --project-name=gensuirou-en
 ```
 
----
-Content mirrored from gensuirou.com for demonstration purposes.
+## Status
+
+Commissioned by the ryokan — this site takes **real reservation enquiries**.
+
+The enquiry form is **not wired yet**. Until `/api/enquiry` exists, the `#reserve`
+band on `index.html` shows the telephone instead of a form: a form that accepts
+input it cannot deliver loses real bookings. Restore the form markup from
+`git show 70174bb:index.html` when the endpoint is live.
+
+Outstanding before launch: own domain, Email Routing (`info@`), Email Sending
+(SPF/DKIM), Turnstile, D1 storage, per-language URLs + hreflang, 301 from
+`gensuirou.tas-quest.com`.
