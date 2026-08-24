@@ -1,4 +1,4 @@
-// Run: python3 -m http.server 8793 (from repo root), then: node scripts/check-gates.mjs
+// Run: python3 -m http.server 8793 (public/ から起動する), then: node scripts/check-gates.mjs
 import { chromium } from 'playwright-core';
 
 const BASE = 'http://127.0.0.1:8793/';

@@ -2,7 +2,8 @@
 
 高級温泉旅館「源翠瓏」(https://gensuirou.com/) の 3 言語ミラーサイト。
 
-Static HTML + CSS + JS, no build step. Deployed on Cloudflare Pages.
+Static HTML + CSS + JS, no build step. Served by a single **Cloudflare Worker**
+with Static Assets (`public/`). Pages はまだ残してあるが、DNS 切替後に畳む。
 
 ## Structure
 
@@ -17,6 +18,15 @@ Static HTML + CSS + JS, no build step. Deployed on Cloudflare Pages.
 | FAQ | `/faq.html` |
 | Wedding | `/wedding.html` |
 
+## Layout
+
+| Path | 中身 |
+|---|---|
+| `public/` | 配信されるもの全部。ここが Static Assets の directory |
+| `src/worker.js` | HTTPS 強制 / URL 正規化 (301) / セキュリティヘッダ / CSP レポート受け口 |
+| `scripts/` | 検証。`public/` から `python3 -m http.server 8793` を上げてから実行 |
+| `dns-migration/` | WADAX → Cloudflare の原本・取り込みファイル・突合スクリプト |
+
 ## Shared components
 
 - `assets/site.css` — full styling (palette, typography, layout, animations)
@@ -26,13 +36,25 @@ Static HTML + CSS + JS, no build step. Deployed on Cloudflare Pages.
 ## Local preview
 
 ```bash
-open index.html
+cd public && python3 -m http.server 8793
+```
+
+## Verify
+
+```bash
+./scripts/check-worker.sh    # 301 正規化 / 404 / セキュリティヘッダ (3 経路)
+./scripts/check-parity.sh    # Pages 版と本文が一致しているか。Pages を畳んだら消す
+node scripts/check-gates.mjs # 8 ページ × 5 幅
+node scripts/check-nav.mjs
+node scripts/check-contrast.mjs
+node scripts/check-form-align.mjs
 ```
 
 ## Deploy
 
 ```bash
-npx wrangler pages deploy . --project-name=gensuirou-en
+unset CF_API_TOKEN CLOUDFLARE_API_TOKEN   # env の token が OAuth を上書きして code 10000 で落ちる
+npx wrangler deploy
 ```
 
 ## Status

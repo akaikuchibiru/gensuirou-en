@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>ページが見つかりません ｜ 源翠瓏</title>
+<meta name="robots" content="noindex" />
+<link rel="icon" href="/assets/imgs/logo_gensuirou.png" />
+<link href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&family=Noto+Serif+SC:wght@400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet" />
+<!-- 他のページと違い、パスはすべて絶対にする。404 は /a/b/c のような任意の深さで
+     表示されるので、相対パスだとこのページ自身の CSS と JS が読めなくなる。 -->
+<link rel="stylesheet" href="/tokens.css" />
+<link rel="stylesheet" href="/assets/site.css" />
+</head>
+<body data-page="notfound">
+<h1 class="seo"><span data-ja>ページが見つかりません</span><span data-en>Page not found</span><span data-zh>页面未找到</span></h1>
+<div id="siteHeader"></div>
+<main id="main">
+
+<div class="shell">
+  <div class="inner">
+    <div class="nf">
+      <p class="nf-code">404</p>
+      <p class="nf-lead">
+        <span data-ja>お探しのページは見つかりませんでした。</span>
+        <span data-en>We could not find the page you were looking for.</span>
+        <span data-zh>未能找到您访问的页面。</span>
+      </p>
+      <p class="nf-sub">
+        <span data-ja>URL が変わったか、削除された可能性がございます。</span>
+        <span data-en>The address may have changed, or the page may have been removed.</span>
+        <span data-zh>网址可能已变更，或该页面已被移除。</span>
+      </p>
+      <div class="nf-acts">
+        <a class="reserve-btn" href="/"><span data-ja>トップへ戻る</span><span data-en>Back to Home</span><span data-zh>返回首页</span></a>
+        <a class="reserve-btn" href="/rooms"><span data-ja>客室を見る</span><span data-en>View Villas</span><span data-zh>查看客房</span></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+<div id="siteFooter"></div>
+<!-- data-base を "/" にしないと、共有ヘッダ・フッターのリンクが
+     "index.html" のような相対パスになり、深い URL で全部壊れる。 -->
+<script src="/assets/site.js" data-base="/"></script>
+</body>
+</html>

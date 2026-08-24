@@ -1,4 +1,4 @@
-// Run: python3 -m http.server 8793 (from repo root), then: node scripts/check-form-align.mjs
+// Run: python3 -m http.server 8793 (public/ から起動する), then: node scripts/check-form-align.mjs
 //
 // Measures the left edge of every element in the enquiry band and asserts they
 // share one edge, plus that the inner column sits centred in the full-bleed band.
