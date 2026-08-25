@@ -937,6 +937,17 @@ html[lang="zh"] .form-section h3 { font-family: var(--font-zh); }
 .nf-lead { margin: var(--space-lg) 0 0; color: var(--color-ink); font-size: var(--text-lg); line-height: var(--leading-loose); }
 .nf-sub  { margin: var(--space-xs) 0 0; color: var(--color-muted); font-size: var(--text-base); line-height: var(--leading-loose); }
 .nf-acts { display: flex; flex-wrap: wrap; gap: var(--space-sm); margin-top: var(--space-xl); }
+
+/* 客室詳細の前後送り。12 室を一巡できるようにして行き止まりを作らない。
+   狭い幅では 3 つ並べると溢れるので折り返す (affordance 自体は nowrap のまま)。 */
+.room-nav {
+  display: flex; flex-wrap: wrap; gap: var(--space-sm);
+  margin-top: var(--space-2xl);
+  padding-top: var(--space-lg);
+  border-top: var(--rule-hair) solid var(--color-rule-2);
+}
+/* 注記 (プールは水着持参、など)。本文より弱く、しかし読める階調で。 */
+.fine-note { margin: var(--space-sm) 0 0; color: var(--color-muted); font-size: var(--text-sm); line-height: var(--leading-loose); }
 .field { margin-bottom: var(--space-md); }
 .field label {
   display: block;

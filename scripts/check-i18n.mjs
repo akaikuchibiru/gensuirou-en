@@ -113,7 +113,7 @@ else {
   const expect = pages.flatMap((p) => LANGS.map((l) => BASE + langPath(l, p)));
   const miss = expect.filter((e) => !locs.includes(e));
   locs.length === expect.length && miss.length === 0
-    ? ok(`sitemap ${locs.length} URL (8 ページ × 3 言語) すべて一致`)
+    ? ok(`sitemap ${locs.length} URL (${pages.length} ページ × ${LANGS.length} 言語) すべて一致`)
     : ng(`sitemap ${locs.length} URL / 欠落 ${miss.length}: ${miss.slice(0, 3)}`);
   // sitemap に載せた URL が本当に 200 か。載っているのに 404 は GSC で全部弾かれる。
   const badLoc = locs.filter((l) => head(l) !== 200);

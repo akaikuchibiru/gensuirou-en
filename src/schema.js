@@ -22,6 +22,7 @@
 
 import { LANGS, PAGES, langPath } from './i18n.js';
 import { FAQ, ROOMS } from './content-data.js';
+import { ROOMS as VILLAS, roomImages } from './rooms.js';
 
 const NAME = { ja: '源翠瓏', en: 'Gensuirou', zh: '源翠瓏' };
 const TEL = '+81-96-279-1800';
@@ -136,6 +137,26 @@ function roomList(origin, lang) {
   };
 }
 
+/** 客室 1 室。面積・定員・構成・お風呂はすべてページに書いてあるものだけ。 */
+function villaNode(origin, lang, path, slug) {
+  const r = VILLAS[slug];
+  const node = {
+    '@type': 'HotelRoom',
+    '@id': origin + langPath(lang, path) + '#room',
+    name: lang === 'ja' ? `${r.kanji} ${r.roman}` : `${r.roman} ${r.kanji}`,
+    description: r.desc[lang],
+    image: roomImages(slug).slice(0, 6).map((u) => origin + u),
+    url: origin + langPath(lang, path),
+    containedInPlace: { '@id': HOTEL_ID(origin) },
+    occupancy: { '@type': 'QuantitativeValue', maxValue: r.capacity, unitText: 'person' },
+    amenityFeature: [{ '@type': 'LocationFeatureSpecification', name: r.bath[lang], value: true }],
+  };
+  // 碧と凛は 2 階建てで、掲載も階別。合計を勝手に作らないので floorSize は出さない。
+  const m = /^([0-9.]+) m²$/.exec(r.area.en);
+  if (m) node.floorSize = { '@type': 'QuantitativeValue', value: Number(m[1]), unitCode: 'MTK' };
+  return node;
+}
+
 /** そのページの JSON-LD を 1 つの @graph にまとめて返す。 */
 export function jsonLd(origin, lang, path) {
   const meta = PAGES[path][lang];
@@ -156,6 +177,7 @@ export function jsonLd(origin, lang, path) {
   if (path === '/faq') page.mainEntity = faqPage(lang);
 
   const graph = [hotel(origin, lang), website(origin, lang), page];
+  if (PAGES[path].room) graph.push(villaNode(origin, lang, path, PAGES[path].room));
   const bc = breadcrumb(origin, lang, path);
   if (bc) graph.push(bc);
   if (path === '/rooms') graph.push(roomList(origin, lang));

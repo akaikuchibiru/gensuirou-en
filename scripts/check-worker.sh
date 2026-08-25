@@ -29,6 +29,35 @@ for a in /tokens.css /assets/site.css /assets/site.js; do
   c=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 25 "$BASE$a"); [ "$c" = "200" ] && ok "$a 200" || ng "$a $c"
 done
 
+echo "── 旧サイトの URL が恒久で生きているか (移行で被リンクを捨てない)"
+# 移行前の gensuirou.com は約 42 URL。PC 21 + /m/ 配下のモバイル版 21。
+for pair in \
+  "/index.html:/" \
+  "/access/index.html:/access" \
+  "/rooms/index.html:/rooms" \
+  "/rooms/aoi/index.html:/rooms/aoi" \
+  "/rooms/sumeragi/index.html:/rooms/sumeragi" \
+  "/reservation/index.html:/#reserve" \
+  "/m/:/" \
+  "/m/index.html:/" \
+  "/m/faq/index.html:/faq" \
+  "/m/rooms/zui/index.html:/rooms/zui" \
+  "/m/wedding/index.html:/wedding"; do
+  src="${pair%%:*}"; want="${pair##*:}"
+  read -r code loc < <(curl -sS -o /dev/null -w "%{http_code} %{redirect_url}" --max-time 25 "$BASE$src")
+  [ "$code" = "301" ] && [ "$loc" = "$BASE$want" ] && ok "$src → $want" || ng "$src → $code $loc (期待 301 $BASE$want)"
+done
+
+echo "── 客室 12 室が 3 言語で生きているか"
+for s in shiori aoi hana midori ei yui rin sora zui sumeragi zen sou; do
+  miss=""
+  for pre in "" /en /zh; do
+    c=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 25 "$BASE$pre/rooms/$s")
+    [ "$c" = "200" ] || miss="$miss ${pre:-/}:$c"
+  done
+  [ -z "$miss" ] && ok "/rooms/$s 3 言語とも 200" || ng "/rooms/$s$miss"
+done
+
 echo "── セキュリティヘッダ (通常 / ナビゲーション / 画像 の 3 経路)"
 check_hdr(){
   local label="$1"; shift

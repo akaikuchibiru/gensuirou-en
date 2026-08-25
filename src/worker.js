@@ -15,8 +15,9 @@
 // ════════════════════════════════════════════════════════════════════
 
 import {
-  PROD_HOST, allUrls, localizePage, localizeShell, parsePath,
+  PAGES, PROD_HOST, allUrls, localizePage, localizeShell, parsePath,
 } from './i18n.js';
+import { renderRoomPage } from './room-page.js';
 
 // ── CSP ──
 // まだ Report-Only。エッジで注入されるものはローカルに出ないので
@@ -115,23 +116,19 @@ export default {
       );
     }
 
-    // ── URL の正規化 (.html と末尾スラッシュを落として 301) ──
+    // ── 旧 URL の正規化 (すべて 301) ──
     //
-    // Static Assets 側も同じ正規化をしてくれるが、返すのが **307 (一時)** で、
-    // Pages は **308 (恒久)** だった (2026-08-25 実測)。307 のままだと検索エンジンが
-    // 旧 URL の評価を新 URL に統合しない。移行で被リンクを捨てることになるので、
-    // アセット側に渡す前にここで 301 を返す。
+    // 移行前の gensuirou.com は約 42 URL あった (PC 21 + /m/ 配下のモバイル版 21)。
+    // 全部を新 URL に恒久で寄せる。落とすと被リンクと索引を捨てることになる。
+    //
+    // Static Assets 側も .html の正規化をしてくれるが、返すのが **307 (一時)** で
+    // Pages は 308 だった (2026-08-25 実測)。307 だと評価が統合されないので、
+    // アセットに渡す前にここで 301 にする。
     const p = url.pathname;
-    let canon = null;
-    if (p === '/index.html') canon = '/';
-    else if (p.endsWith('.html')) canon = p.slice(0, -5);
-    else if (p.length > 1 && p.endsWith('/')) canon = p.replace(/\/+$/, '');
-    if (canon !== null && canon !== p) {
+    const canon = canonicalPath(p);
+    if (canon !== p) {
       return harden(
-        new Response(null, {
-          status: 301,
-          headers: { Location: url.origin + canon + url.search },
-        }),
+        new Response(null, { status: 301, headers: { Location: url.origin + canon + url.search } }),
         host,
       );
     }
@@ -166,11 +163,21 @@ export default {
       return harden(await serve404(env, url.origin, route.lang), host);
     }
     if (route && route.path) {
-      // クリーンパスのまま取りに行く。html_handling がファイルに対応付ける。
-      // ⚠ '/index.html' のような実ファイル名で ASSETS を叩くと、アセット側が
-      //   クリーン URL へリダイレクトを返して 200 にならず、全ページが 404 になる
-      //   (2026-08-25 実測。deploy は成功するので気付きにくい)。
-      const res = await env.ASSETS.fetch(new Request(new URL(route.path, url.origin), request));
+      const meta = PAGES[route.path];
+      let res;
+      if (meta.room) {
+        // 客室 12 室は静的ファイルではなくデータから組み立てる。
+        // 3 言語入りで返し、この後 localizePage が言語ごとに削る。
+        res = new Response(renderRoomPage(meta.room), {
+          headers: { 'Content-Type': 'text/html; charset=UTF-8' },
+        });
+      } else {
+        // クリーンパスのまま取りに行く。html_handling がファイルに対応付ける。
+        // ⚠ '/index.html' のような実ファイル名で ASSETS を叩くと、アセット側が
+        //   クリーン URL へリダイレクトを返して 200 にならず、全ページが 404 になる
+        //   (2026-08-25 実測。deploy は成功するので気付きにくい)。
+        res = await env.ASSETS.fetch(new Request(new URL(route.path, url.origin), request));
+      }
       if (res.status !== 200) return harden(await serve404(env, url.origin, route.lang), host);
       return harden(localizePage(res, { lang: route.lang, path: route.path, origin: url.origin, host }), host);
     }
@@ -188,6 +195,30 @@ export default {
     return harden(res, host);
   },
 };
+
+/**
+ * 旧サイトの URL を新 URL に寄せる。返り値が引数と違えば 301 する。
+ *
+ * 旧サイトの形:
+ *   /access/index.html          セクションは全部 <名前>/index.html
+ *   /rooms/aoi/index.html       客室詳細 12 本
+ *   /reservation/index.html     予約案内。新サイトではトップの予約枠に集約
+ *   /m/**                       まるごと別のモバイルサイト。新サイトはレスポンシブ
+ */
+function canonicalPath(p) {
+  let out = p;
+  // 旧モバイルサイト。/m と /m/... を PC 側の同じページへ。
+  if (out === '/m' || out.startsWith('/m/')) out = out.slice(2) || '/';
+  // <名前>/index.html → /<名前>
+  if (out.endsWith('/index.html')) out = out.slice(0, -'/index.html'.length) || '/';
+  else if (out === '/index.html') out = '/';
+  else if (out.endsWith('.html')) out = out.slice(0, -5);
+  // 末尾スラッシュを落とす
+  if (out.length > 1 && out.endsWith('/')) out = out.replace(/\/+$/, '') || '/';
+  // 予約ページはトップの予約枠へ
+  if (out === '/reservation') out = '/#reserve';
+  return out || '/';
+}
 
 /** 404。ステータスは必ず 404 にする。
  *  ASSETS から 200 で取った 404.html をそのまま返すと soft-404 になる。 */

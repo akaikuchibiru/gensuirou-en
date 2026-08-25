@@ -21,6 +21,7 @@
 // ════════════════════════════════════════════════════════════════════
 
 import { jsonLdTag } from './schema.js';
+import { roomPageMeta } from './room-page.js';
 
 export const LANGS = ['ja', 'en', 'zh'];
 export const DEFAULT_LANG = 'ja';
@@ -32,7 +33,7 @@ export const PROD_HOST = 'gensuirou.com';
 // 数字と固有名は既存ページの記載から取っている。design.md の非交渉項目に
 // 「Real numbers only」があるので、埋めるために数字を作らないこと。
 //   全 12 棟 / 敷地 4,000 坪 / 地下 1,000m / 熊本県阿蘇郡西原村
-export const PAGES = {
+const BASE_PAGES = {
   '/': {
     // パンくず用の短いラベル。site.js の DESTS と同じ語を使う
     // (ズレは scripts/check-schema.mjs が描画結果と突き合わせて検出する)
@@ -170,6 +171,11 @@ export const PAGES = {
     },
   },
 };
+
+// 客室 12 室は静的ファイルではなくデータから組み立てる。
+// PAGES に混ぜてしまえば、言語別 URL・canonical・hreflang・sitemap・
+// JSON-LD が既存の仕組みのまま効く。
+export const PAGES = { ...BASE_PAGES, ...roomPageMeta() };
 
 // og:locale はハイフン付きの地域込みで書く。ja だけだと Facebook が落とす。
 const OG_LOCALE = { ja: 'ja_JP', en: 'en_US', zh: 'zh_CN' };
