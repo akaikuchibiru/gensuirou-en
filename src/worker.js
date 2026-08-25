@@ -18,6 +18,7 @@ import {
   PAGES, PROD_HOST, allUrls, localizePage, localizeShell, parsePath,
 } from './i18n.js';
 import { renderRoomPage } from './room-page.js';
+import { renderArticle, renderJournalIndex } from './journal.js';
 import { enquiryEnabled, handleEnquiry } from './enquiry.js';
 
 // ── CSP ──
@@ -170,7 +171,13 @@ export default {
     if (route && route.path) {
       const meta = PAGES[route.path];
       let res;
-      if (meta.room) {
+      if (meta.journal) {
+        // 読み物。一覧も記事もデータから組み立てる。
+        res = new Response(
+          meta.journal === 'index' ? renderJournalIndex() : renderArticle(meta.journal),
+          { headers: { 'Content-Type': 'text/html; charset=UTF-8' } },
+        );
+      } else if (meta.room) {
         // 客室 12 室は静的ファイルではなくデータから組み立てる。
         // 3 言語入りで返し、この後 localizePage が言語ごとに削る。
         res = new Response(renderRoomPage(meta.room), {

@@ -68,7 +68,8 @@ for (const p of PAGES) {
     if (r.bodyPx < 16) fails.push(`${tag} · body font ${r.bodyPx}px < 16`);
     if (!r.hasMain) fails.push(`${tag} · no <main id=main>`);
     if (!r.hasSkip) fails.push(`${tag} · no skip link`);
-    if (r.navIndexItems !== 8) fails.push(`${tag} · nav index has ${r.navIndexItems} items (want 8)`);
+    // 行き先は site.js の DESTS と同数。読み物を足して 9 になった (2026-08-25)。
+    if (r.navIndexItems !== 9) fails.push(`${tag} · nav index has ${r.navIndexItems} items (want 9)`);
     if (r.kickers) fails.push(`${tag} · ${r.kickers} kicker(s) remain`);
     if (r.inlineHover) fails.push(`${tag} · ${r.inlineHover} inline onmouseover remain`);
     if (r.splash) fails.push(`${tag} · splash remains`);

@@ -23,6 +23,7 @@
 import { LANGS, PAGES, langPath } from './i18n.js';
 import { FAQ, ROOMS } from './content-data.js';
 import { ROOMS as VILLAS, roomImages } from './rooms.js';
+import { JOURNAL_BASE, articleBySlug } from './journal.js';
 
 const NAME = { ja: '源翠瓏', en: 'Gensuirou', zh: '源翠瓏' };
 const TEL = '+81-96-279-1800';
@@ -101,12 +102,23 @@ function website(origin, lang) {
 
 function breadcrumb(origin, lang, path) {
   if (path === '/') return null;
+  // 客室詳細と読み物の記事は 2 階層下にある。親を飛ばすと
+  // 「ホーム > 紫 Shiori」になり、客室一覧がどこにあるか伝わらない。
+  const trail = ['/'];
+  const seg = path.split('/').filter(Boolean);
+  if (seg.length > 1) {
+    const parent = '/' + seg[0];
+    if (PAGES[parent]) trail.push(parent);
+  }
+  trail.push(path);
   return {
     '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: PAGES['/'].nav[lang], item: origin + langPath(lang, '/') },
-      { '@type': 'ListItem', position: 2, name: PAGES[path].nav[lang], item: origin + langPath(lang, path) },
-    ],
+    itemListElement: trail.map((p, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: PAGES[p].nav[lang],
+      item: origin + langPath(lang, p),
+    })),
   };
 }
 
@@ -157,6 +169,24 @@ function villaNode(origin, lang, path, slug) {
   return node;
 }
 
+/** 読み物の記事。datePublished は記事側の日付をそのまま使う。 */
+function articleNode(origin, lang, path, slug) {
+  const a = articleBySlug(slug);
+  return {
+    '@type': 'Article',
+    '@id': origin + langPath(lang, path) + '#article',
+    headline: a.title[lang],
+    description: a.lead[lang],
+    inLanguage: lang,
+    datePublished: a.date,
+    dateModified: a.date,
+    mainEntityOfPage: { '@id': origin + langPath(lang, path) + '#webpage' },
+    author: { '@id': HOTEL_ID(origin) },
+    publisher: { '@id': HOTEL_ID(origin) },
+    image: origin + '/assets/onsen_main.jpg',
+  };
+}
+
 /** そのページの JSON-LD を 1 つの @graph にまとめて返す。 */
 export function jsonLd(origin, lang, path) {
   const meta = PAGES[path][lang];
@@ -164,7 +194,8 @@ export function jsonLd(origin, lang, path) {
 
   const page = {
     // FAQ ページはページ自体を FAQPage として名乗る。
-    '@type': path === '/faq' ? 'FAQPage' : 'WebPage',
+    '@type': path === '/faq' ? 'FAQPage'
+      : (PAGES[path].journal === 'index' ? 'CollectionPage' : 'WebPage'),
     '@id': self + '#webpage',
     url: self,
     name: meta.title,
@@ -178,6 +209,8 @@ export function jsonLd(origin, lang, path) {
 
   const graph = [hotel(origin, lang), website(origin, lang), page];
   if (PAGES[path].room) graph.push(villaNode(origin, lang, path, PAGES[path].room));
+  const j = PAGES[path].journal;
+  if (j && j !== 'index') graph.push(articleNode(origin, lang, path, j));
   const bc = breadcrumb(origin, lang, path);
   if (bc) graph.push(bc);
   if (path === '/rooms') graph.push(roomList(origin, lang));

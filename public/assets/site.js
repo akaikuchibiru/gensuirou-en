@@ -42,6 +42,7 @@ function gsLangHref(l){
     ['/access',     'access',     'Access',     '交通',     'アクセス'],
     ['/faq',        'faq',        'Questions',  '常见问题', 'よくある質問'],
     ['/wedding',    'wedding',    'Wedding',    '婚礼',     '結婚式'],
+    ['/journal',    'journal',    'Journal',    '读物',     '読み物'],
     ['/',           'home',       'Home',       '首页',     'ホーム']
   ];
 
@@ -100,7 +101,8 @@ function gsLangHref(l){
   };
 
   window._gsFooter = function(){
-    var fmenu = DESTS.slice(0, 7).map(function(d){ return link(d); }).join('');
+    // ホーム以外の全部。件数を直書きすると行き先を足したとき片方だけ増える。
+    var fmenu = DESTS.slice(0, -1).map(function(d){ return link(d); }).join('');
     return ''+
     '<footer>'+
       '<div class="foot-mast">'+

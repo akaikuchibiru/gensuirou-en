@@ -958,6 +958,48 @@ html[lang="zh"] .form-section h3 { font-family: var(--font-zh); }
 
 /* Turnstile。iframe が入るので上下に余白を取る。 */
 .cf-turnstile { margin: var(--space-md) 0; min-height: 65px; }
+
+/* ── 読み物 ──────────────────────────────────────────────
+   既存のトークンだけで組む。この 1 ページのために新しい意匠を作らない。 */
+.jl-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-lg); }
+.jl-card a {
+  display: block; text-decoration: none; color: inherit;
+  padding: var(--space-lg) 0;
+  border-top: var(--rule-hair) solid var(--color-rule-2);
+  transition: border-color var(--dur-short) var(--ease-out);
+}
+.jl-card a:hover, .jl-card a:focus-visible { border-color: var(--color-accent); }
+.jl-card time { display: block; font-family: var(--font-wordmark); font-size: var(--text-xs);
+  letter-spacing: var(--track-label); color: var(--color-muted); }
+.jl-card h3 { margin: var(--space-2xs) 0 0; font-size: var(--text-xl); font-weight: 400; color: var(--color-ink); }
+.jl-card p  { margin: var(--space-xs) 0 0; color: var(--color-ink-2); line-height: var(--leading-loose); }
+.jl-date { font-family: var(--font-wordmark); font-size: var(--text-xs);
+  letter-spacing: var(--track-label); color: var(--color-muted); margin: 0 0 var(--space-sm); }
+
+/* 広い順の一覧。番号は装飾なので、読み上げの邪魔にならない ol を使う。 */
+.jl-rank { margin: 0; padding-left: 1.6em; color: var(--color-ink-2); line-height: var(--leading-loose); }
+.jl-rank a { color: var(--color-ink); }
+
+.jl-groups { display: grid; gap: var(--space-lg); grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr)); }
+.jl-group h4 { margin: 0 0 var(--space-2xs); font-family: var(--font-wordmark); font-size: var(--text-xs);
+  letter-spacing: 0.26em; text-transform: uppercase; color: var(--color-accent); }
+.jl-group p { margin: 0; color: var(--color-ink-2); line-height: var(--leading-loose); }
+
+/* 一覧表は狭い幅で必ず溢れるので、**表だけ**を横スクロールさせる。
+   ⚠ overflow-x:auto は overflow-y を **仕様上 auto に格上げする**。
+     visible と書いても効かない (2026-08-25 に computed で実測して確認)。
+     縦を奪われていないことは CSS では保証できないので、
+     scripts/check-chrome-widths.mjs が表の上に本物のホイールを投げて測る。 */
+.jl-table { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.jl-table table { width: 100%; min-width: 34rem; border-collapse: collapse; }
+.jl-table th, .jl-table td {
+  text-align: left; padding: var(--space-xs) var(--space-sm) var(--space-xs) 0;
+  border-bottom: var(--rule-hair) solid var(--color-rule-2); vertical-align: top;
+  font-size: var(--text-sm); line-height: var(--leading-loose); color: var(--color-ink-2);
+}
+.jl-table th { color: var(--color-accent); font-family: var(--font-wordmark);
+  font-size: var(--text-xs); letter-spacing: 0.2em; text-transform: uppercase; white-space: nowrap; }
+.jl-table td a { color: var(--color-ink); white-space: nowrap; }
 .field { margin-bottom: var(--space-md); }
 .field label {
   display: block;

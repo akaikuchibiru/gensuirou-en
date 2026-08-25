@@ -22,6 +22,7 @@
 
 import { jsonLdTag } from './schema.js';
 import { roomPageMeta } from './room-page.js';
+import { journalPageMeta } from './journal.js';
 
 export const LANGS = ['ja', 'en', 'zh'];
 export const DEFAULT_LANG = 'ja';
@@ -175,7 +176,7 @@ const BASE_PAGES = {
 // 客室 12 室は静的ファイルではなくデータから組み立てる。
 // PAGES に混ぜてしまえば、言語別 URL・canonical・hreflang・sitemap・
 // JSON-LD が既存の仕組みのまま効く。
-export const PAGES = { ...BASE_PAGES, ...roomPageMeta() };
+export const PAGES = { ...BASE_PAGES, ...roomPageMeta(), ...journalPageMeta() };
 
 // og:locale はハイフン付きの地域込みで書く。ja だけだと Facebook が落とす。
 const OG_LOCALE = { ja: 'ja_JP', en: 'en_US', zh: 'zh_CN' };

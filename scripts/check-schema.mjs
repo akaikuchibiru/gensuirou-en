@@ -49,10 +49,15 @@ for (const path of Object.keys(PAGES)) {
     const graph = data['@graph'] || [];
     const types = new Set(graph.map((n) => n['@type']));
 
-    // 2. 必要なノード
-    const want = ['Hotel', 'WebSite', path === '/faq' ? 'FAQPage' : 'WebPage'];
+    // 2. 必要なノード。ページ種別で名乗る型が変わる。
+    //    FAQ は FAQPage、読み物の一覧は CollectionPage (WebPage の下位型で、
+    //    一覧ページとしてはこちらが正しい)。
+    const pageType = path === '/faq' ? 'FAQPage'
+      : (PAGES[path].journal === 'index' ? 'CollectionPage' : 'WebPage');
+    const want = ['Hotel', 'WebSite', pageType];
     if (path !== '/') want.push('BreadcrumbList');
     if (path === '/rooms') want.push('ItemList');
+    if (PAGES[path].journal && PAGES[path].journal !== 'index') want.push('Article');
     const missing = want.filter((t) => !types.has(t));
     missing.length === 0 ? ok(`${label} ${[...types].join(', ')}`) : ng(`${label} 欠落: ${missing.join(', ')}`);
 
