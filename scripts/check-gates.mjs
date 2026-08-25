@@ -32,13 +32,13 @@ for (const p of PAGES) {
         bodyPx: parseFloat(getComputedStyle(document.body).fontSize),
         hasMain: !!document.getElementById('main'),
         hasSkip: !!document.querySelector('.skip'),
-        navIndexItems: document.querySelectorAll('#navIndex a').length,
+        navIndexItems: document.querySelectorAll('#navIndex ol a').length,  // 切替 (.langs a) は数えない
         kickers: document.querySelectorAll('.kicker').length,
         inlineHover: document.querySelectorAll('[onmouseover]').length,
         splash: document.querySelectorAll('#gsSplash').length,
       };
       // gate 49 — clickable text must not wrap to two lines
-      document.querySelectorAll('.reserve-btn, .nav-toggle, .langs button, footer nav.fmenu a, footer .socials a, #navIndex a, .form-wrap button').forEach(el => {
+      document.querySelectorAll('.reserve-btn, .nav-toggle, .langs a, .langs button, footer nav.fmenu a, footer .socials a, #navIndex a, .form-wrap button').forEach(el => {
         const cs = getComputedStyle(el);
         const lh = parseFloat(cs.lineHeight) || parseFloat(cs.fontSize) * 1.2;
         const rect = el.getBoundingClientRect();

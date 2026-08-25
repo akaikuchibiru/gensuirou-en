@@ -26,15 +26,21 @@ for (const w of [375, 1440]) {
   open = await page.getAttribute('#navIndex', 'data-open');
   if (open !== 'false') fails.push(`@${w} panel did not close via toggle`);
 
-  // language switch must work at this width (bar on desktop, panel on phone)
+  // 言語切替は「押すと html[lang] が変わる」ものではなくなった。
+  // URL が言語の正なので、この幅で **可視な切替が存在し、行き先が正しく、
+  // 44px 以上で押せる** ことを見る。実際の遷移は check-i18n-browser.mjs が確認する。
   await page.click('#navToggle'); await page.waitForTimeout(300);
-  const cands = await page.$$('.langs [data-lang="en"]');
-  let clicked = false;
-  for (const c of cands) { if (await c.isVisible()) { await c.click(); clicked = true; break; } }
-  if (!clicked) fails.push(`@${w} no visible language button`);
-  await page.waitForTimeout(300);
-  const lang = await page.getAttribute('html', 'lang');
-  if (lang !== 'en') fails.push(`@${w} language switch failed (lang=${lang})`);
+  const cands = await page.$$('.langs a[data-lang="en"]');
+  let found = null;
+  for (const c of cands) { if (await c.isVisible()) { found = c; break; } }
+  if (!found) fails.push(`@${w} no visible language switch`);
+  else {
+    const href = await found.getAttribute('href');
+    const box = await found.boundingBox();
+    // ローカルの静的サーバでは Worker が居ないので遷移は追えない。href で見る。
+    if (!/^\/en(\/|$|#|\?)/.test(href || '')) fails.push(`@${w} en switch href=${href}`);
+    if (!box || box.height < 44) fails.push(`@${w} en switch height=${box && Math.round(box.height)}`);
+  }
 
   // escape closes
   await page.keyboard.press('Escape');
@@ -44,4 +50,4 @@ for (const w of [375, 1440]) {
 }
 await browser.close();
 if (fails.length) { console.log('FAIL'); fails.forEach(f=>console.log('  ✗ '+f)); process.exit(1); }
-console.log('PASS — disclosure opens/closes, toggle reachable, lang switch works, Escape closes');
+console.log('PASS — disclosure opens/closes, toggle reachable, lang switch は行き先と当たり判定が正、Escape closes');

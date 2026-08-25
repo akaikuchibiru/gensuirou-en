@@ -1,0 +1,300 @@
+// ════════════════════════════════════════════════════════════════════
+//  言語別 URL
+//
+//  移行前の状態: 3 言語ぶんの本文が 1 枚の HTML に入っていて、表示しない
+//  言語は CSS で display:none。言語の選択は localStorage だけに入っていた。
+//  つまり **EN と ZH に URL が存在しなかった**。8 ページとも canonical 0 件 /
+//  hreflang 0 件で、Google が拾えるのは既定の日本語版だけ。英語・中国語で
+//  集客する旅館サイトとしては、ここが一番大きな欠陥だった。
+//
+//  ここでやること:
+//    /        …… ja (x-default)
+//    /en/…    …… en
+//    /zh/…    …… zh
+//  同じ 1 枚の HTML を読み、その言語以外の <span data-XX> を落として返す。
+//  URL が言語の唯一の正。localStorage では上書きしない
+//  (localStorage だけだと、共有された URL が相手の言語で開かない)。
+//
+//  生成ではなく実行時に書き換えているのは、本文の正が 1 か所のままだから。
+//  ページを直すのは public/*.html だけでよく、生成物との二重管理が要らない。
+//  取りこぼしは scripts/check-i18n.mjs が全リンクを実際に叩いて検出する。
+// ════════════════════════════════════════════════════════════════════
+
+export const LANGS = ['ja', 'en', 'zh'];
+export const DEFAULT_LANG = 'ja';
+export const PROD_HOST = 'gensuirou.com';
+
+// クリーン URL → 3 言語ぶんの title / description。
+// 実ファイルへの対応付けは Static Assets の html_handling に任せる。
+//
+// 数字と固有名は既存ページの記載から取っている。design.md の非交渉項目に
+// 「Real numbers only」があるので、埋めるために数字を作らないこと。
+//   全 12 棟 / 敷地 4,000 坪 / 地下 1,000m / 熊本県阿蘇郡西原村
+export const PAGES = {
+  '/': {
+    ja: {
+      title: '源翠瓏 -げんすいろう- ｜ 阿蘇の全室露天風呂付き離れ客室の温泉旅館',
+      desc: '源翠瓏 (Gensuirou) — 熊本県阿蘇郡西原村の全12室・全室離れ露天風呂付き温泉旅館。日本語・English・中文でご案内。',
+    },
+    en: {
+      title: 'Gensuirou — Onsen Ryokan in Aso, Kumamoto | Twelve Detached Villas',
+      desc: 'Gensuirou is a twelve-villa onsen ryokan in Nishihara, Aso, Kumamoto. Every villa stands on its own, each with a private open-air hot spring bath.',
+    },
+    zh: {
+      title: '源翠瓏 — 熊本阿苏温泉旅馆 ｜ 全 12 栋独立别墅・专属露天温泉',
+      desc: '源翠瓏位于熊本县阿苏郡西原村。全 12 栋独立别墅，每栋皆设专属露天温泉。提供日文、English、中文导览。',
+    },
+  },
+  '/rooms': {
+    ja: {
+      title: '客室 Rooms ｜ 源翠瓏 - 全12室の露天風呂付き離れ客室',
+      desc: '源翠瓏の全12室・全室離れ露天風呂付き客室のご紹介。紫、葵、華、碧、瑩、結、凛、宙、瑞、皇、禅、想。',
+    },
+    en: {
+      title: 'Villas | Gensuirou — Twelve Detached Villas with Private Onsen',
+      desc: 'All twelve villas at Gensuirou stand detached, each with its own open-air onsen: Shiori, Aoi, Hana, Midori, Ei, Yui, Rin, Sora, Zui, Sumeragi, Zen and Sou.',
+    },
+    zh: {
+      title: '客房 ｜ 源翠瓏 — 12 栋独立别墅・专属露天温泉',
+      desc: '源翠瓏 12 栋独立别墅介绍，每栋皆附专属露天温泉：紫、葵、華、碧、瑩、結、凛、宙、瑞、皇、禅、想。',
+    },
+  },
+  '/cuisine': {
+    ja: {
+      title: '料理 Cuisine ｜ 源翠瓏 - 九州山海の幸を厳選した創作フレンチ和食',
+      desc: '源翠瓏の創作フレンチ和食。熊本県産を中心に山海の幸を用いたおもてなし料理。',
+    },
+    en: {
+      title: 'Cuisine | Gensuirou — French-Japanese from Kyushu’s Mountains and Seas',
+      desc: 'French-Japanese cuisine at Gensuirou, built on produce from Kumamoto and the mountains and seas of Kyushu.',
+    },
+    zh: {
+      title: '料理 ｜ 源翠瓏 — 取材九州山海的和法创作料理',
+      desc: '源翠瓏的和法创作料理。以熊本县产食材为中心，取九州山海之幸款待宾客。',
+    },
+  },
+  '/onsen': {
+    ja: {
+      title: '温泉 Onsen ｜ 源翠瓏 - 阿蘇の地下1000mから湧く天然温泉',
+      desc: '源翠瓏の天然温泉。アルカリ性単純温泉『美肌の湯』、源泉かけ流し。',
+    },
+    en: {
+      title: 'Onsen | Gensuirou — Natural Hot Spring from 1,000 m Below Aso',
+      desc: 'Gensuirou’s natural hot spring is drawn from 1,000 m below Aso. An alkaline simple spring, served free-flowing from the source.',
+    },
+    zh: {
+      title: '温泉 ｜ 源翠瓏 — 涌自阿苏地下 1,000 米的天然温泉',
+      desc: '源翠瓏的天然温泉，取自阿苏地下 1,000 米。碱性单纯泉「美肌之汤」，源泉放流。',
+    },
+  },
+  '/facilities': {
+    ja: {
+      title: '施設紹介 Facilities ｜ 源翠瓏 - 貸切露天大浴場・サウナ・ボディケア',
+      desc: '源翠瓏の館内施設。貸切露天大浴場「月光桜の湯」、檜のサウナルーム、ボディケア。',
+    },
+    en: {
+      title: 'Facilities | Gensuirou — Private Open-Air Bath House, Sauna, Body Care',
+      desc: 'Facilities at Gensuirou: the reservable open-air bath house Gekko-Sakura no Yu, a hinoki sauna room, and body care.',
+    },
+    zh: {
+      title: '馆内设施 ｜ 源翠瓏 — 包场露天大浴场・桑拿・身体护理',
+      desc: '源翠瓏的馆内设施。可包场的露天大浴场「月光樱之汤」、桧木桑拿房、身体护理。',
+    },
+  },
+  '/access': {
+    ja: {
+      title: '交通アクセス Access ｜ 源翠瓏 - 熊本県阿蘇郡西原村',
+      desc: '源翠瓏への交通アクセス。熊本空港より車で約15分、JR熊本駅より約1時間15分。',
+    },
+    en: {
+      title: 'Access | Gensuirou — Nishihara, Aso, Kumamoto',
+      desc: 'How to reach Gensuirou: about 15 minutes by car from Kumamoto Airport, about 1 hour 15 minutes from JR Kumamoto Station.',
+    },
+    zh: {
+      title: '交通指引 ｜ 源翠瓏 — 熊本县阿苏郡西原村',
+      desc: '前往源翠瓏的交通方式。距熊本机场约 15 分钟车程，距 JR 熊本站约 1 小时 15 分。',
+    },
+  },
+  '/faq': {
+    ja: {
+      title: 'よくある質問 FAQ ｜ 源翠瓏',
+      desc: '源翠瓏のよくあるご質問。チェックイン・お子様・送迎・お食事など。',
+    },
+    en: {
+      title: 'FAQ | Gensuirou',
+      desc: 'Frequently asked questions about Gensuirou — check-in, children, transfers and meals.',
+    },
+    zh: {
+      title: '常见问题 ｜ 源翠瓏',
+      desc: '源翠瓏的常见问题。入住时间、儿童同行、接送与餐食等。',
+    },
+  },
+  '/wedding': {
+    ja: {
+      title: '結婚式 Wedding ｜ 源翠瓏 - 森の隠れ家でのプライベートウェディング',
+      desc: '森の隠れ家 源翠瓏でのプライベートウェディング。少人数のご結婚式・アニバーサリーステイ。',
+    },
+    en: {
+      title: 'Weddings | Gensuirou — A Private Ceremony in the Forest',
+      desc: 'A private wedding at Gensuirou, a hideaway in the forest. Small ceremonies and anniversary stays.',
+    },
+    zh: {
+      title: '婚礼 ｜ 源翠瓏 — 森中隐匿的私人婚礼',
+      desc: '在森中隐匿的源翠瓏举办私人婚礼。适合小型仪式与纪念日住宿。',
+    },
+  },
+};
+
+// og:locale はハイフン付きの地域込みで書く。ja だけだと Facebook が落とす。
+const OG_LOCALE = { ja: 'ja_JP', en: 'en_US', zh: 'zh_CN' };
+
+/**
+ * URL を解釈する。返り値は 3 通り:
+ *   { lang, path }       … 既知のページ
+ *   { strip }            … /en/assets/… のような紛れ。接頭辞を外して 301
+ *   { lang, notFound }   … /en/なにか。その言語のまま 404 を出す
+ *   null                 … 言語接頭辞なしの非ページ (アセット等)。素通し
+ */
+export function parsePath(pathname) {
+  const m = pathname.match(/^\/(en|zh)(\/.*)?$/);
+  if (!m) return PAGES[pathname] ? { lang: DEFAULT_LANG, path: pathname } : null;
+  const rest = m[2] || '/';
+  if (PAGES[rest]) return { lang: m[1], path: rest };
+  // 最後の区切りにドットがあればアセットとみなし、接頭辞を外して 301。
+  // /en/assets/site.css が 404 になるのを防ぐ (古いキャッシュや手打ち対策)。
+  const last = rest.split('/').pop();
+  if (last.includes('.')) return { strip: rest };
+  // それ以外は、その言語のまま 404 を出す。接頭辞を捨てると
+  // 英語で見ていた人に日本語の 404 が出る。
+  return { lang: m[1], notFound: true };
+}
+
+/** 言語 + クリーンパス → その言語での URL パス。ja は接頭辞なし。 */
+export function langPath(lang, path) {
+  const p = path === '/' ? '' : path;
+  return (lang === DEFAULT_LANG ? '' : '/' + lang) + p || '/';
+}
+
+/** 相対 URL か (スキーム・ルート絶対・フラグメントのいずれでもない)。 */
+const isRelative = (v) =>
+  !!v && !/^(?:[a-z][a-z0-9+.-]*:|\/\/|\/|#)/i.test(v.trim());
+
+/**
+ * どのページにも共通の書き換え。
+ *
+ * - html[lang] を立てる。CSS の言語出し分けと、JS が生成するヘッダ・フッタが
+ *   これに従う
+ * - その言語以外の <span data-XX> を落とす。CSS で隠すだけだと、Google からは
+ *   3 言語が混ざった 1 ページに見える
+ * - 相対 URL を絶対に直す。/en/rooms から "assets/site.css" を読むと
+ *   /en/assets/site.css になって 404 する
+ */
+function buildRewriter(lang) {
+  let rw = new HTMLRewriter().on('html', { element: (el) => el.setAttribute('lang', lang) });
+
+  for (const l of LANGS) {
+    if (l === lang) continue;
+    rw = rw.on(`[data-${l}]`, { element: (el) => el.remove() });
+  }
+
+  // ページ間リンク。相対 href は "foo.html" か "foo.html#frag" の形しかない
+  // (2026-08-25 に 8 ページ全部を機械で棚卸しして確認済み)。
+  rw = rw.on('a[href]', {
+    element(el) {
+      const v = el.getAttribute('href');
+      if (!isRelative(v)) return;
+      const i = v.indexOf('#');
+      const hash = i >= 0 ? v.slice(i) : '';
+      const file = i >= 0 ? v.slice(0, i) : v;
+      let clean = '/' + file.replace(/\.html$/, '');
+      if (clean === '/index') clean = '/';
+      el.setAttribute('href', langPath(lang, clean) + hash);
+    },
+  });
+
+  // アセットは言語に依らず 1 か所。ルート絶対に直す。
+  for (const sel of ['link[href]']) {
+    rw = rw.on(sel, { element: (el) => { const v = el.getAttribute('href'); if (isRelative(v)) el.setAttribute('href', '/' + v); } });
+  }
+  for (const sel of ['img[src]', 'script[src]', 'video[src]', 'source[src]', 'audio[src]', 'iframe[src]']) {
+    rw = rw.on(sel, { element: (el) => { const v = el.getAttribute('src'); if (isRelative(v)) el.setAttribute('src', '/' + v); } });
+  }
+  rw = rw.on('video[poster]', { element: (el) => { const v = el.getAttribute('poster'); if (isRelative(v)) el.setAttribute('poster', '/' + v); } });
+  for (const sel of ['img[srcset]', 'source[srcset]']) {
+    rw = rw.on(sel, {
+      element(el) {
+        const v = el.getAttribute('srcset');
+        if (!v) return;
+        el.setAttribute('srcset', v.split(',').map((part) => {
+          const t = part.trim();
+          if (!t) return t;
+          const [u, ...d] = t.split(/\s+/);
+          return (isRelative(u) ? '/' + u : u) + (d.length ? ' ' + d.join(' ') : '');
+        }).join(', '));
+      },
+    });
+  }
+  return rw;
+}
+
+function withLang(res, lang) {
+  const h = new Headers(res.headers);
+  // 同じ URL でも言語ごとに別物を返すので、受け手に言語を明示する。
+  h.set('Content-Language', lang);
+  return new Response(res.body, { status: res.status, statusText: res.statusText, headers: h });
+}
+
+/** ページ。SEO 用の head を足したうえで言語を確定させる。 */
+export function localizePage(res, { lang, path, origin, host }) {
+  const meta = PAGES[path][lang];
+  const self = origin + langPath(lang, path);
+  // 本番以外 (workers.dev 等) は索引に入れない。自己参照 canonical だけだと
+  // 検証用ホストが本番と重複して索引されてしまう。
+  const isProd = host === PROD_HOST;
+
+  const head =
+    `<link rel="canonical" href="${self}">` +
+    LANGS.map((l) => `<link rel="alternate" hreflang="${l}" href="${origin}${langPath(l, path)}">`).join('') +
+    `<link rel="alternate" hreflang="x-default" href="${origin}${langPath(DEFAULT_LANG, path)}">` +
+    `<meta property="og:type" content="website">` +
+    `<meta property="og:site_name" content="源翠瓏 Gensuirou">` +
+    `<meta property="og:locale" content="${OG_LOCALE[lang]}">` +
+    LANGS.filter((l) => l !== lang).map((l) => `<meta property="og:locale:alternate" content="${OG_LOCALE[l]}">`).join('') +
+    `<meta property="og:url" content="${self}">` +
+    `<meta property="og:title" content="${esc(meta.title)}">` +
+    `<meta property="og:description" content="${esc(meta.desc)}">` +
+    `<meta property="og:image" content="${origin}/assets/movie/poster.jpg">` +
+    `<meta name="twitter:card" content="summary_large_image">` +
+    (isProd ? '' : `<meta name="robots" content="noindex">`);
+
+  const rw = buildRewriter(lang)
+    .on('title', { element: (el) => el.setInnerContent(meta.title) })
+    .on('meta[name="description"]', { element: (el) => el.setAttribute('content', meta.desc) })
+    .on('head', { element: (el) => el.append(head, { html: true }) });
+
+  return withLang(rw.transform(res), lang);
+}
+
+/** 404 など、SEO の head を持たせないページ。言語だけ合わせる。 */
+export function localizeShell(res, { lang }) {
+  return withLang(buildRewriter(lang).transform(res), lang);
+}
+
+/** sitemap に載せる URL を全部返す (8 ページ × 3 言語)。 */
+export function allUrls(origin) {
+  const out = [];
+  for (const path of Object.keys(PAGES)) {
+    for (const lang of LANGS) {
+      out.push({
+        loc: origin + langPath(lang, path),
+        alts: LANGS.map((l) => ({ lang: l, href: origin + langPath(l, path) }))
+          .concat([{ lang: 'x-default', href: origin + langPath(DEFAULT_LANG, path) }]),
+      });
+    }
+  }
+  return out;
+}
+
+function esc(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}

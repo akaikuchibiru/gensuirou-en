@@ -3,38 +3,46 @@
 // Chrome archetypes: N9 edge-aligned-minimal nav · Ft1 mast-headed footer
 // ============================================================
 
-var GS = { lang: localStorage.getItem('gs_lang') || 'ja' };
+// 言語は **URL が正**。/ が ja、/en/… が en、/zh/… が zh。
+// サーバ側 (src/i18n.js) が html[lang] を立てて他言語の span を落として返すので、
+// ここでは決め直さず、その値を読むだけにする。
+//
+// 以前は localStorage だけで持っていた。それだと共有された URL が相手の言語で
+// 開かず、検索エンジンから見ると言語別のページが存在しないことになる。
+// localStorage には戻さない (URL と食い違う状態を作らないため)。
+var GS_LABEL = { ja: '日本語', en: 'EN', zh: '中文' };
+var GS_ORDER = ['ja', 'en', 'zh'];
+var GS = { lang: document.documentElement.getAttribute('lang') || 'ja' };
+GS.prefix = GS.lang === 'ja' ? '' : '/' + GS.lang;
 
-function _gsSetLang(l){
-  GS.lang = l;
-  document.documentElement.setAttribute('lang', l);
-  // Two switchers exist (bar + index panel); only one is visible per width.
-  document.querySelectorAll('.langs [data-lang]').forEach(function(b){
-    var on = b.dataset.lang === l;
-    b.classList.toggle('active', on);
-    b.setAttribute('aria-pressed', on ? 'true' : 'false');
-  });
-  try { localStorage.setItem('gs_lang', l); } catch(e){}
+// クリーンパス → いまの言語での URL。'/' のときだけ接頭辞だけを返す。
+function gsHref(path){
+  return (GS.prefix + (path === '/' ? '' : path)) || '/';
 }
-
-// Apply lang attribute immediately so CSS hides other-lang spans before paint
-_gsSetLang(GS.lang);
+// いまのページの、別言語版の URL。
+function gsLangHref(l){
+  var rest = location.pathname.replace(/^\/(en|zh)(?=\/|$)/, '') || '/';
+  var p = (l === 'ja' ? '' : '/' + l) + (rest === '/' ? '' : rest);
+  return (p || '/') + location.search + location.hash;
+}
 
 // ---- shared header/footer injection ----
 (function(){
-  var base = document.currentScript && document.currentScript.dataset.base ? document.currentScript.dataset.base : '';
+  // かつて data-base で相対パスの起点を渡していたが廃止した。
+  // 付け忘れたページで静かに壊れるうえ、言語接頭辞と二重管理になる。
+  // リンクは gsHref()、アセットはルート絶対で統一する。
 
   // The eight destinations. One list, used by both the index panel and the
   // footer mast — so a new page can never appear in one and not the other.
   var DESTS = [
-    ['rooms.html',      'rooms',      'Rooms',      '客房',     '客室'],
-    ['cuisine.html',    'cuisine',    'Cuisine',    '料理',     '料理'],
-    ['onsen.html',      'onsen',      'Onsen',      '温泉',     '温泉'],
-    ['facilities.html', 'facilities', 'Facilities', '设施',     '施設'],
-    ['access.html',     'access',     'Access',     '交通',     'アクセス'],
-    ['faq.html',        'faq',        'Questions',  '常见问题', 'よくある質問'],
-    ['wedding.html',    'wedding',    'Wedding',    '婚礼',     '結婚式'],
-    ['index.html',      'home',       'Home',       '首页',     'ホーム']
+    ['/rooms',      'rooms',      'Rooms',      '客房',     '客室'],
+    ['/cuisine',    'cuisine',    'Cuisine',    '料理',     '料理'],
+    ['/onsen',      'onsen',      'Onsen',      '温泉',     '温泉'],
+    ['/facilities', 'facilities', 'Facilities', '设施',     '施設'],
+    ['/access',     'access',     'Access',     '交通',     'アクセス'],
+    ['/faq',        'faq',        'Questions',  '常见问题', 'よくある質問'],
+    ['/wedding',    'wedding',    'Wedding',    '婚礼',     '結婚式'],
+    ['/',           'home',       'Home',       '首页',     'ホーム']
   ];
 
   function isCurrent(key){
@@ -45,22 +53,25 @@ _gsSetLang(GS.lang);
   }
   function link(d, extraAttr){
     var cur = isCurrent(d[1]) ? ' aria-current="page"' : '';
-    return '<a href="'+base+d[0]+'"'+cur+(extraAttr||'')+'>'+langSpans(d[2], d[3], d[4])+'</a>';
+    return '<a href="'+gsHref(d[0])+'"'+cur+(extraAttr||'')+'>'+langSpans(d[2], d[3], d[4])+'</a>';
   }
 
   function langSwitcher(id){
-    return '<div class="langs"'+(id ? ' id="'+id+'"' : '')+' role="group" aria-label="Language">'+
-      '<button type="button" data-lang="ja" lang="ja">日本語</button>'+
-      '<button type="button" data-lang="en" lang="en">EN</button>'+
-      '<button type="button" data-lang="zh" lang="zh">中文</button>'+
-    '</div>';
+    // button ではなく a。押しても URL が変わらないと、その言語のページを
+    // 共有もブックマークもできず、検索エンジンからも到達できない。
+    var items = GS_ORDER.map(function(l){
+      var on = l === GS.lang;
+      return '<a href="'+gsLangHref(l)+'" hreflang="'+l+'" lang="'+l+'" data-lang="'+l+'"'+
+             (on ? ' class="active" aria-current="true"' : '')+'>'+GS_LABEL[l]+'</a>';
+    }).join('');
+    return '<div class="langs"'+(id ? ' id="'+id+'"' : '')+' role="group" aria-label="Language">'+items+'</div>';
   }
 
   window._gsHeader = function(){
     var items = DESTS.map(function(d, i){
       var n = String(i + 1).padStart(2, '0');
       var cur = isCurrent(d[1]) ? ' aria-current="page"' : '';
-      return '<li><a href="'+base+d[0]+'"'+cur+'>'+
+      return '<li><a href="'+gsHref(d[0])+'"'+cur+'>'+
                '<span class="idx">'+n+'</span>'+
                '<span>'+langSpans(d[2], d[3], d[4])+'</span>'+
              '</a></li>';
@@ -69,13 +80,13 @@ _gsSetLang(GS.lang);
     return ''+
     '<a class="skip" href="#main"><span data-en>Skip to content</span><span data-zh>跳至正文</span><span data-ja>本文へ</span></a>'+
     '<header class="nav"><div class="nav-inner">'+
-      '<a class="brand" href="'+base+'index.html">'+
-        '<img src="'+base+'assets/imgs/logo_gensuirou.png" alt="源翠瓏 Gensuirou" width="200" height="88">'+
+      '<a class="brand" href="'+gsHref('/')+'">'+
+        '<img src="/assets/imgs/logo_gensuirou.png" alt="源翠瓏 Gensuirou" width="200" height="88">'+
         '<span class="txt">GENSUIROU<small>源 翠 瓏</small></span>'+
       '</a>'+
       '<div class="nav-right">'+
         langSwitcher('langSwitcher')+
-        '<a class="reserve-btn" href="'+base+'index.html#reserve">'+langSpans('Reserve','预约','ご予約')+'</a>'+
+        '<a class="reserve-btn" href="'+gsHref('/')+'#reserve">'+langSpans('Reserve','预约','ご予約')+'</a>'+
         '<button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navIndex">'+
           '<span class="bars" aria-hidden="true"><i></i><i></i><i></i></span>'+
           langSpans('Menu','目录','目次')+
@@ -94,7 +105,7 @@ _gsSetLang(GS.lang);
     '<footer>'+
       '<div class="foot-mast">'+
         '<div>'+
-          '<div class="foot-logo"><img src="'+base+'assets/imgs/logo_gensuirou.png" alt="源翠瓏" width="240" height="106" loading="lazy"></div>'+
+          '<div class="foot-logo"><img src="/assets/imgs/logo_gensuirou.png" alt="源翠瓏" width="240" height="106" loading="lazy"></div>'+
           '<address class="addr">'+
             '<span data-en>2113-3 Komori, Nishihara-mura, Aso-gun, Kumamoto 861-2402, Japan</span>'+
             '<span data-zh>日本国 熊本县 阿苏郡 西原村 小森 2113-3（〒861-2402）</span>'+
@@ -119,7 +130,9 @@ _gsSetLang(GS.lang);
     var f = document.getElementById('siteFooter');
     if(h) h.outerHTML = window._gsHeader();
     if(f) f.outerHTML = window._gsFooter();
-    _gsSetLang(GS.lang); // sync button active state after injection
+    // かつてここで _gsSetLang() を呼んで切替ボタンの active を同期していた。
+    // 切替はリンクになり active は生成時に焼き込むので不要。
+    // (関数を消したのに呼び出しが残り、全ページで ReferenceError が出ていた)
   }
   if(document.readyState === 'loading'){
     document.addEventListener('DOMContentLoaded', injectChrome);
@@ -128,11 +141,9 @@ _gsSetLang(GS.lang);
   }
 })();
 
-// ---- lang switcher (event delegation) ----
-document.addEventListener('click', function(e){
-  var b = e.target.closest('.langs [data-lang]');
-  if(b){ e.preventDefault(); _gsSetLang(b.dataset.lang); }
-});
+// 言語切替の click ハンドラは廃止。リンクなのでそのまま遷移させる。
+// preventDefault して localStorage を書き換えるだけだと、URL が変わらないので
+// 共有された先が常に相手の既定言語で開いてしまう。
 
 // ---- site index disclosure (N9's single middle element) ----
 (function(){

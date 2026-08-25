@@ -14,6 +14,10 @@
 //  二つ同時に変えると、壊れたときに切り分けができない。
 // ════════════════════════════════════════════════════════════════════
 
+import {
+  PROD_HOST, allUrls, localizePage, localizeShell, parsePath,
+} from './i18n.js';
+
 // ── CSP ──
 // まだ Report-Only。エッジで注入されるものはローカルに出ないので
 // (CF Web Analytics の beacon で実際に踏んだ)、本番で違反を実測してから
@@ -35,6 +39,9 @@ const CSP_DIRECTIVES = [
   "base-uri 'self'",
   "form-action 'self'",
   "object-src 'none'",
+  // /access の Google マップ埋め込み。default-src 'self' のままだと、
+  // CSP を強制に切り替えた瞬間に地図が消える (2026-08-25 に iframe を棚卸し)。
+  "frame-src https://maps.google.com https://www.google.com",
 ];
 const CSP_REPORT_PATH = '/_csp-report';
 
@@ -129,6 +136,39 @@ export default {
       );
     }
 
+    // ── robots.txt / sitemap.xml ──
+    if (p === '/robots.txt') return harden(robots(url.origin, host), host);
+    if (p === '/sitemap.xml') return harden(sitemap(url.origin), host);
+
+    // ── 言語別ページ ──
+    const route = parsePath(p);
+    if (route && route.strip) {
+      // /en/assets/… のような紛れ。言語接頭辞を外して 301。
+      return harden(
+        new Response(null, { status: 301, headers: { Location: url.origin + route.strip + url.search } }),
+        host,
+      );
+    }
+    if (route && route.notFound) {
+      // /en/なにか。英語で見ていた人に日本語の 404 を出さない。
+      return harden(await serve404(env, url.origin, route.lang), host);
+    }
+    if (route && route.path) {
+      // クリーンパスのまま取りに行く。html_handling がファイルに対応付ける。
+      // ⚠ '/index.html' のような実ファイル名で ASSETS を叩くと、アセット側が
+      //   クリーン URL へリダイレクトを返して 200 にならず、全ページが 404 になる
+      //   (2026-08-25 実測。deploy は成功するので気付きにくい)。
+      const res = await env.ASSETS.fetch(new Request(new URL(route.path, url.origin), request));
+      if (res.status !== 200) return harden(await serve404(env, url.origin, route.lang), host);
+      return harden(localizePage(res, { lang: route.lang, path: route.path, origin: url.origin, host }), host);
+    }
+
+    // ── 拡張子の無い未知パスはページのつもりの誤りとみなす ──
+    // アセット (拡張子つき) は下の ASSETS に任せる。
+    if (!p.split('/').pop().includes('.')) {
+      return harden(await serve404(env, url.origin, 'ja'), host);
+    }
+
     // ── 静的アセット ──
     // run_worker_first = true なので、画像も CSS も必ずここを通る。
     // 出口が 1 か所なのでヘッダの付け漏れが起きない。
@@ -136,3 +176,41 @@ export default {
     return harden(res, host);
   },
 };
+
+/** 404。ステータスは必ず 404 にする。
+ *  ASSETS から 200 で取った 404.html をそのまま返すと soft-404 になる。 */
+async function serve404(env, origin, lang) {
+  const res = await env.ASSETS.fetch(new URL('/404.html', origin));
+  const out = localizeShell(res, { lang });
+  return new Response(out.body, {
+    status: 404,
+    headers: new Headers(out.headers),
+  });
+}
+
+function robots(origin, host) {
+  // 本番以外 (workers.dev 等) は丸ごと拒否する。索引が二重になるのを防ぐ。
+  const body = host === PROD_HOST
+    ? `User-agent: *\nAllow: /\nDisallow: /_csp-report\n\nSitemap: ${origin}/sitemap.xml\n`
+    : `User-agent: *\nDisallow: /\n`;
+  return new Response(body, {
+    headers: { 'Content-Type': 'text/plain; charset=UTF-8', 'Cache-Control': 'public, max-age=3600' },
+  });
+}
+
+function sitemap(origin) {
+  // 言語別 URL を全部載せ、各 URL に相互の hreflang を付ける。
+  // 片方向だけだと Google は言語クラスタとして扱わない。
+  const urls = allUrls(origin).map(({ loc, alts }) =>
+    `  <url>\n    <loc>${loc}</loc>\n` +
+    alts.map((a) => `    <xhtml:link rel="alternate" hreflang="${a.lang}" href="${a.href}"/>`).join('\n') +
+    `\n  </url>`,
+  ).join('\n');
+  const body =
+    `<?xml version="1.0" encoding="UTF-8"?>\n` +
+    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n` +
+    urls + `\n</urlset>\n`;
+  return new Response(body, {
+    headers: { 'Content-Type': 'application/xml; charset=UTF-8', 'Cache-Control': 'public, max-age=3600' },
+  });
+}

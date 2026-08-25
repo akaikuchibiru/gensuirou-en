@@ -176,6 +176,7 @@ h1.seo { position: absolute; left: -9999px; font-size: 1px; }
   gap: 0;
   border: var(--rule-hair) solid var(--color-rule-strong);
 }
+.langs a,
 .langs button {
   background: none;
   border: 0;
@@ -191,10 +192,16 @@ h1.seo { position: absolute; left: -9999px; font-size: 1px; }
     color var(--dur-short) var(--ease-out),
     background-color var(--dur-short) var(--ease-out);
 }
+/* a は inline なので min-height が効かない。44px の当たり判定を保つため
+   flex にして中央寄せする (design.md の非交渉項目)。 */
+.langs a { display: inline-flex; align-items: center; text-decoration: none; }
+.langs a.active,
 .langs button.active { background: var(--color-accent); color: var(--color-accent-ink); }
 @media (hover: hover) and (pointer: fine) {
+  .langs a:hover:not(.active),
   .langs button:hover:not(.active) { color: var(--color-ink); background: oklch(var(--ch-accent) / 0.14); }
 }
+.langs a:active:not(.active),
 .langs button:active:not(.active) { background: oklch(var(--ch-accent) / 0.22); }
 
 /* C1 outlined chip — the one CTA that survives N9's silence. Eight states. */
