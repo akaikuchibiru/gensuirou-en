@@ -26,6 +26,29 @@
     "not_found_handling": "404-page"
   },
 
+  // 予約・お問い合わせの保存先。**メールより先にここへ書く**。
+  // 送信の ok は「Cloudflare が受け取った」であって「届いた」ではないので、
+  // 送信が失敗しても問い合わせが消えない形にしておく。
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "gensuirou-enquiries",
+      "database_id": "fc8b9465-ad22-4162-872f-18073138cc62"
+    }
+  ],
+
+  // Cloudflare Email Sending。gensuirou.com を Email Sending に登録するまでは
+  // 送信が失敗するので、コード側で必ず結果を見て画面に出し分ける。
+  //   npx wrangler email sending enable gensuirou.com
+  // ⚠ Email **Routing** は有効化しないこと。apex の MX を奪って旅館の
+  //   既存メールボックスが全滅する。受信箱は WADAX 側に既にある。
+  "send_email": [{ "name": "EMAIL" }],
+
+  "vars": {
+    // Turnstile の sitekey は公開値 (HTML に出る)。secret は wrangler secret 側。
+    "TURNSTILE_SITEKEY": "0x4AAAAAAEa5kQkJe6__etjG"
+  },
+
   "observability": { "enabled": true }
 
   // ⚠ Custom Domain は宣言的管理。ここに書き漏らすと deploy で DNS ごと消える

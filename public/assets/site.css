@@ -948,6 +948,16 @@ html[lang="zh"] .form-section h3 { font-family: var(--font-zh); }
 }
 /* 注記 (プールは水着持参、など)。本文より弱く、しかし読める階調で。 */
 .fine-note { margin: var(--space-sm) 0 0; color: var(--color-muted); font-size: var(--text-sm); line-height: var(--leading-loose); }
+
+/* 送信結果。成功・注意・失敗を色で分ける。
+   「受け付けたが通知に失敗」を成功と同じ見た目にしない。 */
+.form-note[data-state="sent"]  { color: var(--color-accent-hi); }
+.form-note[data-state="warn"]  { color: var(--color-ink); }
+.form-note[data-state="error"] { color: var(--color-invalid); }
+.form-note:empty { display: none; }
+
+/* Turnstile。iframe が入るので上下に余白を取る。 */
+.cf-turnstile { margin: var(--space-md) 0; min-height: 65px; }
 .field { margin-bottom: var(--space-md); }
 .field label {
   display: block;

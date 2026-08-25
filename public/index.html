@@ -171,6 +171,68 @@
   <div class="form-section" id="reserve">
     <div class="form-wrap">
       <h3><span data-ja>ご予約・お問い合わせ</span><span data-en>Reservation &amp; Enquiry</span><span data-zh>预约 · 咨询</span></h3>
+      <!-- 予約フォーム。**宛先 (ENQUIRY_TO) が設定されているときだけ** Worker が
+           このブロックを残し、下の電話導線を消す。設定が無いまま出すと、
+           誰も見ない場所に問い合わせが溜まる。 -->
+      <div data-enquiry="form" hidden>
+        <div class="form-sub">
+          <span data-ja>下記フォームよりお気軽にお問い合わせ下さいませ。担当者よりご連絡いたします。</span><span data-en>Please send us an enquiry below. A member of our staff will be in touch.</span><span data-zh>请通过下方表单咨询，我们的工作人员将与您联络。</span>
+        </div>
+        <noscript>
+          <!-- JS 無効では Turnstile が描画されず、検証を通れない。
+               黙って失敗させず電話導線に落とす。
+               ⚠ noscript の中身は HTMLRewriter が **要素として辿らない** ので、
+                 ここに <span data-ja> 等を置くと他言語が削られずに残る
+                 (2026-08-25 に check-i18n が検出)。文言は言語に依らないものだけ。 -->
+          <style>#enquiryForm{display:none}</style>
+          <p class="form-note" data-state="warn">
+            <a class="reserve-btn" href="tel:+81962791800">TEL +81 (0)96-279-1800</a>
+          </p>
+        </noscript>
+        <form id="enquiryForm" method="post" action="/api/enquiry" novalidate>
+          <div class="row2">
+            <div class="field"><label for="f-name"><span data-ja>お名前</span><span data-en>Name</span><span data-zh>姓名</span></label><input id="f-name" name="name" autocomplete="name" required></div>
+            <div class="field"><label for="f-country"><span data-ja>ご住所（国／地域）</span><span data-en>Country</span><span data-zh>国家 / 地区</span></label><input id="f-country" name="country" autocomplete="country-name"></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label for="f-email"><span data-ja>メールアドレス</span><span data-en>Email</span><span data-zh>邮箱</span></label><input id="f-email" type="email" name="email" autocomplete="email" required></div>
+            <div class="field"><label for="f-phone"><span data-ja>お電話番号</span><span data-en>Phone</span><span data-zh>电话</span></label><input id="f-phone" type="tel" name="phone" autocomplete="tel"></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label for="f-checkin"><span data-ja>チェックイン希望日</span><span data-en>Check-in</span><span data-zh>入住日期</span></label><input id="f-checkin" type="date" name="checkin"></div>
+            <div class="field"><label for="f-nights"><span data-ja>宿泊日数</span><span data-en>Nights</span><span data-zh>入住晚数</span></label><select id="f-nights" name="nights"><option>1</option><option>2</option><option>3</option><option>4+</option></select></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label for="f-guests"><span data-ja>人数</span><span data-en>Guests</span><span data-zh>人数</span></label><select id="f-guests" name="guests"><option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option></select></div>
+            <div class="field"><label for="f-villa"><span data-ja>ご希望のお部屋</span><span data-en>Preferred Villa</span><span data-zh>希望客房</span></label>
+              <select id="f-villa" name="villa">
+              <!-- 客室名は 3 言語とも同じ表記なので option を分けない
+                   (option の中の span は言語で出し分けできない) -->
+              <option value="">—</option>
+              <option value="shiori">紫 Shiori</option>
+              <option value="aoi">葵 Aoi</option>
+              <option value="hana">華 Hana</option>
+              <option value="midori">碧 Midori</option>
+              <option value="ei">瑩 Ei</option>
+              <option value="yui">結 Yui</option>
+              <option value="rin">凛 Rin</option>
+              <option value="sora">宙 Sora</option>
+              <option value="zui">瑞 Zui</option>
+              <option value="sumeragi">皇 Sumeragi</option>
+              <option value="zen">禅 Zen</option>
+              <option value="sou">想 Sou</option>
+              </select>
+            </div>
+          </div>
+          <div class="field"><label for="f-message"><span data-ja>お問い合わせ内容</span><span data-en>Message</span><span data-zh>留言</span></label><textarea id="f-message" name="message"></textarea></div>
+          <div class="cf-turnstile" data-theme="dark" data-size="flexible"></div>
+          <button type="submit"><span data-ja>お問合せを送信</span><span data-en>Send Enquiry</span><span data-zh>发送咨询</span></button>
+          <div class="form-note" id="formNote" role="status" aria-live="polite"></div>
+        </form>
+      </div>
+
+      <!-- 電話導線。フォームが有効なときは Worker がこちらを消す。 -->
+      <div data-enquiry="standby">
       <div class="form-sub">
         <span data-ja>オンラインでのお問い合わせフォームは、ただいま準備を進めております。ご予約・ご相談は、お電話にて承っております。</span>
         <span data-en>Our online enquiry form is currently in preparation. For reservations and enquiries, please contact us by telephone.</span>
@@ -183,6 +245,7 @@
           <span data-en>Telephone hours 10:00–18:00 JST</span>
           <span data-zh>受理时间 10:00–18:00（日本时间）</span>
         </p>
+      </div>
       </div>
     </div>
   </div>

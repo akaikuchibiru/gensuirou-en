@@ -16,13 +16,21 @@ for (const w of [320, 375, 414, 768, 1000, 1200, 1440, 1920]) {
   await p.waitForSelector('.skip', { state: 'attached' });
   await p.waitForTimeout(200);
   const r = await p.evaluate(() => {
+    // ⚠ **可視な要素**を選ぶ。.form-sub はフォーム側と電話導線側の 2 つあり、
+    //   querySelector は先頭 (隠れているほう) を返して left=0 になる。
+    //   隠れた要素の座標は全部 0 なので、位置の検査は静かに嘘をつく。
     const R = (s) => {
-      const e = document.querySelector(s);
+      const list = [...document.querySelectorAll(s)];
+      const e = list.find((x) => x.checkVisibility()) || null;
       if (!e) return null;
       const b = e.getBoundingClientRect();
       return { l: Math.round(b.left), r: Math.round(b.right) };
     };
-    const wired = !!document.querySelector('.form-wrap form');
+    // ⚠ 存在ではなく **可視** で判定する。フォームは宛先が未設定のとき
+    //   hidden 付きで HTML に同居しており (Worker が出し分ける)、
+    //   存在だけを見ると「フォーム状態」と誤判定して全幅で落ちる。
+    const formEl = document.querySelector('.form-wrap form');
+    const wired = !!formEl && formEl.checkVisibility();
     // Candidates for both states; absent ones drop out rather than throwing.
     const names = wired
       ? ['.form-section h3', '.form-sub', '.field input', '.form-wrap textarea', '.form-wrap button']

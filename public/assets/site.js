@@ -231,8 +231,62 @@ window.addEventListener('scroll', function(){
   n.classList.toggle('scrolled', window.scrollY > 40);
 }, {passive:true});
 
-// ---- enquiry form ----
-// Removed 2026-08-24. The form was a mock: it logged to the console and always
-// printed "送信しました". On a site taking real reservations that is a lie, so
-// the section now offers the telephone instead. Restore the markup from
-// `git show 70174bb:index.html` when the /api/enquiry endpoint is live.
+// ---- 予約・お問い合わせフォーム ----
+//
+// 2026-08-24 まで、このフォームは console.log するだけで **必ず**
+// 「✓ お問い合わせを送信しました」を出していた。実予約を受けるサイトで
+// それをやると、お客様が予約が通ったと信じて待つ。
+// いまは /api/enquiry の結果をそのまま画面に出す。無条件の成功表示はしない。
+//
+// サーバは 3 通りを返す:
+//   ok=true,  notified=true   受け付けて、旅館にも通知できた
+//   ok=true,  notified=false  受け付けたが通知に失敗。**成功とは書かない**
+//   ok=false                  受け付けられなかった
+(function(){
+  var form = document.getElementById('enquiryForm');
+  if(!form) return;                       // フォームが出ていない (電話導線のとき)
+  var note = document.getElementById('formNote');
+  var btn  = form.querySelector('button[type=submit]');
+
+  function say(msg, state){
+    if(!note) return;
+    note.textContent = msg;
+    note.dataset.state = state;           // sent | warn | error
+  }
+  function busy(on){
+    if(!btn) return;
+    btn.disabled = on;
+    btn.setAttribute('aria-busy', on ? 'true' : 'false');
+  }
+  // 失敗したら Turnstile を必ず作り直す。token は使い捨てなので、
+  // 作り直さないと 2 回目以降が必ず検証に落ちる。
+  function resetTurnstile(){
+    try { if(window.turnstile) window.turnstile.reset(); } catch(e){}
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    busy(true);
+    say('', '');
+    var fd = new FormData(form);
+    fd.append('lang', GS.lang);
+    fetch('/api/enquiry', { method:'POST', body: fd, headers:{ 'Accept':'application/json' } })
+      .then(function(r){ return r.json().catch(function(){ return { ok:false }; }); })
+      .then(function(d){
+        if(d.ok && d.notified){
+          say(d.message, 'sent');
+          form.reset();
+        } else {
+          // 受け付けたが通知できていない場合も含めて、成功の見た目にはしない。
+          say(d.message || '送信できませんでした。お手数ですが、お電話にてご連絡くださいませ。',
+              d.ok ? 'warn' : 'error');
+        }
+        resetTurnstile();
+      })
+      .catch(function(){
+        say('通信に失敗しました。お手数ですが、お電話にてご連絡くださいませ。', 'error');
+        resetTurnstile();
+      })
+      .finally(function(){ busy(false); });
+  });
+})();

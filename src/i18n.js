@@ -277,7 +277,7 @@ function withLang(res, lang) {
 }
 
 /** ページ。SEO 用の head を足したうえで言語を確定させる。 */
-export function localizePage(res, { lang, path, origin, host }) {
+export function localizePage(res, { lang, path, origin, host, enquiry, sitekey }) {
   const meta = PAGES[path][lang];
   const self = origin + langPath(lang, path);
   // 本番以外 (workers.dev 等) は索引に入れない。自己参照 canonical だけだと
@@ -300,10 +300,27 @@ export function localizePage(res, { lang, path, origin, host }) {
     (isProd ? '' : `<meta name="robots" content="noindex">`) +
     jsonLdTag(origin, lang, path);
 
-  const rw = buildRewriter(lang)
+  let rw = buildRewriter(lang)
     .on('title', { element: (el) => el.setInnerContent(meta.title) })
     .on('meta[name="description"]', { element: (el) => el.setAttribute('content', meta.desc) })
     .on('head', { element: (el) => el.append(head, { html: true }) });
+
+  // 予約フォームは宛先 (ENQUIRY_TO) があるときだけ出す。無いまま出すと、
+  // 誰も見ない場所に問い合わせが溜まる。出さないときは電話導線を残す。
+  if (enquiry) {
+    rw = rw
+      .on('[data-enquiry="standby"]', { element: (el) => el.remove() })
+      .on('[data-enquiry="form"]', { element: (el) => el.removeAttribute('hidden') })
+      .on('.cf-turnstile', { element: (el) => el.setAttribute('data-sitekey', sitekey) })
+      .on('head', {
+        element: (el) => el.append(
+          '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>',
+          { html: true },
+        ),
+      });
+  } else {
+    rw = rw.on('[data-enquiry="form"]', { element: (el) => el.remove() });
+  }
 
   return withLang(rw.transform(res), lang);
 }

@@ -75,7 +75,10 @@ for (const path of pages) {
     missing.length === 0 ? ok(`${label} hreflang 4 本`) : ng(`${label} hreflang: ${JSON.stringify(missing)}`);
 
     // 5. 他言語の本文が消えている
-    const others = LANGS.filter((l) => l !== lang).filter((l) => body.includes(`data-${l}`));
+    // ⚠ 単純な includes だと data-enquiry を data-en として拾う (2026-08-25 誤検出)。
+    //    属性名として一致させる。
+    const others = LANGS.filter((l) => l !== lang)
+      .filter((l) => new RegExp(`data-${l}\\b`).test(body));
     others.length === 0 ? ok(`${label} 他言語の本文なし`) : ng(`${label} data-${others.join('/')} が残っている`);
 
     // 6. 相対 URL が残っていない

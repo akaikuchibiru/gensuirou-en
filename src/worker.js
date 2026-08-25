@@ -18,6 +18,7 @@ import {
   PAGES, PROD_HOST, allUrls, localizePage, localizeShell, parsePath,
 } from './i18n.js';
 import { renderRoomPage } from './room-page.js';
+import { enquiryEnabled, handleEnquiry } from './enquiry.js';
 
 // ── CSP ──
 // まだ Report-Only。エッジで注入されるものはローカルに出ないので
@@ -30,7 +31,8 @@ import { renderRoomPage } from './room-page.js';
 // 外から読むので 'unsafe-inline' と fonts.googleapis.com が要る。
 const CSP_DIRECTIVES = [
   "default-src 'self'",
-  "script-src 'self'",
+  // Turnstile。api.js を読み、検証は iframe で描画される。
+  "script-src 'self' https://challenges.cloudflare.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",
   "img-src 'self' data:",
@@ -42,7 +44,7 @@ const CSP_DIRECTIVES = [
   "object-src 'none'",
   // /access の Google マップ埋め込み。default-src 'self' のままだと、
   // CSP を強制に切り替えた瞬間に地図が消える (2026-08-25 に iframe を棚卸し)。
-  "frame-src https://maps.google.com https://www.google.com",
+  "frame-src https://maps.google.com https://www.google.com https://challenges.cloudflare.com",
 ];
 const CSP_REPORT_PATH = '/_csp-report';
 
@@ -133,6 +135,9 @@ export default {
       );
     }
 
+    // ── 予約・お問い合わせの受け口 ──
+    if (p === '/api/enquiry') return harden(await handleEnquiry(request, env, ctx), host);
+
     // ── /favicon.ico ──
     // ブラウザは <link rel=icon> があっても /favicon.ico を取りに来る。
     // 無いとタブ・ブックマーク・検索結果が白紙アイコンになる。
@@ -179,7 +184,10 @@ export default {
         res = await env.ASSETS.fetch(new Request(new URL(route.path, url.origin), request));
       }
       if (res.status !== 200) return harden(await serve404(env, url.origin, route.lang), host);
-      return harden(localizePage(res, { lang: route.lang, path: route.path, origin: url.origin, host }), host);
+      return harden(localizePage(res, {
+        lang: route.lang, path: route.path, origin: url.origin, host,
+        enquiry: enquiryEnabled(env), sitekey: env.TURNSTILE_SITEKEY,
+      }), host);
     }
 
     // ── 拡張子の無い未知パスはページのつもりの誤りとみなす ──
