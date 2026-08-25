@@ -291,6 +291,36 @@ window.addEventListener('scroll', function(){
   n.classList.toggle('scrolled', window.scrollY > 40);
 }, {passive:true});
 
+// ---- ヒーロー動画の読み込み判断 ----
+//
+// hero.mp4 は 18.8MB。モバイル 4G で自動再生させると、通信量を食ったうえで
+// LCP のポスター画像と帯域を奪い合う。次のいずれかなら **読み込まない**:
+//   - 通信量の節約が有効
+//   - 動きを減らす設定
+//   - 画面が狭い (スマホは従量課金のことが多い)
+//   - 回線が遅いと申告している
+// 読み込まない場合はポスター画像がそのまま見える。静止画でも成立する構図なので、
+// 「動かないと壊れて見える」にはならない。
+(function(){
+  var v = document.querySelector('video[data-src]');
+  if(!v) return;
+  var c = navigator.connection || {};
+  var slow = ['slow-2g','2g','3g'].indexOf(c.effectiveType) >= 0;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var narrow = window.matchMedia('(max-width: 48rem)').matches;
+  if(c.saveData || reduce || narrow || slow) return;   // ポスターのまま
+
+  // ページの他の読み込みが落ち着いてから入れる。最初の描画と競合させない。
+  var start = function(){
+    v.src = v.dataset.src;
+    v.autoplay = true;
+    var p = v.play();
+    if(p && p.catch) p.catch(function(){ /* 自動再生を拒否されてもポスターが残る */ });
+  };
+  if(document.readyState === 'complete') start();
+  else window.addEventListener('load', function(){ setTimeout(start, 150); });
+})();
+
 // ---- 予約・お問い合わせフォーム ----
 //
 // 2026-08-24 まで、このフォームは console.log するだけで **必ず**

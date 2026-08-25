@@ -8,6 +8,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
 <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png" />
 <link href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&family=Noto+Serif+SC:wght@400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="preload" as="image" href="/assets/movie/poster.jpg" fetchpriority="high" />
 <link rel="stylesheet" href="tokens.css" />
 <link rel="stylesheet" href="assets/site.css" />
 </head>
@@ -22,7 +23,12 @@
 <!-- Hero video (full-bleed with overlay copy) -->
 <div class="hero-block" id="top">
   <div class="video-wrap">
-    <video src="assets/movie/hero.mp4" poster="assets/movie/poster.jpg" preload="metadata" fetchpriority="high" autoplay muted loop playsinline></video>
+    <!-- hero.mp4 は 18.8MB。src を HTML に書くとモバイル 4G でも自動再生が始まり、
+         回線と通信量を食ったうえで LCP のポスター画像と競合する (2026-08-25 実測)。
+         data-src にしておき、site.js が条件を見てから src を入れる。
+         ⚠ preload="none" にしても video.load() は無視して読みに行くので、
+            「読ませない」は src を後から入れるしかない。 -->
+    <video data-src="/assets/movie/hero.mp4" poster="assets/movie/poster.jpg" preload="none" fetchpriority="high" muted loop playsinline></video>
     <div class="overlay"></div>
     <div class="cap">
       <div class="eyebrow"><span data-ja>阿蘇 · 全室離れ 露天風呂付き</span><span data-en>Aso · All-detached · Private Onsen</span><span data-zh>阿苏 · 全房独栋 · 私汤露天</span></div>
@@ -99,14 +105,14 @@
     </div>
 
     <!-- Main image + thumbs -->
-    <div class="main-img"><img src="assets/imgs_1080_570/01.jpg" alt="Gensuirou" id="mainImg"></div>
+    <div class="main-img"><img src="assets/imgs_1080_570/01.jpg" alt="Gensuirou" id="mainImg" loading="lazy" decoding="async"></div>
     <div class="thumbs">
-      <a href="#" data-full="assets/imgs_1080_570/01.jpg"><img src="assets/imgs_1080_570/01_s.jpg" alt=""></a>
-      <a href="#" data-full="assets/imgs_1080_570/02_s.jpg"><img src="assets/imgs_1080_570/02_s.jpg" alt=""></a>
-      <a href="#" data-full="assets/imgs_1080_570/03_s.jpg"><img src="assets/imgs_1080_570/03_s.jpg" alt=""></a>
-      <a href="#" data-full="assets/imgs_1080_570/04_s.jpg"><img src="assets/imgs_1080_570/04_s.jpg" alt=""></a>
-      <a href="#" data-full="assets/imgs_1080_570/05_s.jpg"><img src="assets/imgs_1080_570/05_s.jpg" alt=""></a>
-      <a href="#" data-full="assets/imgs_1080_570/06_s.jpg"><img src="assets/imgs_1080_570/06_s.jpg" alt=""></a>
+      <a href="#" data-full="assets/imgs_1080_570/01.jpg"><img src="assets/imgs_1080_570/01_s.jpg" alt="" loading="lazy" decoding="async"></a>
+      <a href="#" data-full="assets/imgs_1080_570/02_s.jpg"><img src="assets/imgs_1080_570/02_s.jpg" alt="" loading="lazy" decoding="async"></a>
+      <a href="#" data-full="assets/imgs_1080_570/03_s.jpg"><img src="assets/imgs_1080_570/03_s.jpg" alt="" loading="lazy" decoding="async"></a>
+      <a href="#" data-full="assets/imgs_1080_570/04_s.jpg"><img src="assets/imgs_1080_570/04_s.jpg" alt="" loading="lazy" decoding="async"></a>
+      <a href="#" data-full="assets/imgs_1080_570/05_s.jpg"><img src="assets/imgs_1080_570/05_s.jpg" alt="" loading="lazy" decoding="async"></a>
+      <a href="#" data-full="assets/imgs_1080_570/06_s.jpg"><img src="assets/imgs_1080_570/06_s.jpg" alt="" loading="lazy" decoding="async"></a>
     </div>
 
     <!-- Fade block 2 — 12 villas -->
@@ -125,18 +131,18 @@
 
     <!-- 12 rooms — 4 rows × 3 cols -->
     <div class="rooms">
-      <a class="room" href="rooms.html#shiori"><img src="assets/imgs_rooms/shiori_a.jpg" alt="紫 Shiori"><div class="room-label"><div class="kanji">紫</div><div class="roman">Shiori</div></div></a>
-      <a class="room" href="rooms.html#aoi"><img src="assets/imgs_rooms/aoi_a.jpg" alt="葵 Aoi"><div class="room-label"><div class="kanji">葵</div><div class="roman">Aoi</div></div></a>
-      <a class="room" href="rooms.html#hana"><img src="assets/imgs_rooms/hana_a.jpg" alt="華 Hana"><div class="room-label"><div class="kanji">華</div><div class="roman">Hana</div></div></a>
-      <a class="room" href="rooms.html#midori"><img src="assets/imgs_rooms/midori_a.jpg" alt="碧 Midori"><div class="room-label"><div class="kanji">碧</div><div class="roman">Midori</div></div></a>
-      <a class="room" href="rooms.html#ei"><img src="assets/imgs_rooms/ei_a.jpg" alt="瑩 Ei"><div class="room-label"><div class="kanji">瑩</div><div class="roman">Ei</div></div></a>
-      <a class="room" href="rooms.html#yui"><img src="assets/imgs_rooms/yui_a.jpg" alt="結 Yui"><div class="room-label"><div class="kanji">結</div><div class="roman">Yui</div></div></a>
-      <a class="room" href="rooms.html#rin"><img src="assets/imgs_rooms/rin_a.jpg" alt="凛 Rin"><div class="room-label"><div class="kanji">凛</div><div class="roman">Rin</div></div></a>
-      <a class="room" href="rooms.html#sora"><img src="assets/imgs_rooms/sora_a.jpg" alt="宙 Sora"><div class="room-label"><div class="kanji">宙</div><div class="roman">Sora</div></div></a>
-      <a class="room" href="rooms.html#zui"><img src="assets/imgs_rooms/zui_a.jpg" alt="瑞 Zui"><div class="room-label"><div class="kanji">瑞</div><div class="roman">Zui</div></div></a>
-      <a class="room" href="rooms.html#sumeragi"><img src="assets/imgs_rooms/sumeragi_a.jpg" alt="皇 Sumeragi"><div class="room-label"><div class="kanji">皇</div><div class="roman">Sumeragi</div></div></a>
-      <a class="room" href="rooms.html#zen"><img src="assets/imgs_rooms/zen_a.jpg" alt="禅 Zen"><div class="room-label"><div class="kanji">禅</div><div class="roman">Zen</div></div></a>
-      <a class="room" href="rooms.html#sou"><img src="assets/imgs_rooms/sou_a.jpg" alt="想 Sou"><div class="room-label"><div class="kanji">想</div><div class="roman">Sou</div></div></a>
+      <a class="room" href="rooms.html#shiori"><img src="assets/imgs_rooms/shiori_a.jpg" alt="紫 Shiori" loading="lazy" decoding="async"><div class="room-label"><div class="kanji">紫</div><div class="roman">Shiori</div></div></a>
+      <a class="room" href="rooms.html#aoi"><img src="assets/imgs_rooms/aoi_a.jpg" alt="葵 Aoi" loading="lazy" decoding="async"><div class="room-label"><div class="kanji">葵</div><div class="roman">Aoi</div></div></a>
+      <a class="room" href="rooms.html#hana"><img src="assets/imgs_rooms/hana_a.jpg" alt="華 Hana" loading="lazy" decoding="async"><div class="room-label"><div class="kanji">華</div><div class="roman">Hana</div></div></a>
+      <a class="room" href="rooms.html#midori"><img src="assets/imgs_rooms/midori_a.jpg" alt="碧 Midori" loading="lazy" decoding="async"><div class="room-label"><div class="kanji">碧</div><div class="roman">Midori</div></div></a>
+      <a class="room" href="rooms.html#ei"><img src="assets/imgs_rooms/ei_a.jpg" alt="瑩 Ei" loading="lazy" decoding="async"><div class="room-label"><div class="kanji">瑩</div><div class="roman">Ei</div></div></a>
+      <a class="room" href="rooms.html#yui"><img src="assets/imgs_rooms/yui_a.jpg" alt="結 Yui" loading="lazy" decoding="async"><div class="room-label"><div class="kanji">結</div><div class="roman">Yui</div></div></a>
+      <a class="room" href="rooms.html#rin"><img src="assets/imgs_rooms/rin_a.jpg" alt="凛 Rin" loading="lazy" decoding="async"><div class="room-label"><div class="kanji">凛</div><div class="roman">Rin</div></div></a>
+      <a class="room" href="rooms.html#sora"><img src="assets/imgs_rooms/sora_a.jpg" alt="宙 Sora" loading="lazy" decoding="async"><div class="room-label"><div class="kanji">宙</div><div class="roman">Sora</div></div></a>
+      <a class="room" href="rooms.html#zui"><img src="assets/imgs_rooms/zui_a.jpg" alt="瑞 Zui" loading="lazy" decoding="async"><div class="room-label"><div class="kanji">瑞</div><div class="roman">Zui</div></div></a>
+      <a class="room" href="rooms.html#sumeragi"><img src="assets/imgs_rooms/sumeragi_a.jpg" alt="皇 Sumeragi" loading="lazy" decoding="async"><div class="room-label"><div class="kanji">皇</div><div class="roman">Sumeragi</div></div></a>
+      <a class="room" href="rooms.html#zen"><img src="assets/imgs_rooms/zen_a.jpg" alt="禅 Zen" loading="lazy" decoding="async"><div class="room-label"><div class="kanji">禅</div><div class="roman">Zen</div></div></a>
+      <a class="room" href="rooms.html#sou"><img src="assets/imgs_rooms/sou_a.jpg" alt="想 Sou" loading="lazy" decoding="async"><div class="room-label"><div class="kanji">想</div><div class="roman">Sou</div></div></a>
     </div>
 
     <!-- Fade block 3 -->

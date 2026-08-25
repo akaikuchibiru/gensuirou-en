@@ -178,6 +178,22 @@ const BASE_PAGES = {
 // JSON-LD が既存の仕組みのまま効く。
 export const PAGES = { ...BASE_PAGES, ...roomPageMeta(), ...journalPageMeta() };
 
+// 書体はその言語で使うものだけ読む。
+//
+// 3 書体をまとめて要求すると Google Fonts の CSS が **455KB / @font-face 436 件**
+// になり、描画を止める (2026-08-25 実測)。内訳は Noto Serif SC が 340KB、
+// Sawarabi Mincho が 109KB、Cormorant が 6KB。
+// 日本語のページで中国語書体の定義 340KB を読む理由は無い。
+//   ja  Sawarabi + Cormorant   115KB
+//   en  Cormorant のみ           6KB
+//   zh  Noto Serif SC + Cormorant 346KB
+// 英語は 455KB → 6KB。訪日客の入口なので、ここが一番効く。
+const FONT_CSS = {
+  ja: 'https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&family=Cormorant+Garamond:wght@400;500;600&display=swap',
+  en: 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap',
+  zh: 'https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap',
+};
+
 // og:locale はハイフン付きの地域込みで書く。ja だけだと Facebook が落とす。
 const OG_LOCALE = { ja: 'ja_JP', en: 'en_US', zh: 'zh_CN' };
 
@@ -246,9 +262,14 @@ function buildRewriter(lang) {
   });
 
   // アセットは言語に依らず 1 か所。ルート絶対に直す。
-  for (const sel of ['link[href]']) {
-    rw = rw.on(sel, { element: (el) => { const v = el.getAttribute('href'); if (isRelative(v)) el.setAttribute('href', '/' + v); } });
-  }
+  // 併せて Google Fonts の要求を、その言語で使う書体だけに差し替える。
+  rw = rw.on('link[href]', {
+    element(el) {
+      const v = el.getAttribute('href');
+      if (v && v.includes('fonts.googleapis.com/css2')) { el.setAttribute('href', FONT_CSS[lang]); return; }
+      if (isRelative(v)) el.setAttribute('href', '/' + v);
+    },
+  });
   for (const sel of ['img[src]', 'script[src]', 'video[src]', 'source[src]', 'audio[src]', 'iframe[src]']) {
     rw = rw.on(sel, { element: (el) => { const v = el.getAttribute('src'); if (isRelative(v)) el.setAttribute('src', '/' + v); } });
   }
@@ -286,6 +307,12 @@ export function localizePage(res, { lang, path, origin, host, enquiry, sitekey }
   const isProd = host === PROD_HOST;
 
   const head =
+    // 書体は別ホストから来る。接続を先に開いておくと、CSS を読み終えてから
+    // TCP+TLS を張り直す往復が消える。
+    `<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>` +
+    // ロゴはヘッダの一部だが、ヘッダを組み立てるのは body 末尾の site.js。
+    // 素だと要求が LCP より後になる (2026-08-25 実測: 2169ms)。先に取りに行かせる。
+    `<link rel="preload" as="image" href="${origin}/assets/imgs/logo_gensuirou.png">` +
     `<link rel="canonical" href="${self}">` +
     LANGS.map((l) => `<link rel="alternate" hreflang="${l}" href="${origin}${langPath(l, path)}">`).join('') +
     `<link rel="alternate" hreflang="x-default" href="${origin}${langPath(DEFAULT_LANG, path)}">` +

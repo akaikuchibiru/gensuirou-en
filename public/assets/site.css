@@ -121,6 +121,15 @@ h1.seo { position: absolute; left: -9999px; font-size: 1px; }
    The eight destinations live in a full-screen index behind one disclosure;
    filling the middle with a link row would make this N1 with extra steps.
    ============================================================ */
+/* ヘッダは site.js が body 末尾で組み立てて #siteHeader と差し替える。
+   素だと 高さ 0 の空 div が 104px のヘッダになり、main が 104px 押し下げられて
+   CLS 0.072 が毎回発生していた (2026-08-25 実測)。
+   同じ高さを先に確保して、差し替わっても動かないようにする。
+   値は実測: 320-360px=77 / 361-767px=84 / 768px 以上=104。 */
+#siteHeader { min-height: 5.25rem; }                                   /* 84px */
+@media (max-width: 22.5rem) { #siteHeader { min-height: 4.8125rem; } } /* 77px */
+@media (min-width: 48rem)   { #siteHeader { min-height: 6.5rem; } }    /* 104px */
+
 .nav {
   position: sticky;
   top: 0;

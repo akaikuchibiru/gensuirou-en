@@ -8,6 +8,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
 <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png" />
 <link href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&family=Noto+Serif+SC:wght@400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="preload" as="image" href="/assets/facilities_main.jpg" fetchpriority="high" />
 <link rel="stylesheet" href="tokens.css" />
 <link rel="stylesheet" href="assets/site.css" />
 </head>
@@ -41,8 +42,8 @@
     </div>
 
     <div class="gallery" style="grid-template-columns:repeat(2,1fr);max-width:800px;margin:36px auto">
-      <a href="#" data-full="assets/facilities_01.jpg"><img src="assets/facilities_01.jpg" alt=""></a>
-      <a href="#" data-full="assets/facilities_02.jpg"><img src="assets/facilities_02.jpg" alt=""></a>
+      <a href="#" data-full="assets/facilities_01.jpg"><img src="assets/facilities_01.jpg" alt="" loading="lazy" decoding="async"></a>
+      <a href="#" data-full="assets/facilities_02.jpg"><img src="assets/facilities_02.jpg" alt="" loading="lazy" decoding="async"></a>
     </div>
 
     <section class="block">
