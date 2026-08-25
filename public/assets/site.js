@@ -198,32 +198,90 @@ document.addEventListener('click', function(e){
   if(t){ e.preventDefault(); var main = document.getElementById('mainImg'); if(main) main.src = t.dataset.full; }
 });
 
-// ---- lightbox ----
+// ---- ライトボックス ----
+//
+// 客室によっては写真が 12 枚ある。1 枚開いて閉じるだけだと、
+// 全部見るのに 12 回 開閉することになる。同じギャラリーの中を
+// 送れるようにして、キーボードでも操作できるようにする。
+//
+// 動きは opacity のフェードだけ。design.md のモーション 3 原則を増やさない。
+// prefers-reduced-motion では全部畳まれる (共通ルール側で処理)。
 (function(){
   var lb = document.createElement('div');
-  var lastFocus = null;
+  var lastFocus = null, items = [], idx = 0;
+
   lb.className = 'lb';
-  lb.innerHTML = '<button type="button" class="close" aria-label="Close">×</button><img alt="">';
+  lb.setAttribute('role', 'dialog');
+  lb.setAttribute('aria-modal', 'true');
+  lb.hidden = true;
+  lb.innerHTML =
+    '<button type="button" class="lb-close" aria-label="閉じる Close">×</button>' +
+    '<button type="button" class="lb-nav lb-prev" aria-label="前の写真 Previous">‹</button>' +
+    '<figure class="lb-fig"><img alt=""><figcaption class="lb-count"></figcaption></figure>' +
+    '<button type="button" class="lb-nav lb-next" aria-label="次の写真 Next">›</button>';
+
   function attach(){ document.body.appendChild(lb); }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', attach); else attach();
 
+  var img = function(){ return lb.querySelector('img'); };
+
+  function show(i){
+    if(!items.length) return;
+    idx = (i + items.length) % items.length;          // 端で止めず一巡させる
+    var src = items[idx].dataset.full || items[idx].querySelector('img').src;
+    img().src = src;
+    img().alt = items[idx].querySelector('img') ? items[idx].querySelector('img').alt : '';
+    lb.querySelector('.lb-count').textContent = (idx + 1) + ' / ' + items.length;
+    var many = items.length > 1;
+    lb.querySelector('.lb-prev').hidden = !many;
+    lb.querySelector('.lb-next').hidden = !many;
+  }
+
+  function open(a){
+    var box = a.closest('.gallery, .thumbs') || document;
+    items = [].slice.call(box.querySelectorAll('a[data-full]'));
+    if(items.indexOf(a) < 0) items = [a];
+    lastFocus = a;
+    lb.hidden = false;
+    lb.classList.add('on');
+    // 背面のスクロールを止める。⚠ body ではなく html に付ける
+    // (body に付けると sticky なヘッダが横にずれる)。
+    document.documentElement.classList.add('lb-open');
+    show(items.indexOf(a));
+    lb.querySelector('.lb-close').focus({ preventScroll: true });
+  }
+
   function close(){
     lb.classList.remove('on');
+    lb.hidden = true;
+    document.documentElement.classList.remove('lb-open');
     if(lastFocus){ lastFocus.focus({ preventScroll: true }); lastFocus = null; }
   }
+
   document.addEventListener('click', function(e){
-    var g = e.target.closest('.gallery a[data-full], #mainImg');
-    if(g){
+    var a = e.target.closest('.gallery a[data-full], .thumbs a[data-full]');
+    if(a){ e.preventDefault(); open(a); return; }
+    if(!lb.classList.contains('on')) return;
+    if(e.target.closest('.lb-prev')){ show(idx - 1); return; }
+    if(e.target.closest('.lb-next')){ show(idx + 1); return; }
+    // 背景・写真そのもののクリックで閉じる (cursor:zoom-out の見た目どおり)
+    if(e.target.closest('.lb')) close();
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(!lb.classList.contains('on')) return;
+    if(e.key === 'Escape'){ close(); return; }
+    if(e.key === 'ArrowLeft'){ e.preventDefault(); show(idx - 1); return; }
+    if(e.key === 'ArrowRight'){ e.preventDefault(); show(idx + 1); return; }
+    // Tab を外に出さない。開いている間は 3 つのボタンの中で回す。
+    if(e.key === 'Tab'){
+      var f = [].slice.call(lb.querySelectorAll('button:not([hidden])'));
+      if(!f.length) return;
+      var i = f.indexOf(document.activeElement);
       e.preventDefault();
-      lastFocus = g;
-      lb.querySelector('img').src = (g.dataset && g.dataset.full) ? g.dataset.full : g.src;
-      lb.classList.add('on');
-      lb.querySelector('.close').focus({ preventScroll: true });
-    } else if(e.target.closest('.lb')){
-      close();
+      f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus();
     }
   });
-  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') close(); });
 })();
 
 // ---- sticky nav state on scroll ----

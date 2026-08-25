@@ -1081,7 +1081,15 @@ footer nav.fmenu {
   text-transform: uppercase;
   justify-content: flex-end;
 }
-footer nav.fmenu a { color: var(--color-accent-hi); white-space: nowrap; }
+/* 実測 33x25px で、design.md の「Hit targets ≥ 44px」を満たしていなかった
+   (2026-08-25)。socials 側には min-height があったのにこちらには無く、
+   同じフッタの中で当たり判定が食い違っていた。 */
+footer nav.fmenu a {
+  display: inline-flex; align-items: center;
+  min-height: 2.75rem;
+  color: var(--color-accent-hi);
+  white-space: nowrap;
+}
 footer .socials { display: flex; gap: var(--space-2xs); margin-top: var(--space-md); justify-content: flex-end; }
 footer .socials a {
   display: inline-flex; align-items: center;
@@ -1138,9 +1146,46 @@ option [data-en], option [data-zh], option [data-ja] { display: inline; }
 }
 .lb.on { display: flex; animation: lbIn var(--dur-med) var(--ease-out); }
 @keyframes lbIn { from { opacity: 0; } to { opacity: 1; } }
-.lb img { max-width: 100%; max-height: 100%; display: block; }
-.lb .close {
+.lb-fig { margin: 0; display: flex; flex-direction: column; align-items: center; gap: var(--space-sm); max-width: 100%; max-height: 100%; }
+.lb img { max-width: 100%; max-height: calc(100% - 2.5rem); display: block; }
+.lb-count {
+  font-family: var(--font-wordmark); font-size: var(--text-xs);
+  letter-spacing: var(--track-label); color: var(--color-muted);
+}
+/* 前後送り。写真の上に重ねるので、当たり判定を大きく取りつつ
+   見た目は控えめにする (accent の面積は viewport の 5% 以内)。 */
+.lb-nav {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 3.25rem; height: 4.5rem;
+  background: none; border: 0; cursor: pointer;
+  color: var(--color-accent-hi); font-size: var(--text-2xl); line-height: 1;
+  transition: color var(--dur-short) var(--ease-out);
+}
+.lb-prev { inset-inline-start: var(--space-2xs); }
+.lb-next { inset-inline-end: var(--space-2xs); }
+@media (hover: hover) and (pointer: fine) {
+  .lb-nav:hover { color: var(--color-ink); }
+}
+/* 背面のスクロールを止める。⚠ body ではなく html に付ける。
+   body に overflow:hidden を付けると sticky なヘッダが横にずれる。 */
+html.lb-open { overflow: hidden; }
+
+/* 狭い幅では余白が写真を食う (390px で写真が 310px まで縮んでいた)。
+   余白を詰めて、送りボタンは写真の上に重ねる。
+   重ねても当たり判定は 3.25rem x 4.5rem のまま保つ。 */
+@media (max-width: 40rem) {
+  .lb { padding: var(--space-2xs); }
+  .lb img { max-height: calc(100% - 3rem); }
+  .lb-nav { width: 2.75rem; }
+  .lb-prev { inset-inline-start: 0; }
+  .lb-next { inset-inline-end: 0; }
+  /* 写真に重なるので、輪郭を付けて読めるようにする */
+  .lb-nav { text-shadow: 0 1px 6px oklch(var(--ch-shade) / 0.9); }
+}
+.lb .lb-close {
   position: absolute; top: var(--space-md); inset-inline-end: var(--space-md);
+  z-index: 1;
   display: inline-flex; align-items: center; justify-content: center;
   width: 2.75rem; height: 2.75rem;
   background: none; border: 0;
@@ -1151,7 +1196,7 @@ option [data-en], option [data-zh], option [data-ja] { display: inline; }
   transition: color var(--dur-short) var(--ease-out);
 }
 @media (hover: hover) and (pointer: fine) {
-  .lb .close:hover { color: var(--color-ink); }
+  .lb .lb-close:hover { color: var(--color-ink); }
 }
 
 /* ============================================================

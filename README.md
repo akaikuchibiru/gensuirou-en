@@ -41,10 +41,23 @@ cd public && python3 -m http.server 8793
 
 ## Verify
 
+本番 (workers.dev / gensuirou.com) に対して:
+
 ```bash
-./scripts/check-worker.sh    # 301 正規化 / 404 / セキュリティヘッダ (3 経路)
-./scripts/check-parity.sh    # Pages 版と本文が一致しているか。Pages を畳んだら消す
-node scripts/check-gates.mjs # 8 ページ × 5 幅
+./scripts/check-worker.sh              # 旧 URL の 301 / 客室 36 URL / ヘッダ 3 経路 / 404
+node scripts/check-i18n.mjs            # 22 ページ × 3 言語の lang/meta/canonical/hreflang
+                                       # + 内部 URL を全部叩く + sitemap 全件 200
+node scripts/check-schema.mjs          # JSON-LD の構造・本文とのズレ・schema.org 語彙
+node scripts/check-ux.mjs              # ライトボックス / 当たり判定 44px / reveal 固着
+node scripts/check-chrome-widths.mjs   # 18 幅の溢れ + 箱の上に本物のホイールを投げる
+node scripts/check-enquiry.mjs         # 予約フォーム (有効時・fail-closed 時の両方)
+./scripts/check-parity.sh              # Pages 版と本文が一致するか。Pages を畳んだら消す
+```
+
+ローカル (`cd public && python3 -m http.server 8793` を上げてから):
+
+```bash
+node scripts/check-gates.mjs        # 8 ページ × 5 幅
 node scripts/check-nav.mjs
 node scripts/check-contrast.mjs
 node scripts/check-form-align.mjs
