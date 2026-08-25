@@ -136,6 +136,18 @@ export default {
       );
     }
 
+    // ── /favicon.ico ──
+    // ブラウザは <link rel=icon> があっても /favicon.ico を取りに来る。
+    // 無いとタブ・ブックマーク・検索結果が白紙アイコンになる。
+    // 実体は PNG なので、拡張子ではなく Content-Type で正しく名乗る。
+    if (p === '/favicon.ico') {
+      const ico = await env.ASSETS.fetch(new URL('/favicon-32.png', url.origin));
+      const h = new Headers(ico.headers);
+      h.set('Content-Type', 'image/png');
+      h.set('Cache-Control', 'public, max-age=86400');
+      return harden(new Response(ico.body, { status: ico.status, headers: h }), host);
+    }
+
     // ── robots.txt / sitemap.xml ──
     if (p === '/robots.txt') return harden(robots(url.origin, host), host);
     if (p === '/sitemap.xml') return harden(sitemap(url.origin), host);

@@ -20,6 +20,8 @@
 //  取りこぼしは scripts/check-i18n.mjs が全リンクを実際に叩いて検出する。
 // ════════════════════════════════════════════════════════════════════
 
+import { jsonLdTag } from './schema.js';
+
 export const LANGS = ['ja', 'en', 'zh'];
 export const DEFAULT_LANG = 'ja';
 export const PROD_HOST = 'gensuirou.com';
@@ -32,6 +34,9 @@ export const PROD_HOST = 'gensuirou.com';
 //   全 12 棟 / 敷地 4,000 坪 / 地下 1,000m / 熊本県阿蘇郡西原村
 export const PAGES = {
   '/': {
+    // パンくず用の短いラベル。site.js の DESTS と同じ語を使う
+    // (ズレは scripts/check-schema.mjs が描画結果と突き合わせて検出する)
+    nav: { ja: 'ホーム', en: 'Home', zh: '首页' },
     ja: {
       title: '源翠瓏 -げんすいろう- ｜ 阿蘇の全室露天風呂付き離れ客室の温泉旅館',
       desc: '源翠瓏 (Gensuirou) — 熊本県阿蘇郡西原村の全12室・全室離れ露天風呂付き温泉旅館。日本語・English・中文でご案内。',
@@ -46,6 +51,9 @@ export const PAGES = {
     },
   },
   '/rooms': {
+    // パンくず用の短いラベル。site.js の DESTS と同じ語を使う
+    // (ズレは scripts/check-schema.mjs が描画結果と突き合わせて検出する)
+    nav: { ja: '客室', en: 'Rooms', zh: '客房' },
     ja: {
       title: '客室 Rooms ｜ 源翠瓏 - 全12室の露天風呂付き離れ客室',
       desc: '源翠瓏の全12室・全室離れ露天風呂付き客室のご紹介。紫、葵、華、碧、瑩、結、凛、宙、瑞、皇、禅、想。',
@@ -60,6 +68,9 @@ export const PAGES = {
     },
   },
   '/cuisine': {
+    // パンくず用の短いラベル。site.js の DESTS と同じ語を使う
+    // (ズレは scripts/check-schema.mjs が描画結果と突き合わせて検出する)
+    nav: { ja: '料理', en: 'Cuisine', zh: '料理' },
     ja: {
       title: '料理 Cuisine ｜ 源翠瓏 - 九州山海の幸を厳選した創作フレンチ和食',
       desc: '源翠瓏の創作フレンチ和食。熊本県産を中心に山海の幸を用いたおもてなし料理。',
@@ -74,6 +85,9 @@ export const PAGES = {
     },
   },
   '/onsen': {
+    // パンくず用の短いラベル。site.js の DESTS と同じ語を使う
+    // (ズレは scripts/check-schema.mjs が描画結果と突き合わせて検出する)
+    nav: { ja: '温泉', en: 'Onsen', zh: '温泉' },
     ja: {
       title: '温泉 Onsen ｜ 源翠瓏 - 阿蘇の地下1000mから湧く天然温泉',
       desc: '源翠瓏の天然温泉。アルカリ性単純温泉『美肌の湯』、源泉かけ流し。',
@@ -88,6 +102,9 @@ export const PAGES = {
     },
   },
   '/facilities': {
+    // パンくず用の短いラベル。site.js の DESTS と同じ語を使う
+    // (ズレは scripts/check-schema.mjs が描画結果と突き合わせて検出する)
+    nav: { ja: '施設', en: 'Facilities', zh: '设施' },
     ja: {
       title: '施設紹介 Facilities ｜ 源翠瓏 - 貸切露天大浴場・サウナ・ボディケア',
       desc: '源翠瓏の館内施設。貸切露天大浴場「月光桜の湯」、檜のサウナルーム、ボディケア。',
@@ -102,6 +119,9 @@ export const PAGES = {
     },
   },
   '/access': {
+    // パンくず用の短いラベル。site.js の DESTS と同じ語を使う
+    // (ズレは scripts/check-schema.mjs が描画結果と突き合わせて検出する)
+    nav: { ja: 'アクセス', en: 'Access', zh: '交通' },
     ja: {
       title: '交通アクセス Access ｜ 源翠瓏 - 熊本県阿蘇郡西原村',
       desc: '源翠瓏への交通アクセス。熊本空港より車で約15分、JR熊本駅より約1時間15分。',
@@ -116,6 +136,9 @@ export const PAGES = {
     },
   },
   '/faq': {
+    // パンくず用の短いラベル。site.js の DESTS と同じ語を使う
+    // (ズレは scripts/check-schema.mjs が描画結果と突き合わせて検出する)
+    nav: { ja: 'よくある質問', en: 'Questions', zh: '常见问题' },
     ja: {
       title: 'よくある質問 FAQ ｜ 源翠瓏',
       desc: '源翠瓏のよくあるご質問。チェックイン・お子様・送迎・お食事など。',
@@ -130,6 +153,9 @@ export const PAGES = {
     },
   },
   '/wedding': {
+    // パンくず用の短いラベル。site.js の DESTS と同じ語を使う
+    // (ズレは scripts/check-schema.mjs が描画結果と突き合わせて検出する)
+    nav: { ja: '結婚式', en: 'Wedding', zh: '婚礼' },
     ja: {
       title: '結婚式 Wedding ｜ 源翠瓏 - 森の隠れ家でのプライベートウェディング',
       desc: '森の隠れ家 源翠瓏でのプライベートウェディング。少人数のご結婚式・アニバーサリーステイ。',
@@ -265,7 +291,8 @@ export function localizePage(res, { lang, path, origin, host }) {
     `<meta property="og:description" content="${esc(meta.desc)}">` +
     `<meta property="og:image" content="${origin}/assets/movie/poster.jpg">` +
     `<meta name="twitter:card" content="summary_large_image">` +
-    (isProd ? '' : `<meta name="robots" content="noindex">`);
+    (isProd ? '' : `<meta name="robots" content="noindex">`) +
+    jsonLdTag(origin, lang, path);
 
   const rw = buildRewriter(lang)
     .on('title', { element: (el) => el.setInnerContent(meta.title) })
