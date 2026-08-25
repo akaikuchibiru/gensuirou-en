@@ -49,6 +49,17 @@
     "TURNSTILE_SITEKEY": "0x4AAAAAAEa5kQkJe6__etjG"
   },
 
+  // ⚠ Custom Domain は **宣言的**。ここに書いていない Custom Domain は
+  //   deploy で DNS ごと削除される (2026-07-20 に別プロジェクトで 7 分の停止事故)。
+  //   足すときは必ずここにも書く。
+  //
+  //   apex と www だけを Worker に向ける。mail / webmail / smtp / pop は
+  //   DNS only のまま WADAX に残す (旅館のメールはそのまま動き続ける)。
+  "routes": [
+    { "pattern": "gensuirou.com",     "custom_domain": true },
+    { "pattern": "www.gensuirou.com", "custom_domain": true }
+  ],
+
   "observability": { "enabled": true }
 
   // ⚠ Custom Domain は宣言的管理。ここに書き漏らすと deploy で DNS ごと消える
