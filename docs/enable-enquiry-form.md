@@ -9,10 +9,20 @@
 | D1 `enquiries` テーブル | あり（列: id, created_at, lang, name, email, phone, country, checkin, nights, guests, villa, message, cf_country, **mail_status, mail_error**） |
 | Cloudflare Email Sending | `gensuirou.com` 登録済み・有効 |
 | Turnstile | `TURNSTILE_SITEKEY`（vars）/ `TURNSTILE_SECRET`（secret）とも設定済み |
-| `ENQUIRY_TO` | **未設定 — これだけが残り** |
+| `ENQUIRY_TO` | **設定済み（暫定）** — `Haru@bangga-inc.com` |
 
 `enquiryEnabled(env) = !!(env.ENQUIRY_TO && env.TURNSTILE_SITEKEY)` なので、
 `ENQUIRY_TO` が入った瞬間にフォームが出て、電話案内の文面と入れ替わる。
+
+## ⚠ いまは暫定の宛先で動いている（2026-08-26〜）
+
+オーナー判断で、旅館さんの回答を待たずに `Haru@bangga-inc.com` へ流している。
+**お客さまの実際の予約問い合わせがここに届く。** 旅館さんのアドレスが決まったら
+上の手順で差し替えること。
+
+指定は `Haru@bannga-inc.com`（n が 2 つ）だったが、
+その綴りは **NXDOMAIN** でドメイン自体が存在せず、全部バウンドする。
+`bangga-inc.com` は MX = `smtp.google.com` で生きているので、そちらに直した。
 
 ## 手順
 
