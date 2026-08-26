@@ -77,8 +77,14 @@ for (const path of pages) {
     // 5. 他言語の本文が消えている
     // ⚠ 単純な includes だと data-enquiry を data-en として拾う (2026-08-25 誤検出)。
     //    属性名として一致させる。
+    // ⚠ HTML コメントは除く (2026-08-26 誤検出)。noscript の注意書きに
+    //    `<span data-ja>` と **書いてある** のを本文の残りとして拾っていた。
+    //    予約フォームを出した途端にそのコメントが配信されて落ちた。
+    //    noscript の中身自体は除かない — HTMLRewriter が要素として辿らないので
+    //    そこに置いた実物のタグは本当に残る。検出対象のままにしておく。
+    const visible = body.replace(/<!--[\s\S]*?-->/g, '');
     const others = LANGS.filter((l) => l !== lang)
-      .filter((l) => new RegExp(`data-${l}\\b`).test(body));
+      .filter((l) => new RegExp(`data-${l}\\b`).test(visible));
     others.length === 0 ? ok(`${label} 他言語の本文なし`) : ng(`${label} data-${others.join('/')} が残っている`);
 
     // 6. 相対 URL が残っていない

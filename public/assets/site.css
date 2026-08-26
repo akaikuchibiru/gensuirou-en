@@ -1327,6 +1327,21 @@ html.lb-open { overflow: hidden; }
   .lb .lb-close:hover { color: var(--color-ink); }
 }
 
+/* 宿の名前は絶対に途中で折らない。実測 (英語ページ 375/390px) で
+   「源翠瓏」が 2 行に割れていた。ヘッダーが 8px しか余っておらず、
+   brand が 53px まで潰されていたため。320 でも 414 でも起きないので
+   目視では気づけない — 幅を 10px 刻みで走らせて見つけた。 */
+.nav .brand .txt { white-space: nowrap; }
+.nav .brand { flex: 0 0 auto; }
+
+/* 英語は RESERVE / MENU が「ご予約」「目次」より長い。この帯だけ
+   ボタンを詰めて、名前を折らずに収める。 */
+@media (max-width: 26rem) {
+  .nav-right { gap: var(--space-2xs); }
+  .reserve-btn, .nav-toggle { padding-inline: var(--space-xs); letter-spacing: 0.08em; }
+  .nav-toggle { gap: var(--space-3xs); }
+}
+
 /* ============================================================
    Responsive — verified at 320 / 375 / 414 / 768
    ============================================================ */
