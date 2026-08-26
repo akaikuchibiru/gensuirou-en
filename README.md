@@ -55,6 +55,7 @@ node scripts/check-vitals.mjs          # LCP/CLS/FCP/TBT と転送量。キャ�
 node scripts/check-originality.mjs     # 旧サイトとの一致率。ALLOW 以外の一致が出たら落ちる
 node scripts/check-css-vars.mjs        # var(--x) が解決するか / ルール外に落ちた宣言
 node scripts/check-images.mjs          # 表示中なのに読めていない画像。人の速度でスクロールして測る
+node scripts/check-hero-contrast.mjs   # 映像の上の文字。合成後の画素を 8 フレーム見る
 ./scripts/check-parity.sh              # Pages 版と本文が一致するか。Pages を畳んだら消す
 ```
 

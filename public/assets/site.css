@@ -383,16 +383,47 @@ body[data-nav-open="true"] { overflow: hidden; }
   max-height: 58rem;
 }
 .hero-block video { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* ── ヒーローの遮光 ───────────────────────────────────────────────────
+   映像の上の文字は、**明るいフレームが来た瞬間** に消える。実測 (8 フレーム):
+   遮光を敷く前は 見出し 1.35:1 / 小見出し 1.15:1 — ほぼ見えない。
+   祖先の background-color を辿る従来の検査では原理的に測れないので、
+   scripts/check-hero-contrast.mjs で合成後の画素を見て決めた値。
+   太陽が抜けるカットでも 4.5:1 を割らないことが条件。 */
 .hero-block .overlay {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    oklch(var(--ch-shade) / 0.30) 0%,
-    oklch(var(--ch-shade) / 0.10) 38%,
-    oklch(var(--ch-shade) / 0.82) 100%
-  );
+  background:
+    linear-gradient(180deg,
+      oklch(var(--ch-shade) / 0.34) 0%,
+      oklch(var(--ch-shade) / 0.10) 30%,
+      oklch(var(--ch-shade) / 0.55) 68%,
+      oklch(var(--ch-shade) / 0.92) 100%),
+    /* 文字が載る左下の隅だけを落とす。全面を暗くすると映像が死ぬ。 */
+    linear-gradient(to top right,
+      oklch(var(--ch-shade) / 0.78) 0%,
+      oklch(var(--ch-shade) / 0.40) 24%,
+      transparent 48%);
+}
+/* 和文・中文は見出しが右端を縦に走るので、その帯を落とす。
+   遮光ではなく「墨の帯」として構図に組み込む。 */
+html[lang="ja"] .hero-block .overlay,
+html[lang="zh"] .hero-block .overlay {
+  background:
+    linear-gradient(180deg,
+      oklch(var(--ch-shade) / 0.34) 0%,
+      oklch(var(--ch-shade) / 0.10) 30%,
+      oklch(var(--ch-shade) / 0.55) 68%,
+      oklch(var(--ch-shade) / 0.92) 100%),
+    linear-gradient(to top right,
+      oklch(var(--ch-shade) / 0.72) 0%,
+      oklch(var(--ch-shade) / 0.34) 22%,
+      transparent 46%),
+    linear-gradient(270deg,
+      oklch(var(--ch-shade) / 0.76) 0%,
+      oklch(var(--ch-shade) / 0.66) 15%,
+      oklch(var(--ch-shade) / 0.22) 30%,
+      transparent 44%);
 }
 .hero-block .cap {
   position: absolute;
@@ -406,17 +437,19 @@ body[data-nav-open="true"] { overflow: hidden; }
   padding: 0 var(--page-gutter) var(--space-2xl);
   z-index: var(--z-raised);
 }
-.hero-block .cap > * {
+/* 対象は入れ子の中。`> *` のままだと包んだ瞬間に演出が丸ごと外れる。 */
+.hero-block .cap :is(.eyebrow, .title, .sub, .scroll) {
   opacity: 0;
   animation: heroRise var(--dur-entrance) var(--ease-out) forwards;
 }
+.hero-block .cap-vert, .hero-block .cap-foot { width: 100%; min-width: 0; }
 .hero-block .cap .eyebrow {
   font-family: var(--font-wordmark);
   font-size: var(--text-sm);
   letter-spacing: 0.5em;
   color: var(--color-accent-hi);
   text-transform: uppercase;
-  margin-bottom: var(--space-md);
+  margin-block-end: var(--space-md);   /* 縦組みでは「左どなり」になる */
   animation-delay: 240ms;
 }
 .hero-block .cap .title {
@@ -426,8 +459,10 @@ body[data-nav-open="true"] { overflow: hidden; }
   letter-spacing: var(--track-display);
   color: var(--color-ink);
   /* flex-start children size to content — cap against the container or a
-     long CJK line runs straight off the right edge on a phone */
-  max-width: min(18ch, 100%);
+     long CJK line runs straight off the right edge on a phone。
+     縦組みでは行の進む向きが変わるので **論理プロパティ** で書く。
+     max-width のままだと、縦組みのとき行の高さではなく列の幅を縛る。 */
+  max-inline-size: min(18ch, 100%);
   animation-delay: 400ms;
 }
 html[lang="ja"] .hero-block .cap .title,
@@ -438,7 +473,7 @@ html[lang="zh"] .hero-block .cap .title {
 }
 html[lang="zh"] .hero-block .cap .title { font-family: var(--font-zh); }
 .hero-block .cap .sub {
-  max-width: min(42ch, 100%);
+  max-inline-size: min(42ch, 100%);
   margin-top: var(--space-md);
   font-size: var(--text-base);
   line-height: var(--leading-loose);
@@ -463,6 +498,44 @@ html[lang="zh"] .hero-block .cap .title { font-family: var(--font-zh); }
   width: 1px; height: 2rem;
   background: linear-gradient(180deg, var(--color-accent), transparent);
 }
+/* ── ヒーローの構図 ───────────────────────────────────────────────────
+   旧サイトも新サイトも同じ映像を使っているので、横組みの見出しを重ねる限り
+   「同じサイト」に見える。和文・中文では見出しを **縦組み** にして
+   右上から下ろし、説明文だけ左下に横組みで残す。斜めに引き合う構図になり、
+   一目で別のサイトだと分かる。英語は横組みのまま (縦組みは読めない)。 */
+html[lang="ja"] .hero-block .cap,
+html[lang="zh"] .hero-block .cap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-areas: ".    vert"
+                       "foot vert";
+  align-items: start;
+  /* 実測 390px 幅で 説明文の右端と 縦組みの左端が ちょうど 0px で接していた。
+     狭い画面ほど詰まるので、間は必ず空ける。 */
+  column-gap: var(--space-lg);
+  padding-block: var(--space-2xl);
+}
+html[lang="ja"] .hero-block .cap-vert,
+html[lang="zh"] .hero-block .cap-vert {
+  grid-area: vert;
+  writing-mode: vertical-rl;
+  width: auto;
+  max-block-size: 100%;
+  /* 子は行の進む向き (右→左) に積まれる。先に書いた eyebrow が右、
+     見出しがその左。和文の読み順そのまま。 */
+}
+html[lang="ja"] .hero-block .cap-foot,
+html[lang="zh"] .hero-block .cap-foot { grid-area: foot; align-self: end; }
+html[lang="ja"] .hero-block .cap .eyebrow,
+html[lang="zh"] .hero-block .cap .eyebrow { letter-spacing: 0.3em; }
+html[lang="ja"] .hero-block .cap .title,
+html[lang="zh"] .hero-block .cap .title { max-inline-size: 100%; }
+/* ch は「0」の幅。和文書体では半角ぶんしかないので 42ch = 357px にしかならず、
+   24 字の説明文が 2 行に割れて「スイート」だけ落ちていた。全角基準の em で持つ。 */
+html[lang="ja"] .hero-block .cap .sub,
+html[lang="zh"] .hero-block .cap .sub { max-inline-size: min(30em, 100%); }
+
 @keyframes heroRise {
   from { opacity: 0; transform: translateY(1.25rem); }
   to   { opacity: 1; transform: none; }
