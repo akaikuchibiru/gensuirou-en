@@ -537,6 +537,28 @@ section.block { padding: var(--space-2xl) 0; position: relative; z-index: var(--
   margin: 0 0 var(--space-xl);
   padding-inline: var(--page-gutter);
 }
+/* S2 の見出しから、そのまま該当ページへ渡す小さな導線。
+   以前は温泉・料理・施設を散文で説明していたが、説明を読ませるより
+   その場から行かせるほうが早い。 */
+.s2-links { display: flex; flex-wrap: wrap; gap: var(--space-md); margin: var(--space-md) 0 0; }
+.s2-links a {
+  display: inline-flex; align-items: center; min-height: 2.75rem;
+  color: var(--color-accent-hi); text-decoration: none; white-space: nowrap;
+  font-family: var(--font-wordmark); font-size: var(--text-xs);
+  letter-spacing: var(--track-label);
+  /* 当たり判定を 44px 取ると枠が文字より高くなるので、border-bottom だと
+     線が文字から離れて浮く (2026-08-25 に実測して気付いた)。
+     線は文字側に付ける。 */
+  text-decoration: underline;
+  text-decoration-color: var(--color-rule-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.45em;
+  transition: color var(--dur-short) var(--ease-out), text-decoration-color var(--dur-short) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .s2-links a:hover { color: var(--color-ink); text-decoration-color: var(--color-accent); }
+}
+
 .section-title h2 {
   font-family: var(--font-ja);
   font-size: var(--text-xl);

@@ -52,6 +52,7 @@ node scripts/check-ux.mjs              # ライトボックス / 当たり判定
 node scripts/check-chrome-widths.mjs   # 18 幅の溢れ + 箱の上に本物のホイールを投げる
 node scripts/check-enquiry.mjs         # 予約フォーム (有効時・fail-closed 時の両方)
 node scripts/check-vitals.mjs          # LCP/CLS/FCP/TBT と転送量。キャッシュ空・4G 相当で測る
+node scripts/check-originality.mjs     # 旧サイトとの一致率。ALLOW 以外の一致が出たら落ちる
 ./scripts/check-parity.sh              # Pages 版と本文が一致するか。Pages を畳んだら消す
 ```
 
