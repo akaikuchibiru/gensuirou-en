@@ -53,6 +53,8 @@ node scripts/check-chrome-widths.mjs   # 18 幅の溢れ + 箱の上に本物の
 node scripts/check-enquiry.mjs         # 予約フォーム (有効時・fail-closed 時の両方)
 node scripts/check-vitals.mjs          # LCP/CLS/FCP/TBT と転送量。キャッシュ空・4G 相当で測る
 node scripts/check-originality.mjs     # 旧サイトとの一致率。ALLOW 以外の一致が出たら落ちる
+node scripts/check-css-vars.mjs        # var(--x) が解決するか / ルール外に落ちた宣言
+node scripts/check-images.mjs          # 表示中なのに読めていない画像。人の速度でスクロールして測る
 ./scripts/check-parity.sh              # Pages 版と本文が一致するか。Pages を畳んだら消す
 ```
 

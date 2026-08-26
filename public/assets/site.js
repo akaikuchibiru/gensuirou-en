@@ -82,8 +82,12 @@ function gsLangHref(l){
     '<a class="skip" href="#main"><span data-en>Skip to content</span><span data-zh>跳至正文</span><span data-ja>本文へ</span></a>'+
     '<header class="nav"><div class="nav-inner">'+
       '<a class="brand" href="'+gsHref('/')+'">'+
+        // ロゴ画像は 430x80 の組みロゴで、すでに「源翠瓏 -RYOKAN GENSUIROU-」まで
+        // 入っている。横に文字の wordmark を並べると **ロゴが 2 つ** 見える。
+        // 画像が出ている幅では画像だけ、画像を隠す狭い幅でだけ .txt を出す (site.css)。
         '<img src="/assets/imgs/logo_gensuirou.png" alt="源翠瓏 Gensuirou" width="200" height="88">'+
-        '<span class="txt">GENSUIROU<small>源 翠 瓏</small></span>'+
+        // 狭い幅の代替。旅館の名前は漢字が主、ラテンは従。
+        '<span class="txt" aria-hidden="true">源翠瓏<small>GENSUIROU</small></span>'+
       '</a>'+
       '<div class="nav-right">'+
         langSwitcher('langSwitcher')+

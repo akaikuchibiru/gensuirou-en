@@ -50,9 +50,9 @@
   --font-body:     var(--font-latin);
 
   /* ── Scale · 1.25 major third, 16px base ─────────────────────────── */
-  --text-xs:   0.8125rem;
-  --text-sm:   0.9375rem;
-  --text-base: 1rem;
+  --text-xs:   0.875rem;    /* 14px — 言語切替・添字。13px は実測で小さすぎた */
+  --text-sm:   0.9688rem;   /* 15.5px */
+  --text-base: 1.0625rem;   /* 17px — 読み本文 */
   --text-md:   1.25rem;
   --text-lg:   1.5625rem;
   --text-xl:   1.9531rem;
@@ -110,16 +110,16 @@
   --radius-sm:   2px;
 }
 
-/* ── Per-language type scale ──────────────────────────────────────────
-   Measured x-height per 1em: Cormorant Garamond 0.386 · Sawarabi Mincho
-   0.500 · system-ui 0.508. At an identical px size the Latin face reads
-   about a third smaller than the CJK ones — which is why the English
-   pages felt undersized. Lift the reading sizes for `en` only; the
-   display clamps are already large and stay put. */
-html[lang="en"] {
-  --text-xs:   0.9375rem;
-  --text-sm:   1rem;
-  --text-base: 1.125rem;
-  --text-md:   1.375rem;
-  --text-lg:   1.75rem;
-}
+/* ── x-height をそろえる ───────────────────────────────────────────────
+   本番で実測した 1em あたりの x-height:
+     Cormorant Garamond 0.386 · Sawarabi Mincho 0.500 · Noto Serif SC 0.516
+   同じ px を指定しても、ラテンだけ **23% 小さく見える**。
+   言語ごとにスケールを別建てして誤魔化していたが、それでは
+   「日本語ページの中のラテン片」(EN / 中文 / Shiori / TEL) に効かない。
+   実測ではそこが 13px 指定・見かけ 10px まで落ちていた。
+
+   font-size-adjust で書体側の x-height を 0.5 に正規化する。以後
+   --text-* は 3 言語で同じ「見かけの大きさ」を意味する。
+   1 値構文は Safari 16.4 / Chrome 127 以降。未対応ブラウザでは
+   単に無効になるだけで、下のスケールがそのまま出る。 */
+:root { --x-height-ref: 0.5; }

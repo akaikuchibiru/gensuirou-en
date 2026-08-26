@@ -33,6 +33,9 @@ body {
   font-weight: 400;
   line-height: var(--leading-loose);
   letter-spacing: var(--track-body);
+  /* Cormorant の x-height (0.386em) を和文と同じ 0.5 に正規化する。
+     詳細は tokens.css。継承するので、下の見出しだけ none で降りる。 */
+  font-size-adjust: var(--x-height-ref);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -44,6 +47,24 @@ body {
 html[lang="ja"] body { font-family: var(--font-ja); word-break: auto-phrase; line-break: strict; }
 html[lang="zh"] body { font-family: var(--font-zh); line-break: strict; }
 html[lang="en"] body { font-family: var(--font-latin); line-height: var(--leading-body); }
+
+/* ボタン等は UA スタイルシートの `font` 一括指定を受ける。`font` は
+   font-size-adjust を **none に戻す** ので、継承しているつもりでも効かない。
+   実測で「目次 / Menu」だけ見かけ 10.8px のまま残って気付いた。 */
+button, input, select, textarea, optgroup { font-size-adjust: var(--x-height-ref); }
+
+/* 見出しは正規化しない。40〜84px では読みにくさの問題は起きず、
+   Cormorant の細さそのものがブランドだから。ここを揃えると
+   欧文見出しだけ 3 割膨らんでレイアウトが崩れる。 */
+.hero-block .cap .title,
+.page-hero .cap .en,
+.page-head .en,
+.section-title h2,
+.fade-title,
+.form-section h3,
+.jl-card h3,
+.numbers .n .k,
+.lb-nav, .lb .lb-close { font-size-adjust: none; }
 
 /* Single warm veil. No aurora blobs, no floating orbs — one two-stop wash
    that lifts the paper off flat black, at 4 % so it never becomes decoration. */
@@ -162,17 +183,14 @@ h1.seo { position: absolute; left: -9999px; font-size: 1px; }
   transition: height var(--dur-med) var(--ease-out);
 }
 .nav.scrolled .brand img { height: 2.25rem; }
-.nav .brand .txt {
-  font-family: var(--font-wordmark);
-  font-size: var(--text-md);
-  letter-spacing: 0.3em;
-  color: var(--color-accent-hi);
-  line-height: 1.1;
-}
+/* ロゴ画像が出ている幅では出さない。画像の中に同じ文字が入っているので、
+   並べると左上にロゴが 2 つある状態になる。 */
+.nav .brand .txt { display: none; }
 .nav .brand .txt small {
   display: block;
+  font-family: var(--font-latin);
   font-size: var(--text-xs);
-  letter-spacing: 0.44em;
+  letter-spacing: 0.4em;
   color: var(--color-muted);
   margin-top: var(--space-3xs);
 }
@@ -646,7 +664,13 @@ html[lang="en"] .fade-body { letter-spacing: 0.01em; line-height: var(--leading-
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;
 }
-.numbers .n .k sup { font-size: 0.4em; color: var(--color-accent); margin-inline-start: 0.25em; }
+/* 単位は見出しの適用除外を継承して 見かけ 12px まで落ちていた。
+   ここだけ正規化を戻し、そのぶん指定を詰めて 39px の数字と釣り合わせる。 */
+.numbers .n .k sup {
+  font-size: var(--text-xs); color: var(--color-accent);
+  margin-inline-start: 0.25em; font-size-adjust: var(--x-height-ref);
+  vertical-align: super; line-height: 0;
+}
 .numbers .n .l {
   margin-top: var(--space-xs);
   font-size: var(--text-xs);
@@ -1237,7 +1261,15 @@ html.lb-open { overflow: hidden; }
   /* The bitmap mark needs ~11rem of width to read; below this the
      typographic wordmark carries the brand on its own. */
   .nav .brand img { display: none; }
-  .nav .brand .txt { font-size: var(--text-base); letter-spacing: 0.2em; }
+  /* ここで初めて文字の wordmark が brand を背負う。漢字が主。 */
+  .nav .brand .txt {
+    display: block;
+    font-family: var(--font-ja);
+    font-size: var(--text-md);
+    letter-spacing: 0.16em;
+    color: var(--color-accent-hi);
+    line-height: 1.15;
+  }
   .hero-block .video-wrap { height: 72svh; min-height: 26rem; }
   /* clear the absolutely-positioned SCROLL rule beneath the copy */
   .hero-block .cap { padding-bottom: calc(var(--space-2xl) + var(--space-md)); }
