@@ -56,6 +56,7 @@ node scripts/check-originality.mjs     # 旧サイトとの一致率。ALLOW 以
 node scripts/check-css-vars.mjs        # var(--x) が解決するか / ルール外に落ちた宣言
 node scripts/check-images.mjs          # 表示中なのに読めていない画像。人の速度でスクロールして測る
 node scripts/check-hero-contrast.mjs   # 映像の上の文字。合成後の画素を 8 フレーム見る
+node scripts/check-mail-dns.mjs        # 予約通知が飛ぶ DNS。欠けても画面は正常に見える
 ./scripts/check-parity.sh              # Pages 版と本文が一致するか。Pages を畳んだら消す
 ```
 
