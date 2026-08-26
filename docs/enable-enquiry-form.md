@@ -67,3 +67,35 @@ npx wrangler d1 execute gensuirou-enquiries --remote --json \
 ```
 
 `mail_status` が `ok` 以外なら、画面には成功と出ていない（上の表のとおり）。
+
+
+## 本番に触らずに、フォームを通しで試す
+
+Turnstile は人が解くもので、迂回はしない。代わりに **Cloudflare 公式の
+テスト鍵**を `.dev.vars` に置き、`wrangler dev --remote` で動かす。
+リモート実行なので D1 もメール送信も **本物の binding** を使い、
+それでいて本番の鍵・本番の worker には一切触れない。
+
+```bash
+cat > .dev.vars <<'EOT'
+TURNSTILE_SITEKEY = "1x00000000000000000000AA"          # 常に成功する公式テスト鍵
+TURNSTILE_SECRET  = "1x0000000000000000000000000000000AA"
+ENQUIRY_TO        = "<受け取れるアドレス>"
+EOT
+npx wrangler dev --remote --port 8788
+```
+
+`.dev.vars` は .gitignore 済み。試したら消すこと。
+
+**宛先は必ず自分が受け取れるアドレスにする。** 実在のお客さまや
+旅館さんのスタッフに、検証のメールを送らない。
+
+### 2026-08-26 の実施結果
+
+| | |
+|---|---|
+| API 応答 | `{"ok":true,"notified":true,"id":"…"}` |
+| 画面 | `data-state="sent"` /「お問い合わせを受け付けました。担当者よりご連絡いたします。」 |
+| D1 | 1 行保存・`mail_status = sent` / `mail_error` なし・`cf_country = JP` |
+| 後片付け | テスト行を削除し、**全走査して 0 行**を確認 |
+| 本番 | sitekey は実鍵のまま。トークン無し POST は 400 で拒否。保存 0 件 |
