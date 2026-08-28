@@ -52,6 +52,21 @@ const BASE_PAGES = {
       desc: '源翠瓏位于熊本县阿苏郡西原村。全 12 栋独立别墅，每栋皆设专属露天温泉。提供日文、English、中文导览。',
     },
   },
+  '/reservation': {
+    nav: { ja: 'ご予約', en: 'Reservation', zh: '预约' },
+    ja: {
+      title: 'ご予約 Reservation ｜ 源翠瓏 - プラン・料金・空室のご確認',
+      desc: '源翠瓏のご予約。プラン・料金・空室状況はWEB予約ページよりご確認いただけます。お電話（096-279-1800／10:00–18:00）でも承ります。',
+    },
+    en: {
+      title: 'Reservations | Gensuirou — Plans, Rates and Availability',
+      desc: 'Book Gensuirou online to see plans, rates and availability, or reserve by telephone on +81 (0)96-279-1800 (10:00–18:00 JST).',
+    },
+    zh: {
+      title: '预约 ｜ 源翠瓏 — 方案・价格・空房查询',
+      desc: '源翠瓏预约。方案、价格与空房状况请于网络预约页面确认，亦可来电 +81 (0)96-279-1800（10:00–18:00 日本时间）。',
+    },
+  },
   '/rooms': {
     // パンくず用の短いラベル。site.js の DESTS と同じ語を使う
     // (ズレは scripts/check-schema.mjs が描画結果と突き合わせて検出する)

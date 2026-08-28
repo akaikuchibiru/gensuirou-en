@@ -43,6 +43,7 @@ function gsLangHref(l){
     ['/faq',        'faq',        'Questions',  '常见问题', 'よくある質問'],
     ['/wedding',    'wedding',    'Wedding',    '婚礼',     '結婚式'],
     ['/journal',    'journal',    'Journal',    '读物',     '読み物'],
+    ['/reservation','reservation','Reservation','预约',     'ご予約'],
     ['/',           'home',       'Home',       '首页',     'ホーム']
   ];
 
@@ -91,7 +92,9 @@ function gsLangHref(l){
       '</a>'+
       '<div class="nav-right">'+
         langSwitcher('langSwitcher')+
-        '<a class="reserve-btn" href="'+gsHref('/')+'#reserve">'+langSpans('Reserve','预约','ご予約')+'</a>'+
+        // ご予約は **予約ページ** へ。ここを /#reserve (問い合わせフォーム) に
+        // していたため、予約したいお客さまがフォームに着いていた。
+        '<a class="reserve-btn" href="'+gsHref('/reservation')+'">'+langSpans('Reserve','预约','ご予約')+'</a>'+
         '<button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navIndex">'+
           '<span class="bars" aria-hidden="true"><i></i><i></i><i></i></span>'+
           langSpans('Menu','目录','目次')+

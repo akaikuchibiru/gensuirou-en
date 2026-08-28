@@ -59,6 +59,7 @@ node scripts/check-hero-contrast.mjs   # 映像の上の文字。合成後の画
 node scripts/check-mail-dns.mjs        # 予約通知が飛ぶ DNS。欠けても画面は正常に見える
 node scripts/check-type-size.mjs       # 文字の「見かけの大きさ」。指定 px では判断できない
 node scripts/check-header.mjs          # 320〜480px を 10px 刻み。宿名が折れる帯を捕まえる
+node scripts/check-booking-route.mjs   # 「予約」ラベルが予約先へ行くか。全ページ×3言語
 ./scripts/check-parity.sh              # Pages 版と本文が一致するか。Pages を畳んだら消す
 ```
 

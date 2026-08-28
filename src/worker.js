@@ -230,8 +230,10 @@ function canonicalPath(p) {
   else if (out.endsWith('.html')) out = out.slice(0, -5);
   // 末尾スラッシュを落とす
   if (out.length > 1 && out.endsWith('/')) out = out.replace(/\/+$/, '') || '/';
-  // 予約ページはトップの予約枠へ
-  if (out === '/reservation') out = '/#reserve';
+  // ⚠ ここで /reservation を /#reserve に飛ばしていた (2026-08-24〜28)。
+  //   旧サイトの /reservation には **予約エンジン (sec.489.jp)** への導線があり、
+  //   お客さまはそこで料金と空室を見て予約していた。飛ばした結果、
+  //   「金額の確認と予約ができない」状態を 4 日間つくった。飛ばさない。
   return out || '/';
 }
 

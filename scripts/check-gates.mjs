@@ -69,7 +69,10 @@ for (const p of PAGES) {
     if (!r.hasMain) fails.push(`${tag} · no <main id=main>`);
     if (!r.hasSkip) fails.push(`${tag} · no skip link`);
     // 行き先は site.js の DESTS と同数。読み物を足して 9 になった (2026-08-25)。
-    if (r.navIndexItems !== 9) fails.push(`${tag} · nav index has ${r.navIndexItems} items (want 9)`);
+    // 10 = 客室/料理/温泉/施設/アクセス/よくある質問/結婚式/読み物/ご予約/ホーム。
+    // 2026-08-28 に「ご予約」を追加 (予約エンジンへ戻す導線)。数を変えるときは
+    // 足したものが本当に要るか考えること — この数は site.js の DESTS と同期する。
+    if (r.navIndexItems !== 10) fails.push(`${tag} · nav index has ${r.navIndexItems} items (want 10)`);
     if (r.kickers) fails.push(`${tag} · ${r.kickers} kicker(s) remain`);
     if (r.inlineHover) fails.push(`${tag} · ${r.inlineHover} inline onmouseover remain`);
     if (r.splash) fails.push(`${tag} · splash remains`);

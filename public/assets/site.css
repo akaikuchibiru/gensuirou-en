@@ -1327,6 +1327,10 @@ html.lb-open { overflow: hidden; }
   .lb .lb-close:hover { color: var(--color-ink); }
 }
 
+/* 予約枠の中の 2 つ目の見出し。予約が主、問い合わせが従なので一段下げる。 */
+.form-section h3.form-h3-sub { margin-top: var(--space-2xl); font-size: var(--text-lg); }
+html[lang="en"] .form-section h3.form-h3-sub { font-size: var(--text-lg); }
+
 /* 宿の名前は絶対に途中で折らない。実測 (英語ページ 375/390px) で
    「源翠瓏」が 2 行に割れていた。ヘッダーが 8px しか余っておらず、
    brand が 53px まで潰されていたため。320 でも 414 でも起きないので

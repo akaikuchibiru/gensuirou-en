@@ -165,7 +165,40 @@
   <!-- Enquiry form -->
   <div class="form-section" id="reserve">
     <div class="form-wrap">
-      <h3><span data-ja>ご予約・お問い合わせ</span><span data-en>Reservation &amp; Enquiry</span><span data-zh>预约 · 咨询</span></h3>
+      <h3><span data-ja>ご予約</span><span data-en>Reservation</span><span data-zh>预约</span></h3>
+
+      <!-- ▼ 予約の 2 経路。**問い合わせフォームより上** に置く。
+           ここを フォームだけ にしていたため、予約したいお客さまが
+           料金も空室も見られない状態になっていた (2026-08-24〜28)。 -->
+      <div class="price-cards">
+        <div class="price-card">
+          <h4><span data-ja>WEBで予約する</span><span data-en>Book online</span><span data-zh>网络预约</span></h4>
+          <p class="sub">
+            <span data-ja>プラン・料金・空室状況をご覧いただけます。</span>
+            <span data-en>See plans, rates and availability.</span>
+            <span data-zh>可查看方案、价格与空房状况。</span>
+          </p>
+          <p><a class="reserve-btn" href="https://sec.489.jp/rg2/2316/reserve/plan?op_id=1&amp;adult=2" target="_blank" rel="noopener">
+            <span data-ja>プラン・料金を見る</span><span data-en>View plans &amp; rates</span><span data-zh>查看方案与价格</span>
+          </a></p>
+        </div>
+        <div class="price-card">
+          <h4><span data-ja>お電話で予約する</span><span data-en>Book by telephone</span><span data-zh>电话预约</span></h4>
+          <p class="sub">
+            <span data-ja>ご相談・直前のご予約はお電話が確実です。</span>
+            <span data-en>Best for questions and same-day stays.</span>
+            <span data-zh>咨询与临近日期的预约请来电。</span>
+          </p>
+          <p><a class="reserve-btn" href="tel:+81962791800">TEL +81 (0)96-279-1800</a></p>
+          <p class="fine-note">
+            <span data-ja>受付時間 10:00–18:00（日本時間）</span>
+            <span data-en>10:00–18:00 JST</span>
+            <span data-zh>受理时间 10:00–18:00（日本时间）</span>
+          </p>
+        </div>
+      </div>
+
+      <h3 class="form-h3-sub"><span data-ja>お問い合わせ</span><span data-en>Enquiry</span><span data-zh>咨询</span></h3>
       <!-- 予約フォーム。**宛先 (ENQUIRY_TO) が設定されているときだけ** Worker が
            このブロックを残し、下の電話導線を消す。設定が無いまま出すと、
            誰も見ない場所に問い合わせが溜まる。 -->
@@ -229,9 +262,9 @@
       <!-- 電話導線。フォームが有効なときは Worker がこちらを消す。 -->
       <div data-enquiry="standby">
       <div class="form-sub">
-        <span data-ja>オンラインでのお問い合わせフォームは、ただいま準備を進めております。ご予約・ご相談は、お電話にて承っております。</span>
-        <span data-en>Our online enquiry form is currently in preparation. For reservations and enquiries, please contact us by telephone.</span>
-        <span data-zh>在线咨询表单正在准备中。预约与咨询，请通过电话与我们联络。</span>
+        <span data-ja>オンラインでのお問い合わせフォームは、ただいま準備を進めております。ご予約・ご相談は、上記のお電話にて承っております。</span>
+        <span data-en>Our online enquiry form is currently in preparation. Please use the telephone number above.</span>
+        <span data-zh>在线咨询表单正在准备中。请利用上方电话与我们联络。</span>
       </div>
       <div class="standby">
         <a class="reserve-btn" href="tel:+81962791800">TEL +81 (0)96-279-1800</a>
