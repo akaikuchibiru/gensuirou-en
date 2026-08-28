@@ -9,6 +9,10 @@
 import { chromium } from 'playwright-core';
 import { PNG } from 'pngjs';
 
+// ⚠ checkVisibility() は **素で呼ぶと visibility:hidden と opacity:0 を「見えている」と返す**。
+//   既定で見るのは display:none と content-visibility だけ (2026-08-28 に実測)。
+//   閉じたスライドインパネルの中身まで数えてしまうので、必ず全オプションを渡す。
+
 const BASE = process.argv[2] || 'https://gensuirou.com';
 const MIN = 4.5;
 const FRAMES = 8;                      // 尺全体から等間隔。太陽が抜けるカットが最悪値になる
@@ -31,7 +35,7 @@ for (const [lang, url] of [['ja', '/'], ['en', '/en/'], ['zh', '/zh/']]) {
   const items = await p.evaluate(() => {
     const out = [];
     for (const e of document.querySelectorAll('.hero-block .cap :is(.eyebrow,.title,.sub,.scroll)')) {
-      if (!e.checkVisibility()) continue;
+      if (!e.checkVisibility({ visibilityProperty: true, opacityProperty: true, contentVisibilityAuto: true })) continue;
       const cs = getComputedStyle(e);
       const c = document.createElement('canvas').getContext('2d');
       c.fillStyle = cs.color; c.fillRect(0, 0, 1, 1);
@@ -41,7 +45,7 @@ for (const [lang, url] of [['ja', '/'], ['en', '/en/'], ['zh', '/zh/']]) {
         const walk = n.nodeType === 3 ? [n] : [...n.childNodes].filter((m) => m.nodeType === 3);
         for (const tn of walk) {
           if (!tn.textContent.trim()) continue;
-          if (tn.parentElement && !tn.parentElement.checkVisibility()) continue;
+          if (tn.parentElement && !tn.parentElement.checkVisibility({ visibilityProperty: true, opacityProperty: true, contentVisibilityAuto: true })) continue;
           const r = document.createRange(); r.selectNodeContents(tn);
           for (const b of r.getClientRects()) if (b.width > 1 && b.height > 1)
             rects.push({ x: Math.round(b.x), y: Math.round(b.y), w: Math.round(b.width), h: Math.round(b.height) });

@@ -9,6 +9,10 @@
 // 「ご予約」「目次」より長いぶん先に破綻する。
 import { chromium } from 'playwright-core';
 
+// ⚠ checkVisibility() は **素で呼ぶと visibility:hidden と opacity:0 を「見えている」と返す**。
+//   既定で見るのは display:none と content-visibility だけ (2026-08-28 に実測)。
+//   閉じたスライドインパネルの中身まで数えてしまうので、必ず全オプションを渡す。
+
 const BASE = process.argv[2] || 'https://gensuirou.com';
 const MIN_GAP = 8;                 // brand と nav-right の最小すきま
 const b = await chromium.launch({ channel: 'chrome' });
@@ -23,7 +27,7 @@ for (const path of ['/en/', '/', '/zh/']) {
     const r = await p.evaluate(() => {
       const t = document.querySelector('.nav .brand .txt');
       const img = document.querySelector('.nav .brand img');
-      const vis = (e) => !!(e && e.checkVisibility && e.checkVisibility());
+      const vis = (e) => !!(e && e.checkVisibility && e.checkVisibility({ visibilityProperty: true, opacityProperty: true, contentVisibilityAuto: true }));
       // 出ているほうの brand を測る (狭い幅では画像を隠して文字が代役)
       const el = vis(t) ? t : img;
       const cs = el ? getComputedStyle(el) : null;

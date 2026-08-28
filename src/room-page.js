@@ -42,7 +42,8 @@ export function roomPageMeta() {
         desc: trim(`${r.kanji} - ${r.roman} -（${r.area.ja}・定員${cap.ja}）${r.desc.ja}`, 150, 'ja'),
       },
       en: {
-        title: `${r.roman} ${r.kanji} | Gensuirou — Detached Villa with Private Open-Air Onsen`,
+        // 62 単位に収める。超えると検索結果で宿名が切れる (2026-08-28 実測 63〜68)。
+        title: `${r.roman} ${r.kanji} — Detached Villa with Private Onsen | Gensuirou`,
         desc: trim(`${r.roman} (${r.area.en}, ${cap.en}). ${r.desc.en}`, 155, 'en'),
       },
       zh: {
@@ -56,6 +57,11 @@ export function roomPageMeta() {
 
 // description は語の途中で切らない。日本語は句点、英語は語境界で落とす。
 function trim(s, n, lang) {
+  // 和文は 1 字が全角 2 単位。150 字 = 300 単位で、検索結果の枠 (約 250) を
+  // 超えていた (2026-08-28 実測 /rooms/rin 252・/rooms/sou 263)。
+  // 上限は文字数ではなく **表示幅** で持つ。
+  const w = (t) => [...t].reduce((a, c) => a + (/[　-鿿＀-￯]/.test(c) ? 2 : 1), 0);
+  if (lang !== 'en') { while (w(s) > 240 && s.length > 20) s = s.slice(0, -1); }
   if (s.length <= n) return s;
   if (lang === 'en') {
     const cut = s.slice(0, n);

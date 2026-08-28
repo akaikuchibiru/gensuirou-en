@@ -9,6 +9,10 @@
 //   5. キーボードだけで操作できる
 import { chromium } from 'playwright-core';
 
+// ⚠ checkVisibility() は **素で呼ぶと visibility:hidden と opacity:0 を「見えている」と返す**。
+//   既定で見るのは display:none と content-visibility だけ (2026-08-28 に実測)。
+//   閉じたスライドインパネルの中身まで数えてしまうので、必ず全オプションを渡す。
+
 const BASE = process.argv[2] || 'https://gensuirou.japanese-government-official.workers.dev';
 let bad = 0;
 const ok = (m) => console.log('  OK  ' + m);
@@ -32,7 +36,7 @@ await page.waitForTimeout(600);
 
 let st = await page.evaluate(() => {
   const lb = document.querySelector('.lb');
-  return { open: lb && lb.classList.contains('on') && lb.checkVisibility(),
+  return { open: lb && lb.classList.contains('on') && lb.checkVisibility({ visibilityProperty: true, opacityProperty: true, contentVisibilityAuto: true }),
            count: lb?.querySelector('.lb-count')?.textContent,
            locked: document.documentElement.classList.contains('lb-open'),
            focus: document.activeElement?.className };
@@ -72,7 +76,7 @@ for (const [u, label] of [['/', 'トップ'], ['/rooms/zui', '客室'], ['/journ
   await page.waitForTimeout(900);
   const small = await page.evaluate(() =>
     [...document.querySelectorAll('header a, header button, footer nav.fmenu a, footer .socials a, .reserve-btn, .langs a, .nav-toggle')]
-      .filter((e) => e.checkVisibility())
+      .filter((e) => e.checkVisibility({ visibilityProperty: true, opacityProperty: true, contentVisibilityAuto: true }))
       .map((e) => ({ t: (e.textContent || '').trim().slice(0, 12), h: Math.round(e.getBoundingClientRect().height) }))
       .filter((x) => x.h > 0 && x.h < 44));
   small.length === 0 ? ok(`${label}: すべて 44px 以上`) : ng(`${label}: ${small.map((x) => `${x.t}=${x.h}px`).join(', ')}`);
@@ -86,7 +90,7 @@ for (const u of ['/', '/rooms', '/journal/choosing-your-villa']) {
     await new Promise((r) => setTimeout(r, 900));
   });
   const stuck = await page.evaluate(() => [...document.querySelectorAll('.fade,.anim,.block')]
-    .filter((e) => e.checkVisibility() && parseFloat(getComputedStyle(e).opacity) < 0.05).length);
+    .filter((e) => e.checkVisibility({ visibilityProperty: true, opacityProperty: true, contentVisibilityAuto: true }) && parseFloat(getComputedStyle(e).opacity) < 0.05).length);
   stuck === 0 ? ok(`${u} 固着なし`) : ng(`${u} ${stuck} 件が opacity 0 のまま`);
 }
 

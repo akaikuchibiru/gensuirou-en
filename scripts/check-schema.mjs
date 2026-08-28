@@ -30,7 +30,17 @@ function get(url) {
 const strip = (h) => h.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
 
 // 持っていない事実。作れば規約違反にも実害にもなる。
-const FORBIDDEN = ['priceRange', 'aggregateRating', 'geo', 'starRating', 'review', 'ratingValue'];
+//
+// geo は 2026-08-28 に **外した**。旅館が自分のサイトの地図に置いていた
+// ピン (place id 0x3540e70c75a8c961:0x4956ef597574e46a) が見つかり、
+// 推測ではなくなったため。OSM の 小森 重心と 1.65km で照合済み。
+// priceRange は今も出さない — 料金の唯一の出所は予約エンジン sec.489.jp で、
+// 転記した瞬間に実際の請求額とズレる ([[feedback_price_in_multiple_places]])。
+const FORBIDDEN = ['priceRange', 'aggregateRating', 'starRating', 'review', 'ratingValue'];
+
+// 逆に **必ず要る** もの。予約の入口を検索エンジンに見せられなくなると、
+// 2026-08-24〜28 の障害 (予約導線の消失) が構造化データ側で再発する。
+const REQUIRED_ON_HOME = { 'ReserveAction': 'sec.489.jp' };
 
 console.log(`検査対象: ${BASE}`);
 
@@ -65,6 +75,15 @@ for (const path of Object.keys(PAGES)) {
     const raw = JSON.stringify(data);
     const leaked = FORBIDDEN.filter((k) => raw.includes(`"${k}"`));
     leaked.length === 0 || ng(`${label} 根拠の無い項目が入っている: ${leaked.join(', ')}`);
+
+    // 5. 予約の入口が構造化データにあるか (Hotel を出すページすべて)
+    if (types.has('Hotel')) {
+      for (const [k, mustPointAt] of Object.entries(REQUIRED_ON_HOME)) {
+        if (!raw.includes(`"${k}"`)) ng(`${label} ${k} が無い — 予約の入口を検索エンジンに示せていない`);
+        else if (!raw.includes(mustPointAt)) ng(`${label} ${k} の行き先が ${mustPointAt} でない`);
+        else ok(`${label} ${k} → ${mustPointAt}`);
+      }
+    }
 
     const text = strip(html);
 

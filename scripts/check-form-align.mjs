@@ -7,6 +7,10 @@
 // replaces it while /api/enquiry does not exist. Measure whichever is present —
 // a checker that only knows one state goes quiet exactly when the layout changed.
 import { chromium } from 'playwright-core';
+
+// ⚠ checkVisibility() は **素で呼ぶと visibility:hidden と opacity:0 を「見えている」と返す**。
+//   既定で見るのは display:none と content-visibility だけ (2026-08-28 に実測)。
+//   閉じたスライドインパネルの中身まで数えてしまうので、必ず全オプションを渡す。
 const b = await chromium.launch({ channel: 'chrome' });
 let bad = 0;
 for (const w of [320, 375, 414, 768, 1000, 1200, 1440, 1920]) {
@@ -21,7 +25,7 @@ for (const w of [320, 375, 414, 768, 1000, 1200, 1440, 1920]) {
     //   隠れた要素の座標は全部 0 なので、位置の検査は静かに嘘をつく。
     const R = (s) => {
       const list = [...document.querySelectorAll(s)];
-      const e = list.find((x) => x.checkVisibility()) || null;
+      const e = list.find((x) => x.checkVisibility({ visibilityProperty: true, opacityProperty: true, contentVisibilityAuto: true })) || null;
       if (!e) return null;
       const b = e.getBoundingClientRect();
       return { l: Math.round(b.left), r: Math.round(b.right) };
@@ -30,7 +34,7 @@ for (const w of [320, 375, 414, 768, 1000, 1200, 1440, 1920]) {
     //   hidden 付きで HTML に同居しており (Worker が出し分ける)、
     //   存在だけを見ると「フォーム状態」と誤判定して全幅で落ちる。
     const formEl = document.querySelector('.form-wrap form');
-    const wired = !!formEl && formEl.checkVisibility();
+    const wired = !!formEl && formEl.checkVisibility({ visibilityProperty: true, opacityProperty: true, contentVisibilityAuto: true });
     // Candidates for both states; absent ones drop out rather than throwing.
     const names = wired
       ? ['.form-section h3', '.form-sub', '.field input', '.form-wrap textarea', '.form-wrap button']

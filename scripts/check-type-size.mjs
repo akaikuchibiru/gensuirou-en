@@ -11,6 +11,10 @@
 //   12 を割るものが出たら、それは中間ですらない小ささなので直す。
 import { chromium } from 'playwright-core';
 
+// ⚠ checkVisibility() は **素で呼ぶと visibility:hidden と opacity:0 を「見えている」と返す**。
+//   既定で見るのは display:none と content-visibility だけ (2026-08-28 に実測)。
+//   閉じたスライドインパネルの中身まで数えてしまうので、必ず全オプションを渡す。
+
 const BASE = process.argv[2] || 'https://gensuirou.com';
 const FLOOR = 12;
 const PAGES = [['ja', '/'], ['en', '/en/'], ['zh', '/zh/'], ['ja', '/rooms/zui']];
@@ -25,7 +29,7 @@ for (const [lang, path] of PAGES) {
   const rows = await p.evaluate(() => {
     const out = [], seen = new Set();
     for (const el of document.querySelectorAll('body *')) {
-      if (!el.checkVisibility || !el.checkVisibility()) continue;
+      if (!el.checkVisibility || !el.checkVisibility({ visibilityProperty: true, opacityProperty: true, contentVisibilityAuto: true })) continue;
       const own = [...el.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent.trim()).join('').trim();
       if (!own) continue;
       const cs = getComputedStyle(el);

@@ -10,6 +10,10 @@
 //   **リンクの行き先を意味で確かめる検査が無かった** ことが原因。
 import { chromium } from 'playwright-core';
 
+// ⚠ checkVisibility() は **素で呼ぶと visibility:hidden と opacity:0 を「見えている」と返す**。
+//   既定で見るのは display:none と content-visibility だけ (2026-08-28 に実測)。
+//   閉じたスライドインパネルの中身まで数えてしまうので、必ず全オプションを渡す。
+
 const BASE = process.argv[2] || 'https://gensuirou.com';
 const ENGINE = 'sec.489.jp';
 const BOOKABLE = (href) => href.includes(ENGINE) || /\/reservation(\/|$|\?)/.test(href);
@@ -37,7 +41,7 @@ for (const lang of LANGS) {
       const bookRe = new RegExp(bw, 'i'), enqRe = new RegExp(eo);
       const out = [], routes = [];
       for (const a of document.querySelectorAll('a[href]')) {
-        if (!a.checkVisibility || !a.checkVisibility()) continue;
+        if (!a.checkVisibility || !a.checkVisibility({ visibilityProperty: true, opacityProperty: true, contentVisibilityAuto: true })) continue;
         const label = (a.textContent || '').replace(/\s+/g, ' ').trim();
         const href = a.href;
         if (href.includes('sec.489.jp') || /\/reservation(\/|$|\?)/.test(href)) routes.push(label.slice(0, 20));

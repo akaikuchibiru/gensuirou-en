@@ -7,6 +7,10 @@
 // 検証できない。挿入した markup は「存在する」ではなく「押して行き先が正しい」で測る。
 import { chromium } from 'playwright-core';
 
+// ⚠ checkVisibility() は **素で呼ぶと visibility:hidden と opacity:0 を「見えている」と返す**。
+//   既定で見るのは display:none と content-visibility だけ (2026-08-28 に実測)。
+//   閉じたスライドインパネルの中身まで数えてしまうので、必ず全オプションを渡す。
+
 const BASE = process.argv[2] || 'https://gensuirou.japanese-government-official.workers.dev';
 let bad = 0;
 const ok = (m) => console.log('  OK  ' + m);
@@ -81,7 +85,7 @@ console.log('── 言語切替の当たり判定');
 const boxes = await page.evaluate(() =>
   [...document.querySelectorAll('.langs a')].map((a) => {
     const r = a.getBoundingClientRect();
-    return { t: a.textContent.trim(), w: Math.round(r.width), h: Math.round(r.height), vis: a.checkVisibility() };
+    return { t: a.textContent.trim(), w: Math.round(r.width), h: Math.round(r.height), vis: a.checkVisibility({ visibilityProperty: true, opacityProperty: true, contentVisibilityAuto: true }) };
   }));
 const small = boxes.filter((x) => x.vis && x.h < 44);
 small.length === 0

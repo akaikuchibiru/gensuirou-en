@@ -40,11 +40,11 @@ const BASE_PAGES = {
     // (ズレは scripts/check-schema.mjs が描画結果と突き合わせて検出する)
     nav: { ja: 'ホーム', en: 'Home', zh: '首页' },
     ja: {
-      title: '源翠瓏 -げんすいろう- ｜ 阿蘇の全室露天風呂付き離れ客室の温泉旅館',
+      title: '源翠瓏｜阿蘇の全室露天風呂付き離れ宿・熊本の温泉旅館',
       desc: '源翠瓏 (Gensuirou) — 熊本県阿蘇郡西原村の全12室・全室離れ露天風呂付き温泉旅館。日本語・English・中文でご案内。',
     },
     en: {
-      title: 'Gensuirou — Onsen Ryokan in Aso, Kumamoto | Twelve Detached Villas',
+      title: 'Gensuirou | Onsen Ryokan in Aso, Kumamoto — 12 Detached Villas',
       desc: 'Gensuirou is a twelve-villa onsen ryokan in Nishihara, Aso, Kumamoto. Every villa stands on its own, each with a private open-air hot spring bath.',
     },
     zh: {
@@ -89,11 +89,11 @@ const BASE_PAGES = {
     // (ズレは scripts/check-schema.mjs が描画結果と突き合わせて検出する)
     nav: { ja: '料理', en: 'Cuisine', zh: '料理' },
     ja: {
-      title: '料理 Cuisine ｜ 源翠瓏 - 九州山海の幸を厳選した創作フレンチ和食',
+      title: '料理｜源翠瓏 - 九州の山海の幸による創作フレンチ和食',
       desc: '源翠瓏の創作フレンチ和食。熊本県産を中心に山海の幸を用いたおもてなし料理。',
     },
     en: {
-      title: 'Cuisine | Gensuirou — French-Japanese from Kyushu’s Mountains and Seas',
+      title: 'Cuisine | Gensuirou — French-Japanese from Kyushu',
       desc: 'French-Japanese cuisine at Gensuirou, built on produce from Kumamoto and the mountains and seas of Kyushu.',
     },
     zh: {
@@ -123,11 +123,11 @@ const BASE_PAGES = {
     // (ズレは scripts/check-schema.mjs が描画結果と突き合わせて検出する)
     nav: { ja: '施設', en: 'Facilities', zh: '设施' },
     ja: {
-      title: '施設紹介 Facilities ｜ 源翠瓏 - 貸切露天大浴場・サウナ・ボディケア',
+      title: '施設紹介｜源翠瓏 - 貸切露天大浴場・サウナ・ボディケア',
       desc: '源翠瓏の館内施設。貸切露天大浴場「月光桜の湯」、檜のサウナルーム、ボディケア。',
     },
     en: {
-      title: 'Facilities | Gensuirou — Private Open-Air Bath House, Sauna, Body Care',
+      title: 'Facilities | Gensuirou — Open-Air Bath House, Sauna, Body Care',
       desc: 'Facilities at Gensuirou: the reservable open-air bath house Gekko-Sakura no Yu, a hinoki sauna room, and body care.',
     },
     zh: {
@@ -166,7 +166,7 @@ const BASE_PAGES = {
     },
     zh: {
       title: '常见问题 ｜ 源翠瓏',
-      desc: '源翠瓏的常见问题。入住时间、儿童同行、接送与餐食等。',
+      desc: '源翠瓏的常见问题。入住 15:30／退房 11:00、儿童同行、接送、餐食与温泉的使用时间等，出发前请先确认。',
     },
   },
   '/wedding': {
@@ -174,7 +174,7 @@ const BASE_PAGES = {
     // (ズレは scripts/check-schema.mjs が描画結果と突き合わせて検出する)
     nav: { ja: '結婚式', en: 'Wedding', zh: '婚礼' },
     ja: {
-      title: '結婚式 Wedding ｜ 源翠瓏 - 森の隠れ家でのプライベートウェディング',
+      title: '結婚式｜源翠瓏 - 阿蘇の森の隠れ家でのプライベート挙式',
       desc: '森の隠れ家 源翠瓏でのプライベートウェディング。少人数のご結婚式・アニバーサリーステイ。',
     },
     en: {
@@ -183,7 +183,7 @@ const BASE_PAGES = {
     },
     zh: {
       title: '婚礼 ｜ 源翠瓏 — 森中隐匿的私人婚礼',
-      desc: '在森中隐匿的源翠瓏举办私人婚礼。适合小型仪式与纪念日住宿。',
+      desc: '在阿苏森林中隐匿的源翠瓏举办私人婚礼。全 12 栋独立别墅，适合小型仪式、家族聚会与纪念日住宿。详情请来电洽询。',
     },
   },
 };

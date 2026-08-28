@@ -12,15 +12,27 @@
 //    チェックイン   FAQ「チェックイン 15:30（最終 18:00）／チェックアウト 11:00」
 //    設備          施設ページの記載 (貸切露天大浴場・サウナ・ボディケア)
 //    SNS           フッタの Instagram / YouTube
+//    座標          旅館が自分のサイトに貼っていた Google マップ埋め込みの
+//                  ピン (place id 0x3540e70c75a8c961:0x4956ef597574e46a)。
+//                  推測ではなく旅館自身が置いた位置。OSM で 小森 の重心から
+//                  1.65km と照合済 (小森 は広い大字なので範囲内)。
+//    予約導線      予約エンジン sec.489.jp。旧サイトの /reservation から
+//                  実際に予約が取られていた URL
 //
 //  出していないもの:
 //    priceRange     料理のメニュー価格はあるが客室料金ではない
-//    geo            座標がどこにも書かれていない。推測しない
+//                   (料金は予約エンジン sec.489.jp が唯一の出所。転記しない)
 //    starRating     根拠なし
 //    aggregateRating レビューを持っていない。作れば規約違反
 // ════════════════════════════════════════════════════════════════════
 
 import { LANGS, PAGES, langPath } from './i18n.js';
+
+// 予約エンジン。旧サイトの /reservation にあった URL そのもの。
+// サイト上のリンク (public/reservation.html) と同じ値であることを
+// scripts/check-booking-route.mjs と check-schema.mjs が突き合わせる。
+const BOOKING_URL = 'https://sec.489.jp/rg2/2316/reserve/plan?op_id=1&adult=2';
+const RESERVE_NAME = { ja: 'ご予約', en: 'Book a stay', zh: '预约' };
 import { FAQ, ROOMS } from './content-data.js';
 import { ROOMS as VILLAS, roomImages } from './rooms.js';
 import { JOURNAL_BASE, articleBySlug } from './journal.js';
@@ -65,6 +77,9 @@ function hotel(origin, lang) {
     image: ORG_IMAGES(origin),
     logo: origin + '/assets/imgs/logo_gensuirou.png',
     address: { '@type': 'PostalAddress', ...ADDRESS[lang] },
+    // 座標は旅館自身が旧サイトの地図に置いたピン。上の注記を参照。
+    geo: { '@type': 'GeoCoordinates', latitude: 32.846895, longitude: 130.932002 },
+    hasMap: 'https://www.google.com/maps?ftid=0x3540e70c75a8c961:0x4956ef597574e46a',
     sameAs: SAME_AS,
     // 「全12室」はトップと客室ページの両方に書いてある。
     numberOfRooms: { '@type': 'QuantitativeValue', value: 12, unitText: lang === 'en' ? 'villas' : '室' },
@@ -85,6 +100,23 @@ function hotel(origin, lang) {
         closes: '18:00',
         dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
       },
+    },
+    // 予約の入口を検索エンジンに明示する。行き先は予約エンジンそのもの。
+    // ここを自前の問い合わせフォームにしてはいけない — 料金も空室も出せない
+    // (2026-08-24〜28 に実際にそれをやって予約を止めた)。
+    potentialAction: {
+      '@type': 'ReserveAction',
+      name: RESERVE_NAME[lang],
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: BOOKING_URL,
+        inLanguage: lang,
+        actionPlatform: [
+          'http://schema.org/DesktopWebPlatform',
+          'http://schema.org/MobileWebPlatform',
+        ],
+      },
+      result: { '@type': 'LodgingReservation', name: NAME[lang] },
     },
   };
 }

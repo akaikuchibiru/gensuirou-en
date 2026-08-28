@@ -4,6 +4,10 @@
 // 「狭も広も無事なので目視で気付けない」型の欠陥を狙う。
 // 中間幅を刻んで、横スクロールの発生と要素のはみ出しを実測する。
 import { chromium } from 'playwright-core';
+
+// ⚠ checkVisibility() は **素で呼ぶと visibility:hidden と opacity:0 を「見えている」と返す**。
+//   既定で見るのは display:none と content-visibility だけ (2026-08-28 に実測)。
+//   閉じたスライドインパネルの中身まで数えてしまうので、必ず全オプションを渡す。
 const BASE = process.argv[2] || 'https://gensuirou.japanese-government-official.workers.dev';
 const WIDTHS = [320, 360, 375, 390, 414, 480, 560, 640, 720, 768, 820, 900, 1024, 1180, 1280, 1440, 1600, 1920];
 let bad = 0;
@@ -20,7 +24,7 @@ for (const w of WIDTHS) {
     const doc = document.documentElement;
     const over = doc.scrollWidth > doc.clientWidth;
     const inner = document.querySelector('.nav-inner');
-    const navKids = inner ? [...inner.children].filter((e) => e.checkVisibility()).length : 0;
+    const navKids = inner ? [...inner.children].filter((e) => e.checkVisibility({ visibilityProperty: true, opacityProperty: true, contentVisibilityAuto: true })).length : 0;
     const navFits = inner ? inner.scrollWidth <= inner.clientWidth + 1 : true;
     const fmenu = document.querySelector('footer nav.fmenu');
     const fLinks = fmenu ? [...fmenu.querySelectorAll('a')].length : 0;
@@ -31,7 +35,7 @@ for (const w of WIDTHS) {
     //   封じ込めてあり実害は無いのに、素で数えると全幅で誤検出する
     //   (2026-08-25 に 13 幅で誤検出)。正常なページで 0 件になる検査でなければ意味がない。
     const spill = !over ? [] : [...document.querySelectorAll('body *')]
-      .filter((e) => e.checkVisibility())
+      .filter((e) => e.checkVisibility({ visibilityProperty: true, opacityProperty: true, contentVisibilityAuto: true }))
       .filter((e) => e.getBoundingClientRect().right > doc.clientWidth + 1)
       .map((e) => (e.className && String(e.className).split(' ')[0]) || e.tagName)
       .filter((c, i, a) => a.indexOf(c) === i).slice(0, 3);
