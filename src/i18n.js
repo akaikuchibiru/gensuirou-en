@@ -254,7 +254,13 @@ const isRelative = (v) =>
  *   /en/assets/site.css になって 404 する
  */
 function buildRewriter(lang) {
-  let rw = new HTMLRewriter().on('html', { element: (el) => el.setAttribute('lang', lang) });
+  let rw = new HTMLRewriter()
+    .on('html', { element: (el) => el.setAttribute('lang', lang) })
+    // HTML コメントは配信しない。ソースの注記は開発者のためのもので、
+    // お客さまのページに出す必要はない。移行や不具合の経緯を書いた
+    // 内部メモがそのまま見えていた (2026-08-28 実測: トップで 1,439 字)。
+    // 注記はリポジトリに残り、配信物からだけ消える。
+    .onDocument({ comments: (c) => c.remove() });
 
   for (const l of LANGS) {
     if (l === lang) continue;

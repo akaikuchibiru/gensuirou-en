@@ -206,12 +206,12 @@
         <div class="form-sub">
           <span data-ja>下記フォームよりお気軽にお問い合わせ下さいませ。担当者よりご連絡いたします。</span><span data-en>Please send us an enquiry below. A member of our staff will be in touch.</span><span data-zh>请通过下方表单咨询，我们的工作人员将与您联络。</span>
         </div>
+        <!-- JS 無効では Turnstile が描画されず検証を通れないので、黙って
+             失敗させず電話導線に落とす。
+             ⚠ noscript の中身は HTMLRewriter が要素として辿らない。
+               言語別の <span> を置くと他言語が残り、コメントを置くと
+               配信時に除去できず、そのままお客さまに見える。中は素の文言だけ。 -->
         <noscript>
-          <!-- JS 無効では Turnstile が描画されず、検証を通れない。
-               黙って失敗させず電話導線に落とす。
-               ⚠ noscript の中身は HTMLRewriter が **要素として辿らない** ので、
-                 ここに <span data-ja> 等を置くと他言語が削られずに残る
-                 (2026-08-25 に check-i18n が検出)。文言は言語に依らないものだけ。 -->
           <style>#enquiryForm{display:none}</style>
           <p class="form-note" data-state="warn">
             <a class="reserve-btn" href="tel:+81962791800">TEL +81 (0)96-279-1800</a>

@@ -60,6 +60,8 @@ node scripts/check-mail-dns.mjs        # 予約通知が飛ぶ DNS。欠けて�
 node scripts/check-type-size.mjs       # 文字の「見かけの大きさ」。指定 px では判断できない
 node scripts/check-header.mjs          # 320〜480px を 10px 刻み。宿名が折れる帯を捕まえる
 node scripts/check-booking-route.mjs   # 「予約」ラベルが予約先へ行くか。全ページ×3言語
+node scripts/check-seo.mjs             # title/desc の幅と重複・h1・alt・到達クリック数・旧URL の 301
+node scripts/gen-content-data.mjs      # 構造化データの材料を本文から作り直す (FAQ を足したら必ず)
 ./scripts/check-parity.sh              # Pages 版と本文が一致するか。Pages を畳んだら消す
 ```
 

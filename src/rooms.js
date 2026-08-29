@@ -16,6 +16,42 @@
 
 import { ROOM_PHOTOS } from './room-photos.js';
 
+/**
+ * 設備・アメニティ・お食事。
+ *
+ * 移行時に **12 室すべてから丸ごと落ちていた** (2026-08-28 に復活)。
+ * 旧サイト /rooms/<slug>/ の記載をそのまま採っている。
+ * 全室共通ではない — 洗濯機は 瑩・結 の 2 室、ワインセラーは 凛 だけ、
+ * バスローブは 4 室だけ。ここを「共通」で畳むと、部屋選びの判断材料が消える。
+ *
+ * 原文の「タオルウォ―マー」は U+2015（水平線）で、正しくは長音符 U+30FC。
+ * 表記の誤りなので直してある。
+ */
+const EQUIP_BASE = {
+  ja: 'ミニバー・洗面台・テレビ・冷暖房・冷蔵庫・空気清浄機（加湿機能付）・タオルウォーマー・ヘアードライヤー・ケトル・ソーダストリーム・セーフティーボックス・ネスプレッソマシーン・お茶セット',
+  en: 'Mini bar, washbasin, television, air conditioning, refrigerator, air purifier with humidifier, towel warmer, hairdryer, kettle, SodaStream, safe, Nespresso machine, tea set',
+  zh: '迷你吧・洗手台・电视・冷暖气・冰箱・附加湿功能空气清净机・毛巾加热器・吹风机・电热水壶・SodaStream 气泡水机・保险箱・Nespresso 咖啡机・茶具组',
+};
+const withExtra = (base, ja, en, zh) => ({
+  ja: base.ja + '・' + ja, en: base.en + ', ' + en, zh: base.zh + '・' + zh,
+});
+export const EQUIP = {
+  base:    EQUIP_BASE,
+  washer:  withExtra(EQUIP_BASE, '洗濯機', 'washing machine', '洗衣机'),
+  cellar:  withExtra(EQUIP_BASE, 'ワインセラー', 'wine cellar', '红酒柜'),
+};
+
+const AMEN_BASE = {
+  ja: 'バスタオル・フェイスタオル・ミニタオル・巾着3点セット（シャンプー・リンス・ボディソープ）・エッセンスマスク・パウチ4点セット（クレンジング・洗顔・化粧水・乳液）・たび靴下・歯ブラシ・シャワーキャップ・ヘアブラシ・カミソリ・シェービングジェル・コーム・コットン・個包装綿棒・ヘアゴム・マウスウォッシュ・シャンプー・コンディショナー',
+  en: 'Bath towel, face towel, hand towel, pouch set of three (shampoo, conditioner, body soap), sheet mask, four sachets (cleansing, face wash, lotion, milk), tabi socks, toothbrush, shower cap, hairbrush, razor, shaving gel, comb, cotton pads, individually wrapped cotton buds, hair tie, mouthwash, shampoo, conditioner',
+  zh: '浴巾・面巾・小方巾・束口袋三件组（洗发精・润发乳・沐浴乳）・面膜・四件式随身包（卸妆・洗面・化妆水・乳液）・分趾袜・牙刷・浴帽・发梳・刮胡刀・刮胡凝胶・扁梳・化妆棉・独立包装棉花棒・发圈・漱口水・洗发精・润发乳',
+};
+export const AMEN = {
+  base:     AMEN_BASE,
+  slippers: withExtra(AMEN_BASE, '室内スリッパ', 'indoor slippers', '室内拖鞋'),
+  robe:     withExtra(AMEN_BASE, '室内スリッパ・バスローブ', 'indoor slippers, bathrobe', '室内拖鞋・浴袍'),
+};
+
 export const ROOM_ORDER = [
   'shiori', 'aoi', 'hana', 'midori', 'ei', 'yui',
   'rin', 'sora', 'zui', 'sumeragi', 'zen', 'sou',
@@ -25,6 +61,9 @@ export const ROOMS = {
   shiori: {
     kanji: '紫', roman: 'Shiori',
     area: { ja: '77.02 m²', en: '77.02 m²', zh: '77.02 m²' },
+    video: 'tVidpVV7qCQ',   // 旅館の公式チャンネルの客室紹介動画
+    equip: EQUIP.base,
+    amen: AMEN.base,
     capacity: 2,
     reviewed: true,   // もともとサイトに載っていた訳
     desc: {
@@ -47,6 +86,9 @@ export const ROOMS = {
   aoi: {
     kanji: '葵', roman: 'Aoi',
     area: { ja: '69.56 m²', en: '69.56 m²', zh: '69.56 m²' },
+    video: 'MvgghonY__I',   // 旅館の公式チャンネルの客室紹介動画
+    equip: EQUIP.base,
+    amen: AMEN.base,
     capacity: 2,
     desc: {
       ja: '内湯から外湯へ流れるように繋がるお風呂が特別な空間を演出しています。デッキスペースやアウトドアリビングでゆっくりとお過ごしいただけるお部屋です。',
@@ -68,6 +110,9 @@ export const ROOMS = {
   hana: {
     kanji: '華', roman: 'Hana',
     area: { ja: '61.28 m²', en: '61.28 m²', zh: '61.28 m²' },
+    video: 'OnJ0IHxvEPY',   // 旅館の公式チャンネルの客室紹介動画
+    equip: EQUIP.base,
+    amen: AMEN.base,
     capacity: 2,
     desc: {
       ja: 'ガラス張りの開放感のある内湯や屋根のある広々としたデッキスペースと半露天風呂は、雨の日でも屋外で情緒あるゆっくりとした時間を過ごすことができます。',
@@ -90,6 +135,9 @@ export const ROOMS = {
     kanji: '碧', roman: 'Midori',
     // 2 階建て。本番の表記どおり階別に出す。
     area: { ja: '1階 63.76 m² ／ 2階 28.15 m²', en: '1F 63.76 m² / 2F 28.15 m²', zh: '一层 63.76 m² / 二层 28.15 m²' },
+    video: 'bKBM-jqJ_ps',   // 旅館の公式チャンネルの客室紹介動画
+    equip: EQUIP.base,
+    amen: AMEN.robe,
     capacity: 4,
     desc: {
       ja: 'リビングルーム以外にも広々としたリクライニングルームが併設されている他、二階には眺望の良い和室もあり、夏季にはプールでリゾート気分を味わうこともできるラグジュアリーなお部屋です。',
@@ -116,6 +164,9 @@ export const ROOMS = {
   ei: {
     kanji: '瑩', roman: 'Ei',
     area: { ja: '82.20 m²', en: '82.20 m²', zh: '82.20 m²' },
+    video: 'SqP8wAGUe_k',   // 旅館の公式チャンネルの客室紹介動画
+    equip: EQUIP.washer,
+    amen: AMEN.slippers,
     capacity: 3,
     desc: {
       ja: '遠くの木々を見渡せる開放的なリビングや露天風呂など非日常な空間と時間をお過ごし頂けます。バーカウンターや洗濯機などもありロングステイにもお勧めのお部屋です。',
@@ -133,6 +184,9 @@ export const ROOMS = {
   yui: {
     kanji: '結', roman: 'Yui',
     area: { ja: '86.39 m²', en: '86.39 m²', zh: '86.39 m²' },
+    video: 'GHlecm78SfQ',   // 旅館の公式チャンネルの客室紹介動画
+    equip: EQUIP.washer,
+    amen: AMEN.slippers,
     capacity: 2,
     desc: {
       ja: '広々とした露天風呂や隠れ家のようなサウナ、小国杉を使った空間や格天井はラグジュアリー感とともに温もりを感じさせてくれます。',
@@ -154,6 +208,9 @@ export const ROOMS = {
   rin: {
     kanji: '凛', roman: 'Rin',
     area: { ja: '1階 103.20 m² ／ 2階 24.49 m²', en: '1F 103.20 m² / 2F 24.49 m²', zh: '一层 103.20 m² / 二层 24.49 m²' },
+    video: 'bxpQf_91LWw',   // 旅館の公式チャンネルの客室紹介動画
+    equip: EQUIP.cellar,
+    amen: AMEN.robe,
     capacity: 2,
     desc: {
       ja: '柾割竹の扉を開け放てばまるで阿蘇そのものを表現した庭園が広がります。開放的な庭と5mの天井高のリビングは阿蘇を独り占めするような贅沢な空間を演出しています。二階には展望露天風呂もあり眺望を楽しむことも。',
@@ -175,6 +232,8 @@ export const ROOMS = {
   sora: {
     kanji: '宙', roman: 'Sora',
     area: { ja: '127.57 m²', en: '127.57 m²', zh: '127.57 m²' },
+    equip: EQUIP.base,
+    amen: AMEN.robe,
     capacity: 2,
     desc: {
       ja: '広々とした開放的な和モダンリビングの目の前には屋外プールやバーカウンターが広がるリゾート感あふれるお部屋です。畳の間や坪庭などもあり長期滞在中に自分時間を作ることもできます。',
@@ -201,6 +260,9 @@ export const ROOMS = {
   zui: {
     kanji: '瑞', roman: 'Zui',
     area: { ja: '69.37 m²', en: '69.37 m²', zh: '69.37 m²' },
+    video: 'BvCmKpaeTWs',   // 旅館の公式チャンネルの客室紹介動画
+    equip: EQUIP.base,
+    amen: AMEN.slippers,
     capacity: 2,
     desc: {
       ja: '専用アプローチがプライベート感を演出。掘りごたつのリビングの目の前には遠くの木々が見渡せる開放的なロケーションが広がります。テラスには足湯もあり、様々な過ごし方ができるお部屋です。',
@@ -222,6 +284,9 @@ export const ROOMS = {
   sumeragi: {
     kanji: '皇', roman: 'Sumeragi',
     area: { ja: '134.77 m²', en: '134.77 m²', zh: '134.77 m²' },
+    video: 'Rqv5_2FalJs',   // 旅館の公式チャンネルの客室紹介動画
+    equip: EQUIP.base,
+    amen: AMEN.robe,
     capacity: 4,
     desc: {
       ja: '和と洋が融合したアンティークなリビングに広々とした和室、縁側の向こうには雄大な庭園が広がり、桧の露天風呂に入りながら自然そのものを体感できます。',
@@ -239,6 +304,9 @@ export const ROOMS = {
   zen: {
     kanji: '禅', roman: 'Zen',
     area: { ja: '77.01 m²', en: '77.01 m²', zh: '77.01 m²' },
+    video: '5RP-hwcFV9c',   // 旅館の公式チャンネルの客室紹介動画
+    equip: EQUIP.base,
+    amen: AMEN.base,
     capacity: 3,
     desc: {
       ja: '箱庭を眺めながらの半露天風呂や、寝室のすぐ横には足湯もあり、朝一のお風呂代わりも。古民家風数寄屋作りの温かみのあるお部屋です。',
@@ -256,6 +324,8 @@ export const ROOMS = {
   sou: {
     kanji: '想', roman: 'Sou',
     area: { ja: '76.18 m²', en: '76.18 m²', zh: '76.18 m²' },
+    equip: EQUIP.base,
+    amen: AMEN.base,
     capacity: 2,
     desc: {
       ja: '回廊を歩いて行くと、そこは大正ロマン漂う古民家のような玄関アプローチ。要所に朱色を基調にした装飾を施したお部屋です。内湯のアコーディオンドアをフルオープンすると広々としたリビングデッキスペースとつながり、半露天風呂気分が味わえます。',
@@ -284,6 +354,11 @@ export const COMMON = {
   },
   checkin: { ja: '15:30（最終 18:00）', en: '15:30 (latest 18:00)', zh: '15:30（最迟 18:00）' },
   checkout: { ja: '11:00', en: '11:00', zh: '11:00' },
+  meals: {
+    ja: 'レストラン棟にて（夕食・朝食）',
+    en: 'Dinner and breakfast are served in the restaurant building.',
+    zh: '晚餐与早餐于餐厅栋提供。',
+  },
 };
 
 /**

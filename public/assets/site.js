@@ -386,4 +386,35 @@ window.addEventListener('scroll', function(){
       })
       .finally(function(){ busy(false); });
   });
+
+})();
+
+// ---- 客室の紹介動画 ----
+(function(){
+  // 客室の紹介動画。**押されるまで YouTube に一切つながない**。
+  // 自前のサムネイルを出しておき、押されたときだけ iframe を作る。
+  // 最初から iframe を置くと、見ない人にも数百 KB と third-party の
+  // 追跡が乗る (客室ページは 12 枚あるので効きが大きい)。
+  function initVideoFacades(){
+    var list = document.querySelectorAll('.video-facade');
+    for (var i = 0; i < list.length; i++) {
+      list[i].addEventListener('click', function(){
+        var id = this.getAttribute('data-yt');
+        if (!id) return;
+        var f = document.createElement('iframe');
+        // nocookie 版。autoplay は押した直後なのでブラウザに許可される。
+        f.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0';
+        f.title = this.getAttribute('aria-label') || '';
+        f.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';
+        f.allowFullscreen = true;
+        f.loading = 'lazy';
+        this.replaceWith(f);
+      });
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initVideoFacades);
+  } else {
+    initVideoFacades();
+  }
 })();

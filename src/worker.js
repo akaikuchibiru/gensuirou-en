@@ -45,7 +45,7 @@ const CSP_DIRECTIVES = [
   "object-src 'none'",
   // /access の Google マップ埋め込み。default-src 'self' のままだと、
   // CSP を強制に切り替えた瞬間に地図が消える (2026-08-25 に iframe を棚卸し)。
-  "frame-src https://maps.google.com https://www.google.com https://challenges.cloudflare.com",
+  "frame-src https://maps.google.com https://www.google.com https://challenges.cloudflare.com https://www.youtube-nocookie.com",
 ];
 const CSP_REPORT_PATH = '/_csp-report';
 

@@ -28,10 +28,7 @@
 
 import { LANGS, PAGES, langPath } from './i18n.js';
 
-// 予約エンジン。旧サイトの /reservation にあった URL そのもの。
-// サイト上のリンク (public/reservation.html) と同じ値であることを
-// scripts/check-booking-route.mjs と check-schema.mjs が突き合わせる。
-const BOOKING_URL = 'https://sec.489.jp/rg2/2316/reserve/plan?op_id=1&adult=2';
+import { BOOKING_URL } from './booking.js';
 const RESERVE_NAME = { ja: 'ご予約', en: 'Book a stay', zh: '预约' };
 import { FAQ, ROOMS } from './content-data.js';
 import { ROOMS as VILLAS, roomImages } from './rooms.js';

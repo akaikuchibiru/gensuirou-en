@@ -114,6 +114,70 @@ h1.seo { position: absolute; left: -9999px; font-size: 1px; }
    アクセシビリティツリーからも消えるので使わない。
    ギャラリーのサムネイルは <a href="#"><img alt=""></a> で、読み上げが
    「リンク」としか言わなかった。ここに言語別の説明を入れて名前を与える。 */
+/* 客室の紹介動画。押されるまで YouTube に一切つながないので、
+   ここに見えているのは自前のサムネイル。 */
+.room-video { margin-top: var(--space-xl); }
+.room-video h4 {
+  font-family: var(--font-wordmark); font-size: var(--text-sm);
+  letter-spacing: var(--track-label); color: var(--color-accent-hi);
+  text-transform: uppercase; margin: 0 0 var(--space-sm);
+}
+.room-video .video-facade,
+.room-video iframe {
+  display: block; width: 100%; aspect-ratio: 16 / 9;
+  border: var(--rule-hair) solid var(--color-rule); background: var(--color-paper);
+}
+.video-facade { position: relative; padding: 0; cursor: pointer; }
+.video-facade img { width: 100%; height: 100%; object-fit: cover; }
+.video-facade .play {
+  position: absolute; inset: 50% auto auto 50%;
+  translate: -50% -50%;
+  width: 4.5rem; height: 4.5rem; border-radius: 50%;
+  border: var(--rule-hair) solid var(--color-accent-hi);
+  background: oklch(var(--ch-shade) / 0.55);
+  transition: background var(--dur-med) var(--ease-out);
+}
+.video-facade .play::after {
+  content: ''; position: absolute; inset: 50% auto auto 54%;
+  translate: -50% -50%;
+  border-style: solid; border-width: 0.6rem 0 0.6rem 1rem;
+  border-color: transparent transparent transparent var(--color-accent-hi);
+}
+@media (hover: hover) and (pointer: fine) {
+  .video-facade:hover .play { background: oklch(var(--ch-shade) / 0.25); }
+}
+
+/* 設備・アメニティの長い列挙。読み飛ばしやすいよう行間を広く、色を落とす。 */
+.amenity-list {
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: 2;
+  color: var(--color-ink-2);
+}
+/* 客室ページの予約導線。2 本を横並び、狭い幅では縦。 */
+.room-cta {
+  display: flex; flex-wrap: wrap; gap: var(--space-sm);
+  justify-content: center; margin-top: var(--space-xl);
+}
+
+/* 料金の数字。宿の意匠は抑制が旨なので、数字だけ一段大きく、単位は小さく。 */
+.price-figure {
+  font-family: var(--font-latin);
+  font-size: var(--text-2xl);
+  color: var(--color-accent-hi);
+  line-height: 1.15;
+  margin: var(--space-sm) 0 var(--space-xs);
+}
+.price-figure .yen { font-size: 0.5em; margin-inline-start: 0.15em; }
+.price-figure small {
+  display: block;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  letter-spacing: 0.04em;
+  margin-top: var(--space-3xs);
+}
+
 .seo-only {
   position: absolute; width: 1px; height: 1px;
   padding: 0; margin: -1px; overflow: hidden;

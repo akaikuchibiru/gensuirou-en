@@ -15,6 +15,7 @@
 // ════════════════════════════════════════════════════════════════════
 
 import { COMMON, ROOMS, ROOM_ORDER, roomImages } from './rooms.js';
+import { BOOKING_URL } from './booking.js';
 
 const LANGS = ['ja', 'en', 'zh'];
 
@@ -160,8 +161,44 @@ export function renderRoomPage(slug) {
             ${row({ ja: '泉質', en: 'Spring', zh: '泉质' }, COMMON.spring)}
             ${row({ ja: 'チェックイン', en: 'Check-in', zh: '入住' }, COMMON.checkin)}
             ${row({ ja: 'チェックアウト', en: 'Check-out', zh: '退房' }, COMMON.checkout)}
+            ${row({ ja: 'お食事', en: 'Meals', zh: '餐食' }, COMMON.meals)}
           </table>
         </div>
+      </div>
+
+      <!-- 設備・アメニティ。移行時に 12 室すべてから落ちていた (2026-08-28 復活)。
+           部屋によって違う (洗濯機・ワインセラー・バスローブ) ので、
+           「全室共通」に畳まず室ごとに出す。部屋選びの判断材料になる。 -->
+      <div class="info-grid">
+        <div class="info-block">
+          <h4>${spans({ ja: '設備', en: 'In the villa', zh: '设备' })}</h4>
+          <p class="amenity-list">${spans(r.equip)}</p>
+        </div>
+        <div class="info-block">
+          <h4>${spans({ ja: 'アメニティ', en: 'Amenities', zh: '备品' })}</h4>
+          <p class="amenity-list">${spans(r.amen)}</p>
+        </div>
+      </div>
+
+      ${r.video ? `<div class="room-video">
+        <h4>${spans({ ja: 'お部屋の動画', en: 'Room video', zh: '客房影片' })}</h4>
+        <button type="button" class="video-facade" data-yt="${r.video}"
+                aria-label="${esc(r.kanji)} ${esc(r.roman)} の紹介動画を再生">
+          <img src="/assets/video-thumbs/${slug}.jpg" alt="" loading="lazy" decoding="async" width="800" height="450">
+          <span class="play" aria-hidden="true"></span>
+        </button>
+      </div>` : ''}
+
+      <!-- このお部屋を見ている人が、そのまま予約に進めるようにする。
+           これまで客室ページには予約への導線が本文に 1 つも無く、
+           room-nav の 3 つのボタンは全部よそへ行っていた。 -->
+      <div class="room-cta">
+        <a class="reserve-btn" href="${BOOKING_URL}" target="_blank" rel="noopener">
+          ${spans({ ja: 'このお部屋の空室・料金を見る', en: 'Check dates and rates', zh: '查看空房与价格' })}
+        </a>
+        <a class="reserve-btn" href="reservation.html">
+          ${spans({ ja: 'ご予約の方法', en: 'How to book', zh: '预约方式' })}
+        </a>
       </div>
 
       <div class="room-nav">

@@ -16,15 +16,20 @@ const PAIRS = [['/','/'],['/rooms/index.html','/rooms'],['/cuisine/index.html','
   ['/access/index.html','/access'],['/faq/index.html','/faq'],['/wedding/index.html','/wedding']];
 
 // 意図して残している一致 (2026-08-26 時点)
+// 言い換えてはいけないもの。事実・商品名・機能的なラベルは、旧サイトと
+// 一致していて **当然** で、変えるほうが不誠実か不便になる。
+// 2026-08-28 に旅館の実データ (FAQ・設備・ウェディングの料金) を戻したので、
+// この種の一致はこれからも増える。増やすときは「宣伝文句でないこと」を確かめる。
 const ALLOW = [
-  '各お部屋ページで紹介動画を順次公開中です。',
+  '各お部屋ページで紹介動画を順次公開中です。',   // 旅館自身のお知らせ
   '※料理の一例です。',
-  '肌触りが柔らかく肌への刺激が少ない',      // 泉質の公式記述
+  '肌触りが柔らかく肌への刺激が少ない',          // 泉質の公式記述
   '効能（浴用の適応症）',
-  '『源翠瓏』への交通アクセス',
+  '『源翠瓏』への交通アクセス',                 // 機能的なラベル
   'お車でのアクセス',
+  'ロケーションフォト',                        // ウェディングの商品名
 ];
-const LIMIT = 6;   // 実測 6 行。増えたら気付く
+const LIMIT = 8;
 
 const get = (args) => { try { return execFileSync('curl', args, { encoding: 'utf8', maxBuffer: 64e6 }); } catch { return ''; } };
 const old = (p) => get(['-sS','--resolve',`gensuirou.com:443:${OLD_IP}`,'--max-time','25','https://gensuirou.com'+p]);
