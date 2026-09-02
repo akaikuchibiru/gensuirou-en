@@ -20,6 +20,7 @@ import {
 import { renderRoomPage } from './room-page.js';
 import { renderArticle, renderJournalIndex } from './journal.js';
 import { enquiryEnabled, handleEnquiry } from './enquiry.js';
+import { fetchLegacy, isLegacyAsset, isLegacyGuide } from './legacy.js';
 
 // ── CSP ──
 // まだ Report-Only。エッジで注入されるものはローカルに出ないので
@@ -128,6 +129,30 @@ export default {
     // Pages は 308 だった (2026-08-25 実測)。307 だと評価が統合されないので、
     // アセットに渡す前にここで 301 にする。
     const p = url.pathname;
+
+    // ── 客室テレビの館内案内 (ナバック) ──
+    //
+    // /gensuiro/ は **旧サーバにしか無い**。館内案内システムの業者が
+    // 置いた Basic 認証付きのディレクトリで、客室のテレビがこの URL を開いている。
+    // 2026-08-25 の DNS 切替でここへ届かなくなり、テレビに 404 が出ていた。
+    //
+    // 正規化も i18n もセキュリティヘッダもかけない。
+    // 末尾スラッシュを落とすだけで相対リンクが全部外れるし、
+    // X-Frame-Options や CSP を後から被せると業者の画面の振る舞いを変えてしまう。
+    if (isLegacyGuide(p)) {
+      const relayed = await fetchLegacy(request, p + url.search);
+      if (relayed) {
+        relayed.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+        return relayed;
+      }
+      // 旧サーバが答えない。404 を返すと「ページが無い」と見えるので 502 にする。
+      console.log('[legacy] unreachable ' + p);
+      return new Response('館内案内を取得できませんでした。しばらくしてからお試しください。\n', {
+        status: 502,
+        headers: { 'Content-Type': 'text/plain; charset=UTF-8', 'Cache-Control': 'no-store' },
+      });
+    }
+
     const canon = canonicalPath(p);
     if (canon !== p) {
       return harden(
@@ -207,6 +232,13 @@ export default {
     // run_worker_first = true なので、画像も CSS も必ずここを通る。
     // 出口が 1 か所なのでヘッダの付け漏れが起きない。
     const res = await env.ASSETS.fetch(request);
+    if (res.status === 404 && isLegacyAsset(p)) {
+      // 旧サイトのページから参照が残っている画像・CSS・JS。
+      // ページ自体は 301 で新 URL に寄せるが、アセットは新サイトには無いので
+      // 旧サーバから取って返す。200 以外は普通の 404 に落とす。
+      const legacy = await fetchLegacy(request, p + url.search);
+      if (legacy && legacy.status === 200) return harden(legacy, host);
+    }
     return harden(res, host);
   },
 };

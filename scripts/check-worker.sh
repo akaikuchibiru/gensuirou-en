@@ -31,13 +31,16 @@ done
 
 echo "── 旧サイトの URL が恒久で生きているか (移行で被リンクを捨てない)"
 # 移行前の gensuirou.com は約 42 URL。PC 21 + /m/ 配下のモバイル版 21。
+# ⚠ /reservation は **/#reserve に飛ばさない**。旧サイトの /reservation には
+#   予約エンジンへの導線があり、飛ばした 4 日間「料金も空室も確認できない」
+#   状態を作った (2026-08-28)。期待値をそのまま /reservation に直してある。
 for pair in \
   "/index.html:/" \
   "/access/index.html:/access" \
   "/rooms/index.html:/rooms" \
   "/rooms/aoi/index.html:/rooms/aoi" \
   "/rooms/sumeragi/index.html:/rooms/sumeragi" \
-  "/reservation/index.html:/#reserve" \
+  "/reservation/index.html:/reservation" \
   "/m/:/" \
   "/m/index.html:/" \
   "/m/faq/index.html:/faq" \

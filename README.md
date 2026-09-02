@@ -61,6 +61,8 @@ node scripts/check-type-size.mjs       # 文字の「見かけの大きさ」。
 node scripts/check-header.mjs          # 320〜480px を 10px 刻み。宿名が折れる帯を捕まえる
 node scripts/check-booking-route.mjs   # 「予約」ラベルが予約先へ行くか。全ページ×3言語
 node scripts/check-seo.mjs             # title/desc の幅と重複・h1・alt・到達クリック数・旧URL の 301
+node scripts/check-legacy.mjs          # 旧サーバにしか無い資産 (客室テレビの館内案内 /gensuiro/)
+                                       # --full を付けると旧サイトを巡回して全 URL を突合
 node scripts/gen-content-data.mjs      # 構造化データの材料を本文から作り直す (FAQ を足したら必ず)
 ./scripts/check-parity.sh              # Pages 版と本文が一致するか。Pages を畳んだら消す
 ```
@@ -84,12 +86,17 @@ npx wrangler deploy
 ## Status
 
 Commissioned by the ryokan — this site takes **real reservation enquiries**.
+予約フォームは本番で稼働している (Turnstile + D1 保存 + Email Sending)。
+通知先は `ENQUIRY_TO` (secret)。旅館の予約担当アドレスに差し替えるのが残件。
 
-The enquiry form is **not wired yet**. Until `/api/enquiry` exists, the `#reserve`
-band on `index.html` shows the telephone instead of a form: a form that accepts
-input it cannot deliver loses real bookings. Restore the form markup from
-`git show 70174bb:index.html` when the endpoint is live.
+### 旧サーバ (WADAX / Plesk 153.123.7.215) にまだ依存しているもの
 
-Outstanding before launch: own domain, Email Routing (`info@`), Email Sending
-(SPF/DKIM), Turnstile, D1 storage, per-language URLs + hreflang, 301 from
-`gensuirou.tas-quest.com`.
+- **客室テレビの館内案内 `/gensuiro/`** — 館内案内システムの業者 (ナバック) が
+  旧サーバに置いた Basic 認証つきのディレクトリ。中身はこちらに無い。
+  Worker が `cloudflare:sockets` で旧サーバへ中継している (`src/legacy.js`)。
+- **旧ページから参照が残っているアセット** — 新サイトに無い画像・CSS・JS・
+  32MB の紹介動画。404 のときだけ旧サーバへ取りに行く (拡張子で限定)。
+- 旧サーバのメール (`mail` / `webmail` / `smtp` / `pop`) は DNS only のまま。
+
+⚠ これは延命であって移行ではない。旧サーバが止まればテレビも止まる。
+恒久策は「ナバックの中身を旅館経由で受け取り、こちら側に置く」こと。
