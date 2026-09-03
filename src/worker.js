@@ -168,6 +168,18 @@ export default {
     // ブラウザは <link rel=icon> があっても /favicon.ico を取りに来る。
     // 無いとタブ・ブックマーク・検索結果が白紙アイコンになる。
     // 実体は PNG なので、拡張子ではなく Content-Type で正しく名乗る。
+    // ── /apple-touch-icon*.png ──
+    // iOS はホーム画面に追加するときやブックマークで、<link> の有無に関係なく
+    // /apple-touch-icon.png と -precomposed 版を直接取りに来る。
+    // 無いと画面の写しが使われる。実測 (2026-09-02): 日本から 1 日 12 件が 404。
+    if (/^\/apple-touch-icon(-\d+x\d+)?(-precomposed)?\.png$/.test(p)) {
+      const png = await env.ASSETS.fetch(new URL('/favicon-180.png', url.origin));
+      const h = new Headers(png.headers);
+      h.set('Content-Type', 'image/png');
+      h.set('Cache-Control', 'public, max-age=86400');
+      return harden(new Response(png.body, { status: png.status, headers: h }), host);
+    }
+
     if (p === '/favicon.ico') {
       const ico = await env.ASSETS.fetch(new URL('/favicon-32.png', url.origin));
       const h = new Headers(ico.headers);
@@ -236,7 +248,14 @@ export default {
       // 旧サイトのページから参照が残っている画像・CSS・JS。
       // ページ自体は 301 で新 URL に寄せるが、アセットは新サイトには無いので
       // 旧サーバから取って返す。200 以外は普通の 404 に落とす。
-      const legacy = await fetchLegacy(request, p + url.search);
+      let legacy = await fetchLegacy(request, p + url.search);
+      // 旧モバイルサイトのアセットは `/m/` の下にしか無い (例: /m/style_m.css)。
+      // 旧ページを開いた人のブラウザは相対解決の結果ルート直下を取りに来るので、
+      // 根元で外したら /m/ 側も見る。実測: /style_m.css は旧サーバでも
+      // ルートは 404、/m/style_m.css だけ 200 (2026-09-02)。
+      if ((!legacy || legacy.status !== 200) && !p.startsWith('/m/')) {
+        legacy = await fetchLegacy(request, '/m' + p + url.search);
+      }
       if (legacy && legacy.status === 200) return harden(legacy, host);
     }
     return harden(res, host);

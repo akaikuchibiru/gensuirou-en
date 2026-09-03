@@ -106,9 +106,10 @@ for (const path of ['/gensuiro/', '/gensuiro']) {
 const ASSETS = [
   '/js/jquery-1.11.3.min.js',
   '/imgs_1080_570/04.jpg',
-  '/apple-touch-icon.png',
   '/movie/imagevideo202408_pc2500.mp4', // 32MB。溜め込む実装だと落ちる
 ];
+// 旧モバイルサイトのアセットは /m/ の下にしか無い。ルート直下で取りに来る人がいる。
+const MOBILE_ASSETS = [['/style_m.css', '/m/style_m.css']];
 for (const path of ASSETS) {
   const was = await head(ORIGIN + path, { host: 'gensuirou.com' });
   if (was.status !== 200) { bad(path, `旧サーバが ${was.status} — 検査対象の前提が崩れている`); continue; }
@@ -121,6 +122,25 @@ for (const path of ASSETS) {
   x.sha === y.sha && x.bytes > 0
     ? ok(path, `${x.bytes} bytes 一致`)
     : bad(path, `中身が違う ${x.bytes}/${x.sha.slice(0, 12)} != ${y.bytes}/${y.sha.slice(0, 12)}`);
+}
+
+for (const [rootPath, realPath] of MOBILE_ASSETS) {
+  const was = await head(ORIGIN + realPath, { host: 'gensuirou.com' });
+  if (was.status !== 200) { bad(rootPath, `旧サーバの ${realPath} が ${was.status}`); continue; }
+  const [x, y] = await Promise.all([digest(SITE + rootPath), digest(ORIGIN + realPath, { host: 'gensuirou.com' })]);
+  x.sha === y.sha && x.bytes > 0
+    ? ok(`${rootPath} → ${realPath} で救済`, `${x.bytes} bytes 一致`)
+    : bad(rootPath, `${realPath} と一致しない (${x.bytes}/${y.bytes})`);
+}
+
+// ── 2.5 iOS のホーム画面アイコン ────────────────────────────
+// <link> の有無に関係なく直接取りに来る。無いと画面の写しが使われる。
+for (const path of ['/apple-touch-icon.png', '/apple-touch-icon-precomposed.png', '/apple-touch-icon-152x152.png']) {
+  const res = await head(SITE + path);
+  const ct = res.headers['content-type'] || '';
+  res.status === 200 && /image\/png/.test(ct)
+    ? ok(`${path} → 200 png`)
+    : bad(path, `status=${res.status} content-type=${JSON.stringify(ct)}`);
 }
 
 // ── 3. 何でも中継していないこと ──────────────────────────────
