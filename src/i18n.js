@@ -204,9 +204,9 @@ export const PAGES = { ...BASE_PAGES, ...roomPageMeta(), ...journalPageMeta() };
 //   zh  Noto Serif SC + Cormorant 346KB
 // 英語は 455KB → 6KB。訪日客の入口なので、ここが一番効く。
 const FONT_CSS = {
-  ja: 'https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&family=Cormorant+Garamond:wght@400;500;600&display=swap',
-  en: 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap',
-  zh: 'https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap',
+  ja: 'https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&family=Cormorant+Garamond&display=swap',
+  en: 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond&display=swap',
+  zh: 'https://fonts.googleapis.com/css2?family=Noto+Serif+SC&family=Cormorant+Garamond&display=swap',
 };
 
 // og:locale はハイフン付きの地域込みで書く。ja だけだと Facebook が落とす。

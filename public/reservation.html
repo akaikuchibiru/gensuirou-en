@@ -7,7 +7,7 @@
 <meta name="description" content="源翠瓏のご予約。プラン・料金・空室状況はWEB予約ページよりご確認いただけます。お電話でも承ります。" />
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
 <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png" />
-<link href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&family=Noto+Serif+SC:wght@400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&family=Noto+Serif+SC&family=Cormorant+Garamond&display=swap" rel="stylesheet" />
 <link rel="preload" as="image" href="/assets/rooms_main.jpg" fetchpriority="high" />
 <link rel="stylesheet" href="tokens.css" />
 <link rel="stylesheet" href="assets/site.css" />
@@ -79,6 +79,127 @@
         </div>
       </div>
 
+
+    </section>
+
+    <!-- ▼ ここから下は 2026-09-03 に足した。
+         理由: /reservation は **この サイトで最も見られているページ**で、
+         Instagram からの流入もここに落ちる (実測 2026-09-02: 1,447 表示。
+         トップの 300 前後を大きく上回る)。それなのに中身は予約ボタン 2 つだけで、
+         初めて知った人が「何を予約するのか」「泊まれるのか」を判断できなかった。
+         数字と条件は **旅館の既存ページ (FAQ・アクセス) からの引き写し**で、
+         こちらで作った値は 1 つも無い。 -->
+
+    <section class="block anim">
+      <div class="section-title">
+        <h2><span data-ja>ご予約いただける客室</span><span data-en>The villas you can book</span><span data-zh>可预约的客房</span></h2>
+        <p>
+          <span data-ja>4,000坪の広大な敷地の中にある　わずか十二棟の離れ宿は　そのすべてがスイートルーム。伝統的な数寄屋造りとレトロモダンが融合した客室すべてに　源泉かけ流しの露天風呂を併設。プライベートな空間としてご利用頂けます。</span>
+          <span data-en>Within a 4,000-tsubo (over 13,000 m²) estate lie only twelve detached villas — each a suite. Traditional sukiya-style blended with retro-modern, every villa with its own natural hot-spring open-air bath.</span>
+          <span data-zh>4,000 坪的广袤庭园内，仅设十二栋独立别墅。传统数寄屋建筑与复古摩登相融，每一间皆附源泉挂流的露天温泉。</span>
+        </p>
+      </div>
+
+      <div class="rooms">
+        <a class="room" href="rooms/shiori.html"><img src="assets/imgs_rooms/shiori_a.jpg" alt="紫 Shiori" loading="lazy" decoding="async"><div class="room-label"><div class="kanji">紫</div><div class="roman">Shiori</div></div></a>
+        <a class="room" href="rooms/aoi.html"><img src="assets/imgs_rooms/aoi_a.jpg" alt="葵 Aoi" loading="lazy" decoding="async"><div class="room-label"><div class="kanji">葵</div><div class="roman">Aoi</div></div></a>
+        <a class="room" href="rooms/hana.html"><img src="assets/imgs_rooms/hana_a.jpg" alt="華 Hana" loading="lazy" decoding="async"><div class="room-label"><div class="kanji">華</div><div class="roman">Hana</div></div></a>
+        <a class="room" href="rooms/midori.html"><img src="assets/imgs_rooms/midori_a.jpg" alt="碧 Midori" loading="lazy" decoding="async"><div class="room-label"><div class="kanji">碧</div><div class="roman">Midori</div></div></a>
+        <a class="room" href="rooms/ei.html"><img src="assets/imgs_rooms/ei_a.jpg" alt="瑩 Ei" loading="lazy" decoding="async"><div class="room-label"><div class="kanji">瑩</div><div class="roman">Ei</div></div></a>
+        <a class="room" href="rooms/yui.html"><img src="assets/imgs_rooms/yui_a.jpg" alt="結 Yui" loading="lazy" decoding="async"><div class="room-label"><div class="kanji">結</div><div class="roman">Yui</div></div></a>
+        <a class="room" href="rooms/rin.html"><img src="assets/imgs_rooms/rin_a.jpg" alt="凛 Rin" loading="lazy" decoding="async"><div class="room-label"><div class="kanji">凛</div><div class="roman">Rin</div></div></a>
+        <a class="room" href="rooms/sora.html"><img src="assets/imgs_rooms/sora_a.jpg" alt="宙 Sora" loading="lazy" decoding="async"><div class="room-label"><div class="kanji">宙</div><div class="roman">Sora</div></div></a>
+        <a class="room" href="rooms/zui.html"><img src="assets/imgs_rooms/zui_a.jpg" alt="瑞 Zui" loading="lazy" decoding="async"><div class="room-label"><div class="kanji">瑞</div><div class="roman">Zui</div></div></a>
+        <a class="room" href="rooms/sumeragi.html"><img src="assets/imgs_rooms/sumeragi_a.jpg" alt="皇 Sumeragi" loading="lazy" decoding="async"><div class="room-label"><div class="kanji">皇</div><div class="roman">Sumeragi</div></div></a>
+        <a class="room" href="rooms/zen.html"><img src="assets/imgs_rooms/zen_a.jpg" alt="禅 Zen" loading="lazy" decoding="async"><div class="room-label"><div class="kanji">禅</div><div class="roman">Zen</div></div></a>
+        <a class="room" href="rooms/sou.html"><img src="assets/imgs_rooms/sou_a.jpg" alt="想 Sou" loading="lazy" decoding="async"><div class="room-label"><div class="kanji">想</div><div class="roman">Sou</div></div></a>
+      </div>
+
+      <p class="fine-note">
+        <span data-ja>それぞれの間取り・広さ・お風呂・設備は <a href="rooms.html">客室のご案内</a> をご覧ください。</span>
+        <span data-en>Floor plans, size, bath and amenities for each villa are on the <a href="rooms.html">villas page</a>.</span>
+        <span data-zh>各房型的格局、面积、浴池与设备，请见<a href="rooms.html">客房介绍</a>。</span>
+      </p>
+    </section>
+
+    <section class="block anim">
+      <div class="section-title">
+        <h2><span data-ja>ご予約の前に</span><span data-en>Before you book</span><span data-zh>预约前须知</span></h2>
+        <p>
+          <span data-ja>お問い合わせの多い項目をまとめました。そのほかは <a href="faq.html">よくある質問</a> をご覧ください。</span>
+          <span data-en>The questions we are asked most often. For anything else, see the <a href="faq.html">FAQ</a>.</span>
+          <span data-zh>以下为最常见的问题。其他事项请见<a href="faq.html">常见问题</a>。</span>
+        </p>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-block">
+          <h4><span data-ja>チェックイン／チェックアウト</span><span data-en>Check-in / Check-out</span><span data-zh>入住 / 退房</span></h4>
+          <table>
+            <tr><td><span data-ja>チェックイン</span><span data-en>Check-in</span><span data-zh>入住</span></td><td>
+              <span data-ja>15:30（最終 18:00）</span><span data-en>15:30 (latest 18:00)</span><span data-zh>15:30（最迟 18:00）</span></td></tr>
+            <tr><td><span data-ja>チェックアウト</span><span data-en>Check-out</span><span data-zh>退房</span></td><td>11:00</td></tr>
+            <tr><td><span data-ja>アーリーチェックイン</span><span data-en>Early check-in</span><span data-zh>提前入住</span></td><td>
+              <span data-ja>14:30 から（有料・事前にご相談ください）</span>
+              <span data-en>From 14:30, paid — please arrange in advance</span>
+              <span data-zh>14:30 起（付费・请事先联系）</span></td></tr>
+            <tr><td><span data-ja>延長</span><span data-en>Late check-out</span><span data-zh>延时退房</span></td><td>
+              <span data-ja>1 時間 ¥10,000・最長 13:00（予約状況により承れない場合があります）</span>
+              <span data-en>¥10,000 per hour, until 13:00 at the latest (subject to availability)</span>
+              <span data-zh>每小时 ¥10,000，最迟至 13:00（视预约情况而定）</span></td></tr>
+          </table>
+        </div>
+
+        <div class="info-block">
+          <h4><span data-ja>キャンセル料</span><span data-en>Cancellation</span><span data-zh>取消费用</span></h4>
+          <table>
+            <tr><td><span data-ja>7 日前</span><span data-en>7 days before</span><span data-zh>前 7 日</span></td><td>30%</td></tr>
+            <tr><td><span data-ja>3 日前</span><span data-en>3 days before</span><span data-zh>前 3 日</span></td><td>50%</td></tr>
+            <tr><td><span data-ja>前日・当日</span><span data-en>Day before / day of stay</span><span data-zh>前 1 日・当日</span></td><td>100%</td></tr>
+          </table>
+        </div>
+
+        <div class="info-block">
+          <h4><span data-ja>お風呂・サウナ</span><span data-en>Baths &amp; sauna</span><span data-zh>浴池与桑拿</span></h4>
+          <table>
+            <tr><td><span data-ja>貸切露天大浴場</span><span data-en>Private open-air bath</span><span data-zh>包场大浴场</span></td><td>
+              <span data-ja>7:30〜21:00（いずれも貸切・予約優先）</span>
+              <span data-en>07:30–21:00, private use, reservation recommended</span>
+              <span data-zh>7:30〜21:00（包场・采预约优先制）</span></td></tr>
+            <tr><td><span data-ja>檜のサウナ</span><span data-en>Hinoki sauna</span><span data-zh>桧木桑拿</span></td><td>
+              <span data-ja>1 回 40 分・無料</span><span data-en>40 minutes per session, free</span><span data-zh>每次 40 分钟・免费</span></td></tr>
+            <tr><td><span data-ja>月光桜の湯</span><span data-en>Gekkou Sakura no Yu</span><span data-zh>月光樱之汤</span></td><td>
+              <span data-ja>3 月〜11 月末（天候等により休止する場合があります）</span>
+              <span data-en>March to end of November (may close in poor weather)</span>
+              <span data-zh>3 月至 11 月底（遇天候不佳时可能停止）</span></td></tr>
+          </table>
+        </div>
+
+        <div class="info-block">
+          <h4><span data-ja>ご来館・ご滞在</span><span data-en>Getting here &amp; staying</span><span data-zh>前往与住宿</span></h4>
+          <table>
+            <tr><td><span data-ja>熊本空港から</span><span data-en>From Kumamoto Airport</span><span data-zh>熊本机场</span></td><td>
+              <span data-ja>お車で約 15 分</span><span data-en>approx. 15 min by car</span><span data-zh>自驾约 15 分钟</span></td></tr>
+            <tr><td><span data-ja>送迎</span><span data-en>Transfers</span><span data-zh>接送</span></td><td>
+              <span data-ja>行っておりません（レンタカー・タクシー・バスをご利用ください）</span>
+              <span data-en>Not available — please come by rental car, taxi or bus</span>
+              <span data-zh>不提供（请利用租车、出租车或巴士）</span></td></tr>
+            <tr><td><span data-ja>ご宿泊</span><span data-en>Guests</span><span data-zh>入住年龄</span></td><td>
+              <span data-ja>中学生の方から</span><span data-en>Junior-high-school age and above</span><span data-zh>初中生以上</span></td></tr>
+            <tr><td><span data-ja>お飲み物の持ち込み</span><span data-en>Bringing your own drinks</span><span data-zh>自带饮品</span></td><td>
+              <span data-ja>夕食時 1 点につき ¥3,300</span><span data-en>¥3,300 per bottle at dinner</span><span data-zh>晚餐时每瓶 ¥3,300</span></td></tr>
+          </table>
+        </div>
+      </div>
+
+      <p class="fine-note">
+        <span data-ja>道順は <a href="access.html">交通アクセス</a>、お食事は <a href="cuisine.html">お料理</a> をご覧ください。</span>
+        <span data-en>See <a href="access.html">access</a> for directions and <a href="cuisine.html">cuisine</a> for the meals.</span>
+        <span data-zh>路线请见<a href="access.html">交通指引</a>，餐食请见<a href="cuisine.html">料理</a>。</span>
+      </p>
+    </section>
+
+    <section class="block anim">
       <div class="fade">
         <p class="fade-body">
           <span data-ja>ご予約以外のお問い合わせは、<a href="index.html#reserve">お問い合わせフォーム</a>からもお送りいただけます。</span>

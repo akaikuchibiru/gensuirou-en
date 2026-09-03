@@ -76,6 +76,20 @@ node scripts/check-contrast.mjs
 node scripts/check-form-align.mjs
 ```
 
+## 画像
+
+写真は JPEG のまま置き、**同じ名前の `.webp` を隣に生成**して置いてある。
+Worker が `Accept: image/webp` を見て同じ URL で webp を返す (`src/worker.js`)。
+markup は 1 行も変えないので、静的ページ・客室ページ・ライトボックスの
+どの経路も同じだけ軽くなる。twin が無ければ元の画像を返すだけ。
+
+```bash
+./scripts/make-webp.sh      # 写真を足したら実行する (既存の twin は飛ばす)
+```
+
+実測 (2026-09-03、モバイル・キャッシュ空):
+`/rooms/zui` LCP 3,528ms → 1,428ms / 転送 1,807KB → 1,378KB。
+
 ## Deploy
 
 ```bash

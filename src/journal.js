@@ -195,7 +195,7 @@ function shell({ bodyPage, h1, heroCap, inner }) {
 <meta name="description" content="" />
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
 <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png" />
-<link href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&family=Noto+Serif+SC:wght@400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&family=Noto+Serif+SC&family=Cormorant+Garamond&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="/tokens.css" />
 <link rel="stylesheet" href="/assets/site.css" />
 </head>

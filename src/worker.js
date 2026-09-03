@@ -243,6 +243,24 @@ export default {
     // ── 静的アセット ──
     // run_worker_first = true なので、画像も CSS も必ずここを通る。
     // 出口が 1 か所なのでヘッダの付け漏れが起きない。
+    // ── 写真は WebP で返す (URL は同じまま) ──
+    //
+    // 客室の写真は 600x460 なのに 1 枚 110KB あり、客室ページはモバイルで
+    // 1.8MB あった (2026-09-03 実測)。同じ絵の .webp を隣に置いてあるので、
+    // Accept が webp を受けるブラウザにはそちらを返す。
+    // markup を書き換えないので、静的ページ・客室ページ・ライトボックスの
+    // どの経路も同じだけ軽くなる。twin が無ければ普通に元の画像を返す。
+    if (/\.(jpe?g|png)$/i.test(p) && (request.headers.get('Accept') || '').includes('image/webp')) {
+      const twin = await env.ASSETS.fetch(new URL(p.replace(/\.[^.]+$/, '.webp'), url.origin));
+      if (twin.status === 200) {
+        const h = new Headers(twin.headers);
+        h.set('Content-Type', 'image/webp');
+        // 同じ URL で 2 種類返すので、キャッシュに区別させる。
+        h.set('Vary', 'Accept');
+        return harden(new Response(twin.body, { status: 200, headers: h }), host);
+      }
+    }
+
     const res = await env.ASSETS.fetch(request);
     if (res.status === 404 && isLegacyAsset(p)) {
       // 旧サイトのページから参照が残っている画像・CSS・JS。

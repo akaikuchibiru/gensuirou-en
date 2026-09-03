@@ -478,6 +478,22 @@ body[data-nav-open="true"] { overflow: hidden; }
       oklch(var(--ch-shade) / 0.40) 24%,
       transparent 48%);
 }
+/* 英文は見出しが左下を **横に長く** 走る。既定の隅の墨 (48% で消える) は
+   その右端まで届かず、映像の明るいカット (実測 15.7 秒) で
+   かぶりの小見出しが 2.75:1 まで落ちていた (基準 4.5:1)。
+   隅の墨を伸ばして、文字が乗る範囲だけを覆う。全面は暗くしない。 */
+html[lang="en"] .hero-block .overlay {
+  background:
+    linear-gradient(180deg,
+      oklch(var(--ch-shade) / 0.34) 0%,
+      oklch(var(--ch-shade) / 0.10) 30%,
+      oklch(var(--ch-shade) / 0.55) 68%,
+      oklch(var(--ch-shade) / 0.92) 100%),
+    linear-gradient(to top right,
+      oklch(var(--ch-shade) / 0.88) 0%,
+      oklch(var(--ch-shade) / 0.60) 32%,
+      transparent 68%);
+}
 /* 和文・中文は見出しが右端を縦に走るので、その帯を落とす。
    遮光ではなく「墨の帯」として構図に組み込む。 */
 html[lang="ja"] .hero-block .overlay,
