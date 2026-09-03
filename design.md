@@ -50,6 +50,20 @@ Three families, language-scoped. At most two render at once.
 - `--font-ja` **Sawarabi Mincho** — JA reading face
 - `--font-zh` **Noto Serif SC** — ZH reading face
 
+**Delivery (2026-09-03).** The three faces are self-hosted as subsets of exactly the
+glyphs this site renders — Google Fonts pulled 479 KB (JA/EN) and 1,380 KB (ZH) of
+sliced webfont per visit. Same faces, same shapes; only the delivery changed.
+Two consequences the doctrine has to name:
+
+- Each stack must end in a face we actually ship, because Latin-first elements do
+  carry Japanese (「ご予約」「目次」). Without it those glyphs fall to whatever the
+  device has — mincho on Apple, gothic on Android.
+- Sawarabi Mincho does not contain 瓏 (the house name), 凛, 瑩, — , → or ※.
+  A 3 KB companion cut from Noto Serif JP (`Gensuirou Kanji Extra`) sits behind it.
+
+Adding copy means re-cutting the subsets (`./scripts/make-fonts.sh`); an uncut glyph
+renders in a system face and nothing goes red. `scripts/check-fonts.mjs` is the gate.
+
 The Latin wordmark register against a CJK reading face is what keeps the page branded.
 Scale is a 1.25 major third off a 16 px base. Display clamps at `5.25rem`.
 

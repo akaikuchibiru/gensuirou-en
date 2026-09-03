@@ -197,16 +197,22 @@ export const PAGES = { ...BASE_PAGES, ...roomPageMeta(), ...journalPageMeta() };
 //
 // 3 書体をまとめて要求すると Google Fonts の CSS が **455KB / @font-face 436 件**
 // になり、描画を止める (2026-08-25 実測)。内訳は Noto Serif SC が 340KB、
-// Sawarabi Mincho が 109KB、Cormorant が 6KB。
-// 日本語のページで中国語書体の定義 340KB を読む理由は無い。
-//   ja  Sawarabi + Cormorant   115KB
-//   en  Cormorant のみ           6KB
-//   zh  Noto Serif SC + Cormorant 346KB
-// 英語は 455KB → 6KB。訪日客の入口なので、ここが一番効く。
-const FONT_CSS = {
-  ja: 'https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&family=Cormorant+Garamond&display=swap',
-  en: 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond&display=swap',
-  zh: 'https://fonts.googleapis.com/css2?family=Noto+Serif+SC&family=Cormorant+Garamond&display=swap',
+// 書体は自前ホストの部分集合 (2026-09-03 に Google Fonts をやめた)。
+// その言語で **実際に読む書体だけ** を先に取りに行かせる。
+//   ja  ja + latin   158KB
+//   en  latin のみ    11KB
+//   zh  zh + latin   252KB
+// 置き換え前は実測で ja 479KB / zh 1,380KB だった。
+// extra は Sawarabi に無い 6 字 (凛嗜檜瑩瓏贅) の補い。3KB。
+// 宿の名前の「瓏」が入っているので、どの言語の面でも要る。
+const FONT_FILES = {
+  ja: ['/assets/fonts/gensuirou-ja.woff2', '/assets/fonts/gensuirou-latin.woff2',
+       '/assets/fonts/gensuirou-ja-extra.woff2'],
+  // 英語・中国語の面に出る和文は客室名と切替の 19 字だけ。155KB でなく 5KB を取る。
+  en: ['/assets/fonts/gensuirou-latin.woff2', '/assets/fonts/gensuirou-ja-mini.woff2',
+       '/assets/fonts/gensuirou-ja-extra.woff2'],
+  zh: ['/assets/fonts/gensuirou-zh.woff2', '/assets/fonts/gensuirou-latin.woff2',
+       '/assets/fonts/gensuirou-ja-mini.woff2', '/assets/fonts/gensuirou-ja-extra.woff2'],
 };
 
 // og:locale はハイフン付きの地域込みで書く。ja だけだと Facebook が落とす。
@@ -287,7 +293,6 @@ function buildRewriter(lang) {
   rw = rw.on('link[href]', {
     element(el) {
       const v = el.getAttribute('href');
-      if (v && v.includes('fonts.googleapis.com/css2')) { el.setAttribute('href', FONT_CSS[lang]); return; }
       if (isRelative(v)) el.setAttribute('href', '/' + v);
     },
   });
@@ -328,9 +333,12 @@ export function localizePage(res, { lang, path, origin, host, enquiry, sitekey }
   const isProd = host === PROD_HOST;
 
   const head =
-    // 書体は別ホストから来る。接続を先に開いておくと、CSS を読み終えてから
-    // TCP+TLS を張り直す往復が消える。
-    `<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>` +
+    // 書体は同じオリジンにある。CSS を読み終えてから取りに行くと本文が
+    // 一度フォールバックで描かれて入れ替わるので、その言語のぶんだけ先に取る。
+    // ⚠ crossorigin が要る (フォントは無指定でも CORS 扱いで取りに行くので、
+    //   付けないと preload が使われず 2 回落とすことになる)。
+    FONT_FILES[lang].map((f) =>
+      `<link rel="preload" as="font" type="font/woff2" href="${origin}${f}" crossorigin>`).join('') +
     // ロゴはヘッダの一部だが、ヘッダを組み立てるのは body 末尾の site.js。
     // 素だと要求が LCP より後になる (2026-08-25 実測: 2169ms)。先に取りに行かせる。
     `<link rel="preload" as="image" href="${origin}/assets/imgs/logo_gensuirou.png">` +

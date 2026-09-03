@@ -29,14 +29,16 @@ import { fetchLegacy, isLegacyAsset, isLegacyGuide } from './legacy.js';
 //
 // script は 'self' だけで足りる。全 8 ページを grep して
 // インライン <script> が 0 件であることを確認済み (2026-08-25)。
-// 一方 style は style="..." が 31 か所あり、Google Fonts も CSS を
-// 外から読むので 'unsafe-inline' と fonts.googleapis.com が要る。
+// 一方 style は style="..." が 31 か所あるので 'unsafe-inline' が要る。
+// 書体は 2026-09-03 から自前ホストなので、外部ホストの許可は無くなった。
 const CSP_DIRECTIVES = [
   "default-src 'self'",
   // Turnstile。api.js を読み、検証は iframe で描画される。
   "script-src 'self' https://challenges.cloudflare.com",
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "font-src 'self' https://fonts.gstatic.com",
+  // 2026-09-03: フォントを自前ホストの部分集合に移したので、
+  // Google のホストは style-src / font-src から外した。
+  "style-src 'self' 'unsafe-inline'",
+  "font-src 'self'",
   "img-src 'self' data:",
   "media-src 'self'",
   "connect-src 'self'",

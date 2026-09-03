@@ -5,3 +5,4 @@ dns-migration/.cf_token.local
 
 # ローカル検証用の上書き。Turnstile のテスト鍵などが入る
 .dev.vars
+.fontwork/

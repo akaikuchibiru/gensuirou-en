@@ -39,15 +39,79 @@
   --color-scrim-soft:   oklch(var(--ch-shade) / 0.32);
   --color-invalid:      oklch(64% 0.160 28);
 
+}
+
+/* ══ Web fonts · 自前ホストの部分集合 ════════════════════════════════════
+   Google Fonts から読むのをやめ、**このサイトで実際に使う文字だけ**に
+   絞ったものを同じオリジンから配る。
+
+   なぜ: Google 版は言語ぶんの分割ファイルを取りに行くので、実測
+   (2026-09-03、モバイル・キャッシュ空) で
+     日本語面 39 ファイル 479KB / 中国語面 20 ファイル 1,380KB
+   だった。字面は同じまま、下の 3 本 (計 158KB / 中文は 252KB) に置き換える。
+
+   ⚠ 文章を足したら **`./scripts/make-fonts.sh` を回す**。
+     入っていない字はシステムのフォントで出るので、1 文字だけ別の書体に
+     見える。`node scripts/check-fonts.mjs` が全ページの実文字を突き合わせて
+     落とすようにしてある。
+
+   ライセンスは 3 本とも SIL Open Font License 1.1 (Reserved Font Name の
+   宣言は無い)。全文を assets/fonts/OFL-*.txt に同梱している。         */
+@font-face {
+  font-family: 'Sawarabi Mincho';
+  src: url('/assets/fonts/gensuirou-ja.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Noto Serif SC';
+  src: url('/assets/fonts/gensuirou-zh.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+/* 客室名の漢字 (紫・葵・華…) だけの 12 字。
+   英語・中国語の面では和文の本文は 1 文字も出ず、出るのはこの 12 字だけ
+   (2026-09-03 に全 URL を実ブラウザで走査して確認)。それだけのために
+   147KB の和文書体を落としていたので、その面ではこちらに差し替える。
+   中身は Sawarabi Mincho の部分集合 (OFL・RFN の宣言なし)。 */
+/* Sawarabi Mincho に無い 6 字 (凛嗜檜瑩瓏贅) だけ。中身は Noto Serif JP。
+   宿の名前の「瓏」が入っていないので、これが無いと屋号の 1 字だけ
+   端末まかせの書体で出る (2026-09-03 に全ページ走査で判明)。 */
+@font-face {
+  font-family: 'Gensuirou Kanji Extra';
+  src: url('/assets/fonts/gensuirou-ja-extra.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Gensuirou Kanji';
+  src: url('/assets/fonts/gensuirou-ja-mini.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('/assets/fonts/gensuirou-latin.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+
+:root {
   /* ── Type · three faces, language-scoped ──────────────────────────────
      At most two families render at once: the Latin wordmark register
      always Cormorant, the reading face switching by <html lang>.        */
-  --font-latin:    'Cormorant Garamond', ui-serif, Georgia, serif;
-  --font-ja:       'Sawarabi Mincho', ui-serif, serif;
-  --font-zh:       'Noto Serif SC', ui-serif, serif;
+  /* ⚠ 欧文の面 (ロゴ・ボタン・ナビ) にも和文は出る (「ご予約」「目次」など)。
+     Cormorant に和文は無いので、**必ず読み書体を後ろに置く**。置かないと
+     その字だけ端末まかせになり、Apple では明朝・Android ではゴシックで出る
+     (2026-09-03 に全ページを走査して判明)。 */
+  --font-latin:    'Cormorant Garamond', 'Sawarabi Mincho', 'Gensuirou Kanji Extra', ui-serif, Georgia, serif;
+  /* Sawarabi Mincho には客室名の 凛・瑩 が無い。足りないぶんだけを
+     Noto Serif JP から作った 3KB を後ろに置く (scripts/make-fonts.sh)。 */
+  --font-ja:       'Sawarabi Mincho', 'Gensuirou Kanji Extra', ui-serif, serif;
+  --font-zh:       'Noto Serif SC', 'Gensuirou Kanji Extra', ui-serif, serif;
   --font-wordmark: var(--font-latin);
   --font-display:  var(--font-latin);
   --font-body:     var(--font-latin);
+
+  /* 英語・中国語の面で和文の読み書体は要らない。出るのは客室名の漢字だけ。
+     ここを差し替えると 147KB → 3.6KB になる (実測 2026-09-03)。
+     ⚠ これらの面に和文の本文を足したら、この行を戻すこと。
+        入れ忘れは `node scripts/check-fonts.mjs` が全ページの実文字で落とす。 */
 
   /* ── Scale · 1.25 major third, 16px base ─────────────────────────── */
   --text-xs:   0.875rem;    /* 14px — 言語切替・添字。13px は実測で小さすぎた */
@@ -138,3 +202,14 @@
    ちょうど 0.500 なので、0.5 は和文にとって **何もしない** 値になる。
    ここを下げると和文まで縮むので下げない。 */
 html[lang="en"] { --x-height-ref: 0.46; }
+
+/* 英語・中国語の面: 和文の読み書体を 12 字の部分集合に落とす。
+   (理由と戻し方は上の --font-ja のところに書いてある) */
+html[lang="en"] {
+  --font-ja:    'Gensuirou Kanji', 'Gensuirou Kanji Extra', ui-serif, serif;
+  --font-latin: 'Cormorant Garamond', 'Gensuirou Kanji', 'Gensuirou Kanji Extra', ui-serif, Georgia, serif;
+}
+html[lang="zh"] {
+  --font-ja:    'Gensuirou Kanji', 'Gensuirou Kanji Extra', ui-serif, serif;
+  --font-latin: 'Cormorant Garamond', 'Noto Serif SC', 'Gensuirou Kanji Extra', ui-serif, Georgia, serif;
+}

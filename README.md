@@ -62,6 +62,7 @@ node scripts/check-header.mjs          # 320〜480px を 10px 刻み。宿名が
 node scripts/check-booking-route.mjs   # 「予約」ラベルが予約先へ行くか。全ページ×3言語
 node scripts/check-seo.mjs             # title/desc の幅と重複・h1・alt・到達クリック数・旧URL の 301
 node scripts/check-legacy.mjs          # 旧サーバにしか無い資産 (客室テレビの館内案内 /gensuiro/)
+node scripts/check-fonts.mjs           # 出ている字が部分集合に入っているか + 配信物の sha256
                                        # --full を付けると旧サイトを巡回して全 URL を突合
 node scripts/gen-content-data.mjs      # 構造化データの材料を本文から作り直す (FAQ を足したら必ず)
 ./scripts/check-parity.sh              # Pages 版と本文が一致するか。Pages を畳んだら消す
@@ -75,6 +76,42 @@ node scripts/check-nav.mjs
 node scripts/check-contrast.mjs
 node scripts/check-form-align.mjs
 ```
+
+## 書体
+
+Google Fonts をやめ、**このサイトで実際に使う文字だけ**に絞った woff2 を
+同じオリジンから配っている (`public/assets/fonts/`)。字面は変えていない。
+
+| 面 | 前 | 後 |
+|---|---|---|
+| 日本語 | 39 本 479KB | 3 本 169KB |
+| 英語 | 39 本 479KB | 3 本 19KB |
+| 中国語 | 20 本 1,380KB | 4 本 222KB |
+
+```bash
+./scripts/make-fonts.sh          # 文章を足したら必ず回す (本番を走査して作り直す)
+npx wrangler deploy
+node scripts/check-fonts.mjs     # 出ている字が全部入っているか + sha256 の照合
+```
+
+⚠ 入っていない字は **システムの書体で静かに出る**。ページは 200 のままで、
+目視ではまず気付かない。実際、移行前は屋号の「瓏」と客室名の「凛・瑩」、
+それに — → ※ が端末まかせで出ていた (Apple は明朝、Android はゴシック)。
+`check-fonts.mjs` は全 69 ページの実文字を `scripts/fonts-coverage.json`
+(作成時に書き出す cmap) と突き合わせて落とす。
+
+書体は 4 本 + 補い 1 本:
+
+| ファイル | 中身 |
+|---|---|
+| `gensuirou-ja.woff2` | 和文の読み書体 (Sawarabi Mincho) |
+| `gensuirou-zh.woff2` | 中文の読み書体 (Noto Serif SC) |
+| `gensuirou-latin.woff2` | 欧文・ロゴ (Cormorant Garamond) |
+| `gensuirou-ja-mini.woff2` | 客室名と言語切替の 19 字 (英語・中国語の面用) |
+| `gensuirou-ja-extra.woff2` | どの原本にも無い 10 字の補い (Noto Serif JP) |
+
+ライセンスは 4 本とも SIL Open Font License 1.1 (Reserved Font Name の宣言なし)。
+全文を `public/assets/fonts/OFL-*.txt` に同梱している。
 
 ## 画像
 
