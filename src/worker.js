@@ -21,6 +21,7 @@ import { renderRoomPage } from './room-page.js';
 import { renderArticle, renderJournalIndex } from './journal.js';
 import { enquiryEnabled, handleEnquiry } from './enquiry.js';
 import { fetchLegacy, isLegacyAsset, isLegacyGuide } from './legacy.js';
+import { tvGuide } from './tv-guide.js';
 
 // ── CSP ──
 // まだ Report-Only。エッジで注入されるものはローカルに出ないので
@@ -151,6 +152,16 @@ export default {
     // 末尾スラッシュを落とすだけで相対リンクが全部外れるし、
     // X-Frame-Options や CSP を後から被せると業者の画面の振る舞いを変えてしまう。
     if (isLegacyGuide(p)) {
+      // ⚠ 資格情報を持たない相手 (= 客室のテレビ) には、旧サーバの 401 を
+      //   そのまま返さない。キオスクの WebView はログイン画面を出せないので
+      //   画面が真っ黒になる (2026-09-04 に全室で発生)。
+      //   代わりにこちらで用意した館内案内を出す。Authorization を持っている
+      //   相手 (スタッフの PC) は今まで通り旧サーバの本物を見られる。
+      //   資格情報が手に入ったら、ここで付けて中継に一本化する。
+      if (!request.headers.get('Authorization') && (request.method === 'GET' || request.method === 'HEAD')
+          && !/\.(css|js|png|jpe?g|gif|svg|ico|woff2?|mp4)$/i.test(p)) {
+        return tvGuide();
+      }
       const relayed = await fetchLegacy(request, p + url.search);
       if (relayed) {
         // ⚠ HSTS を付けない。付けると次からブラウザが自分で https に上げてしまい、
