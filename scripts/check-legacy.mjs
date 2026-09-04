@@ -61,28 +61,18 @@ async function digest(url, { host } = {}) {
 console.log(`\n旧資産の中継  ${SITE}\n`);
 
 // ── 1. テレビの館内案内 ──────────────────────────────────────
-// 新サイトの 404 でも、こちらが作った 502 でもいけない。
-// 業者のサーバが出す 401 (realm つき) がそのまま返ってくるのが正。
+// 2026-09-04 決定版: Authorization 無し (=テレビ) にはこちらの 1 画面を 200 で
+// 出す。401 を返すとキオスクの WebView はログイン画面を出せず真っ黒になる。
+// 中身の検査は check-tv.mjs の仕事。ここは配線 (200 / HTML / 非リダイレクト) を見る。
 for (const path of ['/gensuiro/', '/gensuiro']) {
   const res = await head(SITE + path);
-  const auth = res.headers['www-authenticate'] || '';
+  const ct = res.headers['content-type'] || '';
   if (res.status === 404) bad(`${path} が 404`, 'テレビの館内案内が出ていない');
   else if (res.status === 502) bad(`${path} が 502`, '旧サーバに届いていない');
   else if (res.status >= 300 && res.status < 400) bad(`${path} が ${res.status}`, `正規化してはいけない → ${res.headers.location}`);
-  else if (res.status !== 401 || !/^Basic/i.test(auth)) bad(path, `status=${res.status} www-authenticate=${JSON.stringify(auth)}`);
-  else ok(`${path} → 401 ${auth}`);
-}
-
-// realm のバイト列が旧サーバのものと一致すること。
-// 非 ASCII (ナバック) なので、途中で解き直すと壊れる。
-{
-  const [now, was] = await Promise.all([
-    head(SITE + '/gensuiro/'),
-    head(ORIGIN + '/gensuiro/', { host: 'gensuirou.com' }),
-  ]);
-  const a = now.headers['www-authenticate'] || '';
-  const b = was.headers['www-authenticate'] || '';
-  a === b && b ? ok('WWW-Authenticate が旧サーバと同一', JSON.stringify(b)) : bad('WWW-Authenticate', `new=${JSON.stringify(a)} old=${JSON.stringify(b)}`);
+  else if (res.status === 401) bad(`${path} が 401`, 'テレビが真っ黒になる (2026-09-04 に廃止した応答)');
+  else if (res.status !== 200 || !/html/.test(ct)) bad(path, `status=${res.status} content-type=${JSON.stringify(ct)}`);
+  else ok(`${path} → 200 (こちらの館内案内)`);
 }
 
 // 索引に入れない (認証の向こうは公開物ではない)。
@@ -93,12 +83,21 @@ for (const path of ['/gensuiro/', '/gensuiro']) {
     : bad('/gensuiro/ の noindex', `x-robots-tag=${JSON.stringify(res.headers['x-robots-tag'])}`);
 }
 
-// Authorization を握りつぶしていないか (握りつぶすと 401 のループになる)。
+// Authorization つき (=スタッフ PC) は旧サーバへ中継されること。
+// 誤った資格情報なら旧サーバの 401 が realm ごと返るのが正。
+// realm は非 ASCII (ナバック) なので、途中で解き直すと壊れる → バイト一致で見る。
 {
-  const res = await head(SITE + '/gensuiro/', { auth: 'Basic ' + Buffer.from('probe:probe').toString('base64') });
-  res.status === 401
+  const probe = { auth: 'Basic ' + Buffer.from('probe:probe').toString('base64') };
+  const [now, was] = await Promise.all([
+    head(SITE + '/gensuiro/', probe),
+    head(ORIGIN + '/gensuiro/', { host: 'gensuirou.com', ...probe }),
+  ]);
+  now.status === 401
     ? ok('誤った資格情報 → 401 (中継されている)')
-    : bad('誤った資格情報', `status=${res.status} — 旧サーバの判定が返っていない`);
+    : bad('誤った資格情報', `status=${now.status} — 旧サーバの判定が返っていない`);
+  const a = now.headers['www-authenticate'] || '';
+  const b = was.headers['www-authenticate'] || '';
+  a === b && b ? ok('WWW-Authenticate が旧サーバと同一', JSON.stringify(b)) : bad('WWW-Authenticate', `new=${JSON.stringify(a)} old=${JSON.stringify(b)}`);
 }
 
 // ── 2. 旧ページから参照が残っているアセット ──────────────────

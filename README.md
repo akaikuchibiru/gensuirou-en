@@ -68,7 +68,6 @@ node scripts/check-tv.mjs             # 客室テレビの館内案内 (/gensuir
                                        # --full を付けると旧サイトを巡回して全 URL を突合
 node scripts/gen-content-data.mjs      # 構造化データの材料を本文から作り直す (FAQ を足したら必ず)
 node scripts/gen-lastmod.mjs           # sitemap の lastmod を git から作り直す (中身を変えたら必ず)
-./scripts/check-parity.sh              # Pages 版と本文が一致するか。Pages を畳んだら消す
 ```
 
 ローカル (`cd public && python3 -m http.server 8793` を上げてから):
