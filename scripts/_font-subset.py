@@ -47,6 +47,11 @@ want = {fam: set() for fam in PLAN}
 orphan = {}
 for stack, chars in inv["stacks"]:
     shipped = [f for f in stack if f in PLAN]
+    # 自前の書体が 1 つも無いスタック (端末のゴシックだけ) は対象外。
+    # ⚠ ここを飛ばさないと、その字が全部 Extra へ「救済」されて 40KB 膨らむ
+    #   (2026-09-04 に TV ページのゴシック本文で露呈)。
+    if not shipped:
+        continue
     for ch in chars:
         cp = ord(ch)
         target = next((f for f in shipped if cp in have[f]), None)

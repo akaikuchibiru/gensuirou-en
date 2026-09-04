@@ -56,6 +56,7 @@ page.on('request', (r) => { if (FONT_HOSTS.test(r.url())) external.add(r.url());
 
 const sm = await (await fetch(BASE + '/sitemap.xml')).text();
 const urls = [...sm.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+urls.push(BASE + '/gensuiro/?bg=0');   // 客室テレビの館内案内 (sitemap 外)
 
 const missing = new Map();                 // family -> Map(char -> 最初に見つけた URL)
 for (const u of urls) {
