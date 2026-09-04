@@ -87,6 +87,7 @@ export function journalPageMeta() {
   const out = {
     [JOURNAL_BASE]: {
       journal: 'index',
+      og: '/assets/onsen_main.jpg',
       nav: { ja: '読み物', en: 'Journal', zh: '读物' },
       ja: { title: '読み物 ｜ 源翠瓏 - 阿蘇の温泉旅館', desc: '源翠瓏からの読み物。客室のえらび方など、お泊まりの前に読んでいただきたいことをまとめています。' },
       en: { title: 'Journal | Gensuirou — Onsen Ryokan in Aso', desc: 'Reading from Gensuirou: how to choose among the twelve villas, and other things worth knowing before you stay.' },
@@ -96,6 +97,8 @@ export function journalPageMeta() {
   for (const a of ARTICLES) {
     out[`${JOURNAL_BASE}/${a.slug}`] = {
       journal: a.slug,
+      og: '/assets/onsen_main.jpg',
+      published: a.date,
       nav: a.title,
       ja: { title: `${a.title.ja} ｜ 源翠瓏`, desc: a.lead.ja.slice(0, 150) },
       en: { title: `${a.title.en} | Gensuirou`, desc: a.lead.en.slice(0, 155) },

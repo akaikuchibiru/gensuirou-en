@@ -105,6 +105,35 @@ say(!noix.length, noix.length ? `noindex が付いている ${noix.length} 本` 
 const ogMissing = rows.filter((r) => !r.og || /\.svg$/i.test(r.og));
 say(!ogMissing.length, ogMissing.length ? `og:image が無い/SVG ${ogMissing.length} 本` : 'og:image あり (SVG でない)');
 
+// og:image が全ページ同じだと、LINE や Instagram に貼られたときに
+// どのページも同じ絵で出る。面ごとの写真になっているかを見る。
+const ogSet = new Set(rows.map((r) => r.og));
+say(ogSet.size >= 5, ogSet.size >= 5
+  ? `og:image は ${ogSet.size} 種類 (面ごとに違う)`
+  : `og:image が ${ogSet.size} 種類しかない — 全ページ同じ絵で共有されている`);
+
+// og:image の実体が返るか。存在しない URL を指していても画面は正常に見える。
+{
+  const sample = [...ogSet].slice(0, 8);
+  const codes = await Promise.all(sample.map(async (u) => [u, (await fetch(u, { method: 'HEAD' })).status]));
+  const dead = codes.filter(([, c]) => c !== 200);
+  say(!dead.length, dead.length ? `og:image が ${dead.map(([u, c]) => `${u.split('/').pop()}=${c}`).join(' ')}`
+    : `og:image ${sample.length} 種すべて 200`);
+}
+
+console.log('── 4.5 sitemap の lastmod');
+{
+  const xml = await (await fetch(BASE + '/sitemap.xml')).text();
+  const entries = [...xml.matchAll(/<loc>([^<]+)<\/loc>\s*(?:<lastmod>([^<]+)<\/lastmod>)?/g)];
+  const noLast = entries.filter(([, , d]) => !d);
+  say(!noLast.length, noLast.length ? `lastmod が無い ${noLast.length} URL` : `全 ${entries.length} URL に lastmod`);
+  const today = new Date().toISOString().slice(0, 10);
+  const future = entries.filter(([, , d]) => d && d > today);
+  say(!future.length, future.length ? `未来の日付 ${future.length} 件 (${future[0][2]})` : '未来の日付なし');
+  const bad = entries.filter(([, , d]) => d && !/^\d{4}-\d{2}-\d{2}$/.test(d));
+  say(!bad.length, bad.length ? `日付の形が不正 ${bad.length} 件` : '日付の形は W3C 準拠');
+}
+
 console.log('── 5. 画像の alt / 押せる要素の名前');
 const noAlt = rows.filter((r) => r.noAlt > 0);
 say(!noAlt.length, noAlt.length ? `alt 属性が無い ${noAlt.reduce((a, r) => a + r.noAlt, 0)} 枚 / ${noAlt.length} ページ`

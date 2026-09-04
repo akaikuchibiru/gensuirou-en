@@ -248,7 +248,10 @@ h1.seo { position: absolute; left: -9999px; font-size: 1px; }
   padding: var(--space-md) var(--page-gutter);
 }
 
-.nav .brand { display: flex; align-items: center; gap: var(--space-sm); min-width: 0; }
+/* ⚠ スマホではロゴ画像を出さず文字に切り替わる (下の .brand .txt)。
+   そのとき当たり判定が 69×23px しかなく、design.md の 44px を割っていた
+   (2026-09-04 に実機プロファイルで実測)。見た目は変えずに高さだけ確保する。 */
+.nav .brand { display: flex; align-items: center; gap: var(--space-sm); min-width: 0; min-height: 44px; }
 .nav .brand img {
   height: 2.75rem; width: auto;
   /* The mark ships light-on-transparent (mean luminance 190/255). The old
@@ -624,6 +627,30 @@ html[lang="zh"] .hero-block .cap .title { max-inline-size: 100%; }
    24 字の説明文が 2 行に割れて「スイート」だけ落ちていた。全角基準の em で持つ。 */
 html[lang="ja"] .hero-block .cap .sub,
 html[lang="zh"] .hero-block .cap .sub { max-inline-size: min(30em, 100%); }
+
+/* ⚠ スマホ幅では縦組みが横幅を食い切る。実測 (2026-09-04):
+     320px → 説明文の幅 90px・5 行 (「4,000坪の / 敷地に佇む / わずか /
+              十二棟の / スイート」)、SCROLL との間は 5px
+     375px → 幅 145px・4 行     390px → 幅 160px・3 行
+   横に置いて読めるのは説明文に 200px 以上渡せる幅からで、それは
+   430px より広い画面だけ。スマホの範囲は縦組みを上の段に移し、
+   説明文に全幅を渡す (320px で 2 行・幅 280px)。
+   タブレット・PC の見え方は変えない。 */
+@media (max-width: 430px) {
+  html[lang="ja"] .hero-block .cap,
+  html[lang="zh"] .hero-block .cap {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    grid-template-areas: "vert"
+                         "foot";
+    row-gap: var(--space-lg);
+    align-content: end;
+  }
+  html[lang="ja"] .hero-block .cap-vert,
+  html[lang="zh"] .hero-block .cap-vert { justify-self: end; max-block-size: 46vh; }
+  html[lang="ja"] .hero-block .cap-foot,
+  html[lang="zh"] .hero-block .cap-foot { align-self: start; }
+}
 
 @keyframes heroRise {
   from { opacity: 0; transform: translateY(1.25rem); }

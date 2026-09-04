@@ -332,8 +332,11 @@ function robots(origin, host) {
 function sitemap(origin) {
   // 言語別 URL を全部載せ、各 URL に相互の hreflang を付ける。
   // 片方向だけだと Google は言語クラスタとして扱わない。
-  const urls = allUrls(origin).map(({ loc, alts }) =>
+  const urls = allUrls(origin).map(({ loc, alts, lastmod }) =>
     `  <url>\n    <loc>${loc}</loc>\n` +
+    // lastmod は **中身を作っているファイルが最後に変わった日** (git 由来)。
+    // deploy 日を入れると毎回「更新した」ことになり、そのうち無視される。
+    (lastmod ? `    <lastmod>${lastmod}</lastmod>\n` : '') +
     alts.map((a) => `    <xhtml:link rel="alternate" hreflang="${a.lang}" href="${a.href}"/>`).join('\n') +
     `\n  </url>`,
   ).join('\n');

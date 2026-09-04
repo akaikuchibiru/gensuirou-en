@@ -36,6 +36,8 @@ export function roomPageMeta() {
     const cap = { ja: `${r.capacity}名`, en: `${r.capacity} guests`, zh: `${r.capacity} 人` };
     out[roomPath(slug)] = {
       room: slug,
+      // 共有されたときは、その部屋の写真が出るようにする。
+      og: roomImages(slug)[0] || '/assets/rooms_main.jpg',
       nav: { ja: `${r.kanji} ${r.roman}`, en: r.roman, zh: `${r.kanji} ${r.roman}` },
       ja: {
         title: `${r.kanji} - ${r.roman} - ｜ 源翠瓏 - 阿蘇の露天風呂付き離れ客室`,

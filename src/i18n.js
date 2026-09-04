@@ -23,6 +23,7 @@
 import { jsonLdTag } from './schema.js';
 import { roomPageMeta } from './room-page.js';
 import { journalPageMeta } from './journal.js';
+import { LASTMOD } from './lastmod.js';
 
 export const LANGS = ['ja', 'en', 'zh'];
 export const DEFAULT_LANG = 'ja';
@@ -36,6 +37,7 @@ export const PROD_HOST = 'gensuirou.com';
 //   全 12 棟 / 敷地 4,000 坪 / 地下 1,000m / 熊本県阿蘇郡西原村
 const BASE_PAGES = {
   '/': {
+    og: '/assets/movie/poster.jpg',
     // パンくず用の短いラベル。site.js の DESTS と同じ語を使う
     // (ズレは scripts/check-schema.mjs が描画結果と突き合わせて検出する)
     nav: { ja: 'ホーム', en: 'Home', zh: '首页' },
@@ -53,6 +55,7 @@ const BASE_PAGES = {
     },
   },
   '/reservation': {
+    og: '/assets/rooms_main.jpg',
     nav: { ja: 'ご予約', en: 'Reservation', zh: '预约' },
     ja: {
       title: 'ご予約 Reservation ｜ 源翠瓏 - プラン・料金・空室のご確認',
@@ -68,16 +71,17 @@ const BASE_PAGES = {
     },
   },
   '/rooms': {
+    og: '/assets/rooms_main.jpg',
     // パンくず用の短いラベル。site.js の DESTS と同じ語を使う
     // (ズレは scripts/check-schema.mjs が描画結果と突き合わせて検出する)
     nav: { ja: '客室', en: 'Rooms', zh: '客房' },
     ja: {
       title: '客室 Rooms ｜ 源翠瓏 - 全12室の露天風呂付き離れ客室',
-      desc: '源翠瓏の全12室・全室離れ露天風呂付き客室のご紹介。紫、葵、華、碧、瑩、結、凛、宙、瑞、皇、禅、想。',
+      desc: '源翠瓏の客室は全12棟すべてが離れのスイートルーム。各棟に源泉かけ流しの露天風呂を備え、広さ・定員・お風呂の形はそれぞれ異なります。紫・葵・華・碧・瑩・結・凛・宙・瑞・皇・禅・想。',
     },
     en: {
       title: 'Villas | Gensuirou — Twelve Detached Villas with Private Onsen',
-      desc: 'All twelve villas at Gensuirou stand detached, each with its own open-air onsen: Shiori, Aoi, Hana, Midori, Ei, Yui, Rin, Sora, Zui, Sumeragi, Zen and Sou.',
+      desc: 'Twelve detached villa suites, each with its own free-flowing open-air onsen. Size, capacity and the shape of the bath differ by villa: Shiori, Aoi, Hana, Midori, Ei, Yui, Rin, Sora, Zui, Sumeragi, Zen, Sou.',
     },
     zh: {
       title: '客房 ｜ 源翠瓏 — 12 栋独立别墅・专属露天温泉',
@@ -85,84 +89,89 @@ const BASE_PAGES = {
     },
   },
   '/cuisine': {
+    og: '/assets/cuisine_main.jpg',
     // パンくず用の短いラベル。site.js の DESTS と同じ語を使う
     // (ズレは scripts/check-schema.mjs が描画結果と突き合わせて検出する)
     nav: { ja: '料理', en: 'Cuisine', zh: '料理' },
     ja: {
       title: '料理｜源翠瓏 - 九州の山海の幸による創作フレンチ和食',
-      desc: '源翠瓏の創作フレンチ和食。熊本県産を中心に山海の幸を用いたおもてなし料理。',
+      desc: '源翠瓏のお食事は、和とフレンチを融合した創作料理。山海の幸に恵まれた九州の厳選された食材を使い、季節ごとに彩りを変えてご用意しています。',
     },
     en: {
       title: 'Cuisine | Gensuirou — French-Japanese from Kyushu',
-      desc: 'French-Japanese cuisine at Gensuirou, built on produce from Kumamoto and the mountains and seas of Kyushu.',
+      desc: 'French-Japanese cuisine at Gensuirou, built on carefully selected produce from the mountains and seas of Kyushu. The plates change with the season.',
     },
     zh: {
       title: '料理 ｜ 源翠瓏 — 取材九州山海的和法创作料理',
-      desc: '源翠瓏的和法创作料理。以熊本县产食材为中心，取九州山海之幸款待宾客。',
+      desc: '源翠瓏的和法创作料理。选用山海富饶九州的精选食材，随季节更换菜单，献上暖心款待。',
     },
   },
   '/onsen': {
+    og: '/assets/onsen_main.jpg',
     // パンくず用の短いラベル。site.js の DESTS と同じ語を使う
     // (ズレは scripts/check-schema.mjs が描画結果と突き合わせて検出する)
     nav: { ja: '温泉', en: 'Onsen', zh: '温泉' },
     ja: {
       title: '温泉 Onsen ｜ 源翠瓏 - 阿蘇の地下1000mから湧く天然温泉',
-      desc: '源翠瓏の天然温泉。アルカリ性単純温泉『美肌の湯』、源泉かけ流し。',
+      desc: '源翠瓏の温泉は、阿蘇の地下1000mから湧くアルカリ性単純温泉（pH 8.0）の源泉かけ流し。全12棟の露天風呂に加え、貸切露天大浴場「月光桜の湯」と檜のサウナもございます。',
     },
     en: {
       title: 'Onsen | Gensuirou — Natural Hot Spring from 1,000 m Below Aso',
-      desc: 'Gensuirou’s natural hot spring is drawn from 1,000 m below Aso. An alkaline simple spring, served free-flowing from the source.',
+      desc: 'Gensuirou’s natural hot spring is drawn from 1,000 m below Aso — an alkaline simple spring (pH 8.0), served free-flowing from the source in all twelve villa baths, the private bath house Gekko-Sakura no Yu and a hinoki sauna.',
     },
     zh: {
       title: '温泉 ｜ 源翠瓏 — 涌自阿苏地下 1,000 米的天然温泉',
-      desc: '源翠瓏的天然温泉，取自阿苏地下 1,000 米。碱性单纯泉「美肌之汤」，源泉放流。',
+      desc: '源翠瓏的天然温泉取自阿苏地下 1,000 米，为碱性单纯泉（pH 8.0）源泉放流。除全 12 栋的专属露天温泉外，另有包场大浴场「月光樱之汤」与桧木桑拿。',
     },
   },
   '/facilities': {
+    og: '/assets/facilities_main.jpg',
     // パンくず用の短いラベル。site.js の DESTS と同じ語を使う
     // (ズレは scripts/check-schema.mjs が描画結果と突き合わせて検出する)
     nav: { ja: '施設', en: 'Facilities', zh: '设施' },
     ja: {
       title: '施設紹介｜源翠瓏 - 貸切露天大浴場・サウナ・ボディケア',
-      desc: '源翠瓏の館内施設。貸切露天大浴場「月光桜の湯」、檜のサウナルーム、ボディケア。',
+      desc: '源翠瓏の館内施設。貸切露天大浴場「月光桜の湯」（3月〜11月末）、檜のサウナルーム（1回40分・無料）、ボディケア。いずれも朝7:30〜夜21:00に貸切でご案内しています。',
     },
     en: {
       title: 'Facilities | Gensuirou — Open-Air Bath House, Sauna, Body Care',
-      desc: 'Facilities at Gensuirou: the reservable open-air bath house Gekko-Sakura no Yu, a hinoki sauna room, and body care.',
+      desc: 'Facilities at Gensuirou: the private open-air bath house Gekko-Sakura no Yu (March to end of November), a hinoki sauna (40 minutes per session, free) and body care — all reserved for private use, 07:30–21:00.',
     },
     zh: {
       title: '馆内设施 ｜ 源翠瓏 — 包场露天大浴场・桑拿・身体护理',
-      desc: '源翠瓏的馆内设施。可包场的露天大浴场「月光樱之汤」、桧木桑拿房、身体护理。',
+      desc: '源翠瓏的馆内设施。包场露天大浴场「月光樱之汤」（3 月至 11 月底）、桧木桑拿（每次 40 分钟・免费）、身体护理。均以包场方式提供，7:30〜21:00。',
     },
   },
   '/access': {
+    og: '/assets/access_main.jpg',
     // パンくず用の短いラベル。site.js の DESTS と同じ語を使う
     // (ズレは scripts/check-schema.mjs が描画結果と突き合わせて検出する)
     nav: { ja: 'アクセス', en: 'Access', zh: '交通' },
     ja: {
       title: '交通アクセス Access ｜ 源翠瓏 - 熊本県阿蘇郡西原村',
-      desc: '源翠瓏への交通アクセス。熊本空港より車で約15分、JR熊本駅より約1時間15分。',
+      desc: '源翠瓏（熊本県阿蘇郡西原村小森2113-3）への交通アクセス。熊本空港よりお車で約15分、JR熊本駅より約1時間15分。バスは萌の里バス停より徒歩約10分です。',
     },
     en: {
       title: 'Access | Gensuirou — Nishihara, Aso, Kumamoto',
-      desc: 'How to reach Gensuirou: about 15 minutes by car from Kumamoto Airport, about 1 hour 15 minutes from JR Kumamoto Station.',
+      desc: 'How to reach Gensuirou (2113-3 Komori, Nishihara, Aso, Kumamoto): about 15 minutes by car from Kumamoto Airport, 1 h 15 min from JR Kumamoto Station, or 10 minutes on foot from the Moe-no-Sato bus stop.',
     },
     zh: {
       title: '交通指引 ｜ 源翠瓏 — 熊本县阿苏郡西原村',
-      desc: '前往源翠瓏的交通方式。距熊本机场约 15 分钟车程，距 JR 熊本站约 1 小时 15 分。',
+      desc: '前往源翠瓏（熊本县阿苏郡西原村小森 2113-3）的交通方式。距熊本机场约 15 分钟车程，距 JR 熊本站约 1 小时 15 分，由萌之里巴士站步行约 10 分钟。',
     },
   },
   '/faq': {
+    og: '/assets/onsen_main.jpg',
     // パンくず用の短いラベル。site.js の DESTS と同じ語を使う
     // (ズレは scripts/check-schema.mjs が描画結果と突き合わせて検出する)
     nav: { ja: 'よくある質問', en: 'Questions', zh: '常见问题' },
     ja: {
       title: 'よくある質問 FAQ ｜ 源翠瓏',
-      desc: '源翠瓏のよくあるご質問。チェックイン・お子様・送迎・お食事など。',
+      desc: '源翠瓏のよくあるご質問。チェックイン15:30（最終18:00）／チェックアウト11:00、ご宿泊は中学生から、送迎、キャンセル料など、ご予約の前に多いお問い合わせをまとめています。',
     },
     en: {
       title: 'FAQ | Gensuirou',
-      desc: 'Frequently asked questions about Gensuirou — check-in, children, transfers and meals.',
+      desc: 'Frequently asked questions about Gensuirou: check-in 15:30 (latest 18:00) and check-out 11:00, guests of junior-high age and above, no shuttle service, cancellation fees, and the private bath and sauna hours.',
     },
     zh: {
       title: '常见问题 ｜ 源翠瓏',
@@ -170,20 +179,21 @@ const BASE_PAGES = {
     },
   },
   '/wedding': {
+    og: '/assets/wedding_main.jpg',
     // パンくず用の短いラベル。site.js の DESTS と同じ語を使う
     // (ズレは scripts/check-schema.mjs が描画結果と突き合わせて検出する)
     nav: { ja: '結婚式', en: 'Wedding', zh: '婚礼' },
     ja: {
       title: '結婚式｜源翠瓏 - 阿蘇の森の隠れ家でのプライベート挙式',
-      desc: '森の隠れ家 源翠瓏でのプライベートウェディング。少人数のご結婚式・アニバーサリーステイ。',
+      desc: '森の隠れ家 源翠瓏でのプライベートウェディング。ロケーションフォト55万円〜、ウェディングパーティー60万円〜（いずれも税別）、対応人数2〜18名。ブライダル事業パートナー「ラヴィアンシェリー」が承ります。',
     },
     en: {
       title: 'Weddings | Gensuirou — A Private Ceremony in the Forest',
-      desc: 'A private wedding at Gensuirou, a hideaway in the forest. Small ceremonies and anniversary stays.',
+      desc: 'A private wedding at Gensuirou, a hideaway in the Aso forest. Location photography from ¥550,000 and wedding parties from ¥600,000 (before tax), for parties of 2 to 18. Arranged with our bridal partner La Vie en Chérie.',
     },
     zh: {
       title: '婚礼 ｜ 源翠瓏 — 森中隐匿的私人婚礼',
-      desc: '在阿苏森林中隐匿的源翠瓏举办私人婚礼。全 12 栋独立别墅，适合小型仪式、家族聚会与纪念日住宿。详情请来电洽询。',
+      desc: '在阿苏森林中隐匿的源翠瓏举办私人婚礼。外景摄影 55 万日元起、婚宴 60 万日元起（均为税前），可对应 2〜18 人。由婚礼合作伙伴「La Vie en Chérie」承办。',
     },
   },
 };
@@ -326,7 +336,11 @@ function withLang(res, lang) {
 
 /** ページ。SEO 用の head を足したうえで言語を確定させる。 */
 export function localizePage(res, { lang, path, origin, host, enquiry, sitekey }) {
-  const meta = PAGES[path][lang];
+  // ⚠ og / published / journal は **ページの側** に持たせてある。
+  //   meta (= 言語ごとの title と desc) から読むと undefined になり、
+  //   気付かないまま全ページ同じ og:image に落ちる (2026-09-04 に踏んだ)。
+  const pageMeta = PAGES[path];
+  const meta = pageMeta[lang];
   const self = origin + langPath(lang, path);
   // 本番以外 (workers.dev 等) は索引に入れない。自己参照 canonical だけだと
   // 検証用ホストが本番と重複して索引されてしまう。
@@ -345,14 +359,19 @@ export function localizePage(res, { lang, path, origin, host, enquiry, sitekey }
     `<link rel="canonical" href="${self}">` +
     LANGS.map((l) => `<link rel="alternate" hreflang="${l}" href="${origin}${langPath(l, path)}">`).join('') +
     `<link rel="alternate" hreflang="x-default" href="${origin}${langPath(DEFAULT_LANG, path)}">` +
-    `<meta property="og:type" content="website">` +
+    // 面ごとの写真を出す。全ページ同じ絵だと、LINE や Instagram に貼られた
+    // ときにどのページも同じ見た目になり、開かれにくい (2026-09-04 まで
+    // 23 ページすべて poster.jpg だった)。
+    `<meta property="og:type" content="${pageMeta.journal && pageMeta.journal !== 'index' ? 'article' : 'website'}">` +
     `<meta property="og:site_name" content="源翠瓏 Gensuirou">` +
     `<meta property="og:locale" content="${OG_LOCALE[lang]}">` +
     LANGS.filter((l) => l !== lang).map((l) => `<meta property="og:locale:alternate" content="${OG_LOCALE[l]}">`).join('') +
     `<meta property="og:url" content="${self}">` +
     `<meta property="og:title" content="${esc(meta.title)}">` +
     `<meta property="og:description" content="${esc(meta.desc)}">` +
-    `<meta property="og:image" content="${origin}/assets/movie/poster.jpg">` +
+    `<meta property="og:image" content="${origin}${pageMeta.og || '/assets/movie/poster.jpg'}">` +
+    `<meta property="og:image:alt" content="${esc(meta.title)}">` +
+    (pageMeta.published ? `<meta property="article:published_time" content="${pageMeta.published}">` : '') +
     `<meta name="twitter:card" content="summary_large_image">` +
     (isProd ? '' : `<meta name="robots" content="noindex">`) +
     jsonLdTag(origin, lang, path);
@@ -396,6 +415,8 @@ export function allUrls(origin) {
         loc: origin + langPath(lang, path),
         alts: LANGS.map((l) => ({ lang: l, href: origin + langPath(l, path) }))
           .concat([{ lang: 'x-default', href: origin + langPath(DEFAULT_LANG, path) }]),
+        // 中身が最後に変わった日 (scripts/gen-lastmod.mjs が git から作る)
+        lastmod: LASTMOD[path] || null,
       });
     }
   }

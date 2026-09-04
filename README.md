@@ -63,8 +63,10 @@ node scripts/check-booking-route.mjs   # 「予約」ラベルが予約先へ行
 node scripts/check-seo.mjs             # title/desc の幅と重複・h1・alt・到達クリック数・旧URL の 301
 node scripts/check-legacy.mjs          # 旧サーバにしか無い資産 (客室テレビの館内案内 /gensuiro/)
 node scripts/check-fonts.mjs           # 出ている字が部分集合に入っているか + 配信物の sha256
+node scripts/check-mobile.mjs          # 69 URL × 4 端末。横あふれ・当たり判定・縦スワイプ・入力欄・文字・画像
                                        # --full を付けると旧サイトを巡回して全 URL を突合
 node scripts/gen-content-data.mjs      # 構造化データの材料を本文から作り直す (FAQ を足したら必ず)
+node scripts/gen-lastmod.mjs           # sitemap の lastmod を git から作り直す (中身を変えたら必ず)
 ./scripts/check-parity.sh              # Pages 版と本文が一致するか。Pages を畳んだら消す
 ```
 
