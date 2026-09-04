@@ -87,7 +87,16 @@ export default {
     try {
       visitorScheme = JSON.parse(request.headers.get('cf-visitor') || '{}').scheme || '';
     } catch { /* ヘッダが無い / 壊れている場合は無視 */ }
-    if (url.protocol === 'http:' && visitorScheme !== 'https' && !isLocal) {
+    // ⚠ 客室テレビの館内案内 (/gensuiro) だけは **http のまま通す**。
+    //   テレビは Basic 認証の資格情報を `http://gensuirou.com` の生成元に
+    //   保存しており、https へ転送すると **別の生成元になって資格情報が
+    //   使えなくなる**。結果 401 が返り続け、キオスクの WebView は
+    //   ログイン画面を出せないので画面が真っ黒になる。
+    //   実測 (2026-09-04): 客室テレビは 401 だけを受け続け、1 台が 1 日で
+    //   13,243 回再試行していた。同じ時刻にスタッフの PC は 200 で見えている。
+    //   移管前と同じ経路 (http) に戻すのが、テレビ側を触らずに直す唯一の道。
+    if (url.protocol === 'http:' && visitorScheme !== 'https' && !isLocal
+        && !isLegacyGuide(url.pathname)) {
       return new Response(null, {
         status: 301,
         headers: {
@@ -144,7 +153,8 @@ export default {
     if (isLegacyGuide(p)) {
       const relayed = await fetchLegacy(request, p + url.search);
       if (relayed) {
-        relayed.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+        // ⚠ HSTS を付けない。付けると次からブラウザが自分で https に上げてしまい、
+        //   保存済みの資格情報 (http の生成元) が使えなくなる。
         return relayed;
       }
       // 旧サーバが答えない。404 を返すと「ページが無い」と見えるので 502 にする。
