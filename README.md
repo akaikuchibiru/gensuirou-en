@@ -64,6 +64,7 @@ node scripts/check-seo.mjs             # title/desc の幅と重複・h1・alt�
 node scripts/check-legacy.mjs          # 旧サーバにしか無い資産 (客室テレビの館内案内 /gensuiro/)
 node scripts/check-fonts.mjs           # 出ている字が部分集合に入っているか + 配信物の sha256
 node scripts/check-mobile.mjs          # 69 URL × 4 端末。横あふれ・当たり判定・縦スワイプ・入力欄・文字・画像
+node scripts/check-tv.mjs             # 客室テレビの館内案内 (/gensuiro/)。1 画面・ロゴ・折り返し・写真の上の可読性
                                        # --full を付けると旧サイトを巡回して全 URL を突合
 node scripts/gen-content-data.mjs      # 構造化データの材料を本文から作り直す (FAQ を足したら必ず)
 node scripts/gen-lastmod.mjs           # sitemap の lastmod を git から作り直す (中身を変えたら必ず)
