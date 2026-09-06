@@ -18,7 +18,7 @@ import { chromium } from 'playwright-core';
 import { PNG } from 'pngjs';
 
 const BASE = process.argv[2] || 'https://gensuirou.com';
-const BGS = 6;
+const BGS = 10;  // 夜 5 + 昼 5 (tv-guide.js の PHOTOS と同数)
 const lin = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
 const lum = (r, g, b) => 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
 const ratio = (a, b) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
