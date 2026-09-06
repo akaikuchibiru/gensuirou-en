@@ -92,9 +92,12 @@ markup doesn't break, but it renders `display: none`.
 
 ## Motion
 
-Three primitives, no more: `hero-entrance` (one orchestrated rise), `image-bloom` (hover,
-`@media (hover: hover)` only), `rule-draw`. Scroll reveal is opacity-only — content should
-*be there*, not arrive. Everything collapses under `prefers-reduced-motion: reduce`.
+Four primitives, no more: `hero-entrance` (one orchestrated rise), `image-bloom` (hover,
+`@media (hover: hover)` only), `rule-draw`, and `ken-burns` (page-hero photographs drift
+in by 6% over 26s, alternate — transform-only, so CLS stays 0; added 2026-09-06 on the
+owner's request for a page that breathes). Scroll reveal is opacity plus a 10px settle —
+10px is the ceiling: content settles into place, it does not travel. Everything collapses
+under `prefers-reduced-motion: reduce`.
 
 Easings: `--ease-out` / `--ease-in` / `--ease-in-out`. Never the browser default.
 

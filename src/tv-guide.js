@@ -99,6 +99,12 @@ export function tvGuide() {
   .bg{position:fixed;top:0;right:0;bottom:0;left:0;z-index:0;
       background-position:center;background-size:cover;background-repeat:no-repeat;
       opacity:0;transition:opacity 2.8s ease}
+  /* 写真がゆっくり寄る (40 秒で 5%、往復)。2 層で位相をずらすので、
+     入れ替わるたびに違う寄り方に見える。?bg=N 固定 (検査・プレビュー) では
+     body.pin が付き、画素が決定的になるよう止める。 */
+  @keyframes kb{from{transform:scale(1)}to{transform:scale(1.05)}}
+  body:not(.pin) .bg{animation:kb 40s ease-in-out alternate infinite}
+  body:not(.pin) #bgB{animation-delay:-20s}
   /* 幕。上下の帯に文字が載るので濃く、中央は写真を見せる。 */
   .veil{position:fixed;top:0;right:0;bottom:0;left:0;z-index:1;background:
     linear-gradient(180deg, rgba(8,7,6,.94) 0%, rgba(8,7,6,.52) 15%, rgba(8,7,6,0) 30%),
@@ -299,6 +305,7 @@ export function tvGuide() {
   }
   function mark(i){ document.body.setAttribute('data-bg', String(i)); document.body.setAttribute('data-ready', '1'); }
   if (pin !== undefined) {
+    document.body.className += ' pin';
     var i = Math.min(parseInt(pin, 10) || 0, PHOTOS.length - 1);
     A.style.transition = 'none';
     load(A, PHOTOS[i], function(err){ if (!err) A.style.opacity = 1; mark(i); });
