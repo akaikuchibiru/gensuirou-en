@@ -135,6 +135,12 @@ if (nf.status !== 404) ng(`/en/no-such-page status=${nf.status}`);
 else {
   const l = attr(nf.body, /<html[^>]*\blang="([^"]*)"/i);
   l === 'en' ? ok('/en/no-such-page → 404 かつ lang=en') : ng(`/en の 404 が lang=${l}`);
+  // lang 属性だけでなく title も。本文は data-lang の span で出し分けられるが
+  // <title> は span を持てず、日本語固定に戻りやすい (2026-09-07 に実際に戻っていた)。
+  const t = attr(nf.body, /<title>([^<]*)<\/title>/i) || '';
+  /[a-z]/i.test(t) && !/[ぁ-んァ-ン]/.test(t)
+    ? ok(`/en の 404 title が英語 (${t.slice(0, 30)})`)
+    : ng(`/en の 404 title が日本語のまま: ${t.slice(0, 40)}`);
 }
 const strip = head(BASE + '/en/assets/site.css');
 [200, 301].includes(strip) ? ok(`/en/assets/site.css → ${strip} (接頭辞を外して救済)`) : ng(`/en/assets/site.css → ${strip}`);
