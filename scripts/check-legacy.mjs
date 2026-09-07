@@ -100,6 +100,22 @@ for (const path of ['/gensuiro/', '/gensuiro']) {
   a === b && b ? ok('WWW-Authenticate が旧サーバと同一', JSON.stringify(b)) : bad('WWW-Authenticate', `new=${JSON.stringify(a)} old=${JSON.stringify(b)}`);
 }
 
+// ── 1.5 Let's Encrypt の HTTP-01 中継 ────────────────────────
+// Plesk の証明書自動更新は /.well-known/acme-challenge/ を apex で検証する。
+// 中継が外れると 10 月の更新が黙って失敗し、11/15 に webmail の TLS が切れる。
+// トークンは検証中しか存在しないので、無作為な token が「旧サーバと同じ 404」で
+// 返ることを見る (こちらの 404 ページや 301 が返ったら配線が外れている)。
+{
+  const token = '/.well-known/acme-challenge/probe-' + process.pid + '-' + Date.now();
+  const [now, was] = await Promise.all([
+    head(SITE.replace('https:', 'http:') + token),
+    head(ORIGIN + token, { host: 'gensuirou.com' }),
+  ]);
+  now.status === was.status && now.status === 404
+    ? ok('acme-challenge が旧サーバへ中継されている (http で 404 一致)')
+    : bad('acme-challenge 中継', `new=${now.status} old=${was.status}`);
+}
+
 // ── 2. 旧ページから参照が残っているアセット ──────────────────
 // 新サイトには無い。旧サーバから取れていないと、旧 URL を開いた人の画面が崩れる。
 const ASSETS = [

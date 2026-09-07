@@ -96,6 +96,21 @@ export default {
     //   実測 (2026-09-04): 客室テレビは 401 だけを受け続け、1 台が 1 日で
     //   13,243 回再試行していた。同じ時刻にスタッフの PC は 200 で見えている。
     //   移管前と同じ経路 (http) に戻すのが、テレビ側を触らずに直す唯一の道。
+    // ── Let's Encrypt の HTTP-01 検証を旧サーバへ中継 ──
+    //
+    // 旧サーバ (WADAX/Plesk) は gensuirou.com の証明書を HTTP-01 で自動更新して
+    // いるが、apex が Cloudflare に移った 2026-08-25 以降、検証リクエストは
+    // ここに来る。中継しないと 2026-10 中旬の更新が失敗し、webmail / mail の
+    // TLS が 2026-11-15 で切れる (スタッフの予約メール環境が壊れる)。
+    // この 1 プレフィックスだけを旧サーバへ通せば、Plesk 側は何も変えずに済む。
+    // GET/HEAD 限定。トークンは使い捨てなので露出リスクはない。
+    if (url.pathname.startsWith('/.well-known/acme-challenge/')
+        && (request.method === 'GET' || request.method === 'HEAD')) {
+      const relayed = await fetchLegacy(request, url.pathname);
+      if (relayed) return relayed;
+      return new Response('acme relay: origin unreachable\n', { status: 502, headers: { 'Cache-Control': 'no-store' } });
+    }
+
     if (url.protocol === 'http:' && visitorScheme !== 'https' && !isLocal
         && !isLegacyGuide(url.pathname)) {
       return new Response(null, {
