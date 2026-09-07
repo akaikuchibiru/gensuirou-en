@@ -346,9 +346,19 @@ function canonicalPath(p) {
 
 /** 404。ステータスは必ず 404 にする。
  *  ASSETS から 200 で取った 404.html をそのまま返すと soft-404 になる。 */
+// 404.html の <title> は静的に日本語なので、言語ごとに差し替える。
+// 本文は data-ja/en/zh の span で出し分け済みだが、title は span を持てない
+// (2026-09-07: /en の 404 でタブと検索結果だけ日本語になっていた)。
+const TITLE_404 = {
+  ja: 'ページが見つかりません ｜ 源翠瓏',
+  en: 'Page not found | Gensuirou',
+  zh: '页面未找到 ｜ 源翠瓏',
+};
 async function serve404(env, origin, lang) {
   const res = await env.ASSETS.fetch(new URL('/404.html', origin));
-  const out = localizeShell(res, { lang });
+  const out = new HTMLRewriter()
+    .on('title', { element(el) { el.setInnerContent(TITLE_404[lang] || TITLE_404.ja); } })
+    .transform(localizeShell(res, { lang }));
   return new Response(out.body, {
     status: 404,
     headers: new Headers(out.headers),

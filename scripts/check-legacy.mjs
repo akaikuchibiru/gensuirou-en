@@ -35,7 +35,12 @@ async function head(url, { host, auth, follow = false } = {}) {
   if (host) args.push('-H', `Host: ${host}`);
   if (auth) args.push('-H', `Authorization: ${auth}`);
   args.push(url);
-  const { stdout } = await run('curl', args, { maxBuffer: 8 << 20 });
+  // curl は本文の途中で時間切れ (exit 28) になっても headers は吐いている。
+  // 32MB の動画をヘッダ確認のために全量落とす作りだったので、旧サーバが
+  // 遅い日にここで検査ごと墜落した (2026-09-07)。status が取れていれば使う。
+  let stdout;
+  try { ({ stdout } = await run('curl', args, { maxBuffer: 8 << 20 })); }
+  catch (e) { stdout = e && e.stdout ? String(e.stdout) : ''; if (!/^HTTP\//.test(stdout)) throw e; }
   const code = Number(stdout.slice(stdout.lastIndexOf('__CODE__') + 8).trim());
   const headers = {};
   let status = 0;
