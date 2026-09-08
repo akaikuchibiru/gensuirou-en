@@ -22,6 +22,10 @@ import { renderArticle, renderJournalIndex } from './journal.js';
 import { enquiryEnabled, handleEnquiry } from './enquiry.js';
 import { fetchLegacy, isLegacyAsset, isLegacyGuide } from './legacy.js';
 import { tvGuide } from './tv-guide.js';
+import { ROOM_PHOTOS } from './room-photos.js';
+
+// IndexNow (Bing / Naver 等への URL 通知) のキー。公開仕様なので secret ではない。
+const INDEXNOW_KEY = '10673798367d7df03fc9c3df29cef4cd';
 
 // ── CSP ──
 // まだ Report-Only。エッジで注入されるものはローカルに出ないので
@@ -230,6 +234,16 @@ export default {
     if (p === '/robots.txt') return harden(robots(url.origin, host), host);
     if (p === '/sitemap.xml') return harden(sitemap(url.origin), host);
 
+    // ── IndexNow のキー確認ファイル ──
+    // Bing / Naver 等はこのプロトコルでログイン不要の URL 通知を受ける。
+    // キーは公開が前提の仕様 (所有確認はこのファイルの応答で行う)。
+    // 通知の送信は scripts/indexnow.mjs (中身を変えて deploy したら回す)。
+    if (p === `/${INDEXNOW_KEY}.txt`) {
+      return new Response(INDEXNOW_KEY + '\n', {
+        headers: { 'Content-Type': 'text/plain; charset=UTF-8', 'Cache-Control': 'public, max-age=86400' },
+      });
+    }
+
     // ── 言語別ページ ──
     const route = parsePath(p);
     if (route && route.strip) {
@@ -375,20 +389,31 @@ function robots(origin, host) {
   });
 }
 
+/** sitemap に載せる画像。**そのページに実際に出ている写真だけ** (og と、
+ *  客室ページは掲載ギャラリー全枚)。出ていない画像を足すと Google は
+ *  リストごと信用しなくなる。 */
+function sitemapImages(path) {
+  const list = [PAGES[path] && PAGES[path].og].filter(Boolean);
+  const m = path.match(/^\/rooms\/([a-z_]+)$/);
+  if (m && ROOM_PHOTOS[m[1]]) list.push(...ROOM_PHOTOS[m[1]]);
+  return [...new Set(list)];
+}
+
 function sitemap(origin) {
   // 言語別 URL を全部載せ、各 URL に相互の hreflang を付ける。
   // 片方向だけだと Google は言語クラスタとして扱わない。
-  const urls = allUrls(origin).map(({ loc, alts, lastmod }) =>
+  const urls = allUrls(origin).map(({ path, loc, alts, lastmod }) =>
     `  <url>\n    <loc>${loc}</loc>\n` +
     // lastmod は **中身を作っているファイルが最後に変わった日** (git 由来)。
     // deploy 日を入れると毎回「更新した」ことになり、そのうち無視される。
     (lastmod ? `    <lastmod>${lastmod}</lastmod>\n` : '') +
-    alts.map((a) => `    <xhtml:link rel="alternate" hreflang="${a.lang}" href="${a.href}"/>`).join('\n') +
+    alts.map((a) => `    <xhtml:link rel="alternate" hreflang="${a.lang}" href="${a.href}"/>`).join('\n') + '\n' +
+    sitemapImages(path).map((img) => `    <image:image><image:loc>${origin}${img}</image:loc></image:image>`).join('\n') +
     `\n  </url>`,
   ).join('\n');
   const body =
     `<?xml version="1.0" encoding="UTF-8"?>\n` +
-    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n` +
+    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n` +
     urls + `\n</urlset>\n`;
   return new Response(body, {
     headers: { 'Content-Type': 'application/xml; charset=UTF-8', 'Cache-Control': 'public, max-age=3600' },

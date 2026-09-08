@@ -412,6 +412,7 @@ export function allUrls(origin) {
   for (const path of Object.keys(PAGES)) {
     for (const lang of LANGS) {
       out.push({
+        path,
         loc: origin + langPath(lang, path),
         alts: LANGS.map((l) => ({ lang: l, href: origin + langPath(l, path) }))
           .concat([{ lang: 'x-default', href: origin + langPath(DEFAULT_LANG, path) }]),

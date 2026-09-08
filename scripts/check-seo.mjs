@@ -132,6 +132,27 @@ console.log('── 4.5 sitemap の lastmod');
   say(!future.length, future.length ? `未来の日付 ${future.length} 件 (${future[0][2]})` : '未来の日付なし');
   const bad = entries.filter(([, , d]) => d && !/^\d{4}-\d{2}-\d{2}$/.test(d));
   say(!bad.length, bad.length ? `日付の形が不正 ${bad.length} 件` : '日付の形は W3C 準拠');
+
+  // 画像 sitemap (2026-09-08 追加)。namespace が無いと image:loc は全部無視される。
+  say(xml.includes('xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"'),
+    xml.includes('xmlns:image') ? '画像 namespace あり' : '画像 namespace が無い (image:loc が全部無視される)');
+  const imgs = [...new Set([...xml.matchAll(/<image:loc>([^<]+)<\/image:loc>/g)].map((m) => m[1]))];
+  say(imgs.length >= 120, `画像 ${imgs.length} 種 (客室 118 枚 + og。119 未満なら欠落を疑う)`);
+  // 実在の抜き取り (全数は check 全体が重くなる。全数検査は追加時に手で 1 回)
+  const sample = [imgs[0], imgs[Math.floor(imgs.length / 2)], imgs[imgs.length - 1]].filter(Boolean);
+  for (const u of sample) {
+    const st = (await fetch(u, { method: 'HEAD' })).status;
+    say(st === 200, `${u.replace(BASE, '')} → ${st}`);
+  }
+}
+
+console.log('── 4.6 IndexNow のキーファイル');
+{
+  const KEY = '10673798367d7df03fc9c3df29cef4cd';
+  const r = await fetch(`${BASE}/${KEY}.txt`);
+  const body = (await r.text()).trim();
+  say(r.status === 200 && body === KEY,
+    r.status === 200 && body === KEY ? 'キーファイル配信 OK' : `キーファイル異常: status=${r.status}`);
 }
 
 console.log('── 5. 画像の alt / 押せる要素の名前');
