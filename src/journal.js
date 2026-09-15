@@ -78,9 +78,9 @@ const T2 = {
     zh: '附桑拿的包场露天温泉',
   },
   lead: {
-    ja: '源翠瓏の貸切露天風呂は、サウナ付きになりました。ご利用は午後三時半から夜九時まで、一回四十分の貸切制。予約優先で、最終のご案内は夜九時です。湯と水風呂のこと、そしてサウナ付きの客室という選択肢までをまとめました。',
-    en: 'Gensuirou’s private open-air bath now comes with a sauna. It is yours in private 40-minute sessions from 15:30 to 21:00 — reservation recommended, with the last entry at 21:00. Here is how it works, along with the villas that have a sauna of their own.',
-    zh: '源翠瓏的包场露天温泉现附带桑拿。开放时间为 15:30 至 21:00，每次包场 40 分钟，采预约优先制，最迟入场 21:00。本文整理其使用方式、水风吕，以及自带桑拿的客房选项。',
+    ja: '源翠瓏の貸切露天風呂は、サウナ付きになりました。ご利用は午後三時半から夜九時まで、一回四十分の貸切制で、最終のご案内は夜九時です。湯と水風呂のこと、そしてサウナ付きの客室という選択肢までをまとめました。',
+    en: 'Gensuirou’s private open-air bath now comes with a sauna. It is yours in private 40-minute sessions from 15:30 to 21:00, with the last entry at 21:00. Here is how it works, along with the villas that have a sauna of their own.',
+    zh: '源翠瓏的包场露天温泉现附带桑拿。开放时间为 15:30 至 21:00，每次包场 40 分钟，最迟入场 21:00。本文整理其使用方式、水风吕，以及自带桑拿的客房选项。',
   },
   how: { ja: 'ご利用のかたち', en: 'How it works', zh: '使用方式' },
   howBody: {
