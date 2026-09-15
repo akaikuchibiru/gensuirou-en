@@ -28,5 +28,6 @@ export const LASTMOD = {
  "/rooms/zen": "2026-09-15",
  "/rooms/sou": "2026-09-15",
  "/journal": "2026-09-15",
+ "/journal/private-sauna-bath": "2026-09-15",
  "/journal/choosing-your-villa": "2026-09-15"
 };
