@@ -92,14 +92,14 @@ export const FAQ = [
   },
   {
     "q": {
-      "ja": "貸切露天大浴場・サウナの利用は？",
-      "en": "How do I use the private outdoor bath & sauna?",
-      "zh": "包场大浴场与桑拿如何使用？"
+      "ja": "サウナ付き貸切露天風呂の利用は？",
+      "en": "How do I use the private open-air bath with sauna?",
+      "zh": "附桑拿的包场露天温泉如何使用？"
     },
     "a": {
-      "ja": "朝 7:30 〜 夜 21:00、いずれも貸切でご案内しております。檜のサウナルームは 1 回 40 分・無料。貸切露天岩風呂「月光桜の湯」の利用期間は 3 月〜11 月末で、天候等により利用できない場合がございます。予約優先・最終のご案内は 21:00、一日の枠には限りがございます。",
-      "en": "Both are reserved for private use, 07:30–21:00. The hinoki sauna is 40 minutes per session, free of charge. The open-air rock bath Gekkou Sakura no Yu is available March to the end of November and may be closed in poor weather. Reservation is recommended, the last slot is 21:00, and daily slots are limited.",
-      "zh": "早上 7:30 至晚间 21:00，均以包场方式提供。桧木桑拿每次 40 分钟、免费。露天岩浴「月光樱之汤」开放期间为 3 月至 11 月底，遇天候不佳时可能停止使用。采预约优先制，最迟 21:00，每日名额有限。"
+      "ja": "15:30 〜 21:00、1 回 40 分の貸切でご案内しております。予約優先・最終のご案内は 21:00、一日の枠には限りがございます。貸切露天岩風呂「月光桜の湯」の利用期間は 3 月〜11 月末で、天候等により利用できない場合がございます。",
+      "en": "The private open-air bath with sauna is available 15:30–21:00 in private 40-minute sessions. Reservation is recommended, the last entry is 21:00, and daily slots are limited. The open-air rock bath Gekkou Sakura no Yu is available March to the end of November and may be closed in poor weather.",
+      "zh": "附桑拿的包场露天温泉开放时间为 15:30 至 21:00，每次包场 40 分钟。采预约优先制，最迟入场 21:00，每日名额有限。露天岩浴「月光樱之汤」开放期间为 3 月至 11 月底，遇天候不佳时可能停止使用。"
     }
   },
   {

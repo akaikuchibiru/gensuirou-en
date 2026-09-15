@@ -113,15 +113,15 @@ const BASE_PAGES = {
     nav: { ja: '温泉', en: 'Onsen', zh: '温泉' },
     ja: {
       title: '温泉 Onsen ｜ 源翠瓏 - 阿蘇の地下1000mから湧く天然温泉',
-      desc: '源翠瓏の温泉は、阿蘇の地下1000mから湧くアルカリ性単純温泉（pH 8.0）の源泉かけ流し。全12棟の露天風呂に加え、貸切露天大浴場「月光桜の湯」と檜のサウナもございます。',
+      desc: '源翠瓏の温泉は、阿蘇の地下1000mから湧くアルカリ性単純温泉（pH 8.0）の源泉かけ流し。全12棟の露天風呂に加え、サウナ付き貸切露天風呂「月光桜の湯」もございます。',
     },
     en: {
       title: 'Onsen | Gensuirou — Natural Hot Spring from 1,000 m Below Aso',
-      desc: 'Gensuirou’s natural hot spring is drawn from 1,000 m below Aso — an alkaline simple spring (pH 8.0), served free-flowing from the source in all twelve villa baths, the private bath house Gekko-Sakura no Yu and a hinoki sauna.',
+      desc: 'Gensuirou’s natural hot spring is drawn from 1,000 m below Aso — an alkaline simple spring (pH 8.0), served free-flowing from the source in all twelve villa baths and the private open-air bath with sauna, Gekko-Sakura no Yu.',
     },
     zh: {
       title: '温泉 ｜ 源翠瓏 — 涌自阿苏地下 1,000 米的天然温泉',
-      desc: '源翠瓏的天然温泉取自阿苏地下 1,000 米，为碱性单纯泉（pH 8.0）源泉放流。除全 12 栋的专属露天温泉外，另有包场大浴场「月光樱之汤」与桧木桑拿。',
+      desc: '源翠瓏的天然温泉取自阿苏地下 1,000 米，为碱性单纯泉（pH 8.0）源泉放流。除全 12 栋的专属露天温泉外，另有附桑拿的包场露天温泉「月光樱之汤」。',
     },
   },
   '/facilities': {
@@ -130,16 +130,16 @@ const BASE_PAGES = {
     // (ズレは scripts/check-schema.mjs が描画結果と突き合わせて検出する)
     nav: { ja: '施設', en: 'Facilities', zh: '设施' },
     ja: {
-      title: '施設紹介｜源翠瓏 - 貸切露天大浴場・サウナ・ボディケア',
-      desc: '源翠瓏の館内施設。貸切露天大浴場「月光桜の湯」（3月〜11月末）、檜のサウナルーム（1回40分・無料）、ボディケア。いずれも朝7:30〜夜21:00に貸切でご案内しています。',
+      title: '施設紹介｜源翠瓏 - サウナ付き貸切露天風呂・ボディケア',
+      desc: '源翠瓏の館内施設。サウナ付き貸切露天風呂「月光桜の湯」（3月〜11月末）とボディケア。15:30〜21:00、1回40分の貸切でご案内しています。',
     },
     en: {
-      title: 'Facilities | Gensuirou — Open-Air Bath House, Sauna, Body Care',
-      desc: 'Facilities at Gensuirou: the private open-air bath house Gekko-Sakura no Yu (March to end of November), a hinoki sauna (40 minutes per session, free) and body care — all reserved for private use, 07:30–21:00.',
+      title: 'Facilities | Gensuirou — Open-Air Bath with Sauna, Body Care',
+      desc: 'Facilities at Gensuirou: the private open-air bath with sauna, Gekko-Sakura no Yu (March to end of November), and body care — private 40-minute sessions, 15:30–21:00.',
     },
     zh: {
-      title: '馆内设施 ｜ 源翠瓏 — 包场露天大浴场・桑拿・身体护理',
-      desc: '源翠瓏的馆内设施。包场露天大浴场「月光樱之汤」（3 月至 11 月底）、桧木桑拿（每次 40 分钟・免费）、身体护理。均以包场方式提供，7:30〜21:00。',
+      title: '馆内设施 ｜ 源翠瓏 — 附桑拿的包场露天温泉・身体护理',
+      desc: '源翠瓏的馆内设施。附桑拿的包场露天温泉「月光樱之汤」（3 月至 11 月底）与身体护理。15:30〜21:00，每次包场 40 分钟。',
     },
   },
   '/access': {

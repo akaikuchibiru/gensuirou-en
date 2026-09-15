@@ -208,14 +208,10 @@ export function tvGuide() {
     <section class="card">
       <h2>お風呂とサウナ<span>BATHS &amp; SAUNA</span></h2>
       <div class="row">
-        <div class="k">貸切露天大浴場<br>「月光桜の湯」<span>PRIVATE OPEN-AIR BATH</span></div>
-        <div class="v">7:30 – 21:00<span>貸切・予約優先／最終 21:00<br>Reserved for private use</span></div>
+        <div class="k">サウナ付き<br>貸切露天風呂<span>PRIVATE OPEN-AIR BATH WITH SAUNA</span></div>
+        <div class="v">15:30 – 21:00<span>1 回 40 分・予約優先／最終案内 21:00<br>40 min per session / last entry 21:00</span></div>
       </div>
-      <div class="row">
-        <div class="k">檜のサウナ<span>HINOKI SAUNA</span></div>
-        <div class="v">1 回 40 分・無料<span>40 minutes, free of charge</span></div>
-      </div>
-      <p class="note">月光桜の湯のご利用期間は 3 月〜11 月末です。天候によりご利用いただけない場合がございます。
+      <p class="note">貸切露天岩風呂「月光桜の湯」のご利用期間は 3 月〜11 月末です。天候によりご利用いただけない場合がございます。
         <em>The open-air rock bath is available March to late November.</em></p>
     </section>
 

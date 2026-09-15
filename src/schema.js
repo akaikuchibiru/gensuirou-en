@@ -50,9 +50,9 @@ const SAME_AS = [
 
 // 施設ページに書いてあるものだけ。
 const AMENITIES = {
-  ja: ['全室露天風呂付き', '貸切露天大浴場「月光桜の湯」', 'サウナ', 'ボディケア'],
-  en: ['Private open-air onsen in every villa', 'Reservable open-air bath house', 'Sauna', 'Body care'],
-  zh: ['每栋皆设专属露天温泉', '可包场的露天大浴场「月光樱之汤」', '桑拿', '身体护理'],
+  ja: ['全室露天風呂付き', 'サウナ付き貸切露天風呂「月光桜の湯」', 'ボディケア'],
+  en: ['Private open-air onsen in every villa', 'Private open-air bath with sauna', 'Body care'],
+  zh: ['每栋皆设专属露天温泉', '附桑拿的包场露天温泉「月光樱之汤」', '身体护理'],
 };
 
 const HOTEL_ID = (o) => o + '/#hotel';
