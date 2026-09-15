@@ -398,6 +398,22 @@ export function localizePage(res, { lang, path, origin, host, enquiry, sitekey }
     rw = rw.on('[data-enquiry="form"]', { element: (el) => el.remove() });
   }
 
+  // ── モバイルの予約 CTA (狭い幅だけ、site.css の .mcta) ──
+  // 65% がモバイルで、成約ページは /reservation (2026-09-03 実測で最多表示)。
+  // 深い階層 (客室詳細・読み物) からワンタップで戻れる導線を全ページに置く。
+  // /reservation 自身には出さない (そこが行き先なので)。
+  // 注入済みの HTML は rewriter の言語処理を通らないので、ラベルはこの場で
+  // lang に合わせて確定させる (data-span を残すと 3 言語ぶん出てしまう)。
+  if (path !== '/reservation') {
+    const label = { ja: 'ご予約', en: 'Reserve', zh: '预约' }[lang] || 'ご予約';
+    rw = rw.on('body', {
+      element: (el) => el.append(
+        `<a class="mcta" href="${langPath(lang, '/reservation')}">${label}</a>`,
+        { html: true },
+      ),
+    });
+  }
+
   return withLang(rw.transform(res), lang);
 }
 

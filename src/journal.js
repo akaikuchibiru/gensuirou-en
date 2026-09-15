@@ -69,8 +69,77 @@ const T = {
   seeRoom: { ja: '詳しく見る', en: 'See the villa', zh: '查看客房' },
 };
 
+// ── サウナ付き貸切露天風呂の記事 (2026-09-13 の営業形態変更を受けて) ──
+// 数字はすべて施設・温泉・FAQ ページの掲載どおり。ここで新しい数字を作らない。
+const T2 = {
+  title: {
+    ja: 'サウナ付き貸切露天風呂のご案内',
+    en: 'The private open-air bath with sauna',
+    zh: '附桑拿的包场露天温泉',
+  },
+  lead: {
+    ja: '源翠瓏の貸切露天風呂は、サウナ付きになりました。ご利用は午後三時半から夜九時まで、一回四十分の貸切制。予約優先で、最終のご案内は夜九時です。湯と水風呂のこと、そしてサウナ付きの客室という選択肢までをまとめました。',
+    en: 'Gensuirou’s private open-air bath now comes with a sauna. It is yours in private 40-minute sessions from 15:30 to 21:00 — reservation recommended, with the last entry at 21:00. Here is how it works, along with the villas that have a sauna of their own.',
+    zh: '源翠瓏的包场露天温泉现附带桑拿。开放时间为 15:30 至 21:00，每次包场 40 分钟，采预约优先制，最迟入场 21:00。本文整理其使用方式、水风吕，以及自带桑拿的客房选项。',
+  },
+  how: { ja: 'ご利用のかたち', en: 'How it works', zh: '使用方式' },
+  howBody: {
+    ja: '一回四十分、完全な貸切でご案内しています。ご利用時間は午後三時半から夜九時まで、最終のご案内は夜九時。一日の枠には限りがあるため、予約優先です。ご到着の際、フロントでお申し付けください。',
+    en: 'Each session is 40 minutes, entirely private. Hours run from 15:30 to 21:00, with the last entry at 21:00. Daily slots are limited, so reservation is recommended — just ask at the front desk when you arrive.',
+    zh: '每次 40 分钟、完全包场。开放时间为 15:30 至 21:00，最迟入场 21:00。每日名额有限，采预约优先制，抵达时向前台预约即可。',
+  },
+  water: { ja: '湯と水風呂', en: 'The water', zh: '汤与水风吕' },
+  waterBody: {
+    ja: 'お湯は阿蘇の地下一〇〇〇メートルから湧くアルカリ性単純温泉（pH 8.0）の源泉かけ流し。サウナのあとには水風呂があります。貸切露天岩風呂「月光桜の湯」のご利用期間は三月から十一月末で、天候によりご利用いただけない日もあります。',
+    en: 'The spring is drawn from 1,000 m below Aso — an alkaline simple spring (pH 8.0), served free-flowing from the source. A cold plunge waits after the sauna. The open-air rock bath Gekkou Sakura no Yu is open March to the end of November and may close in poor weather.',
+    zh: '温泉取自阿苏地下 1,000 米，为碱性单纯泉（pH 8.0）源泉放流。桑拿之后设有水风吕。露天岩浴「月光樱之汤」开放期间为 3 月至 11 月底，遇天候不佳时可能停止使用。',
+  },
+  rooms: { ja: '客室のサウナという選択肢', en: 'Villas with their own sauna', zh: '自带桑拿的客房' },
+  roomsBody: {
+    ja: '十二棟すべての客室に露天風呂が付いているので、貸切露天風呂は「もうひとつの湯」としてお使いいただけます。お部屋から出ずにサウナを楽しみたい方には、サウナ付きの客室もございます。',
+    en: 'Every one of the twelve villas has its own open-air bath, so the shared bath is best thought of as a second bath. If you would rather not leave your villa at all, some villas have a sauna of their own.',
+    zh: '十二栋客房皆设专属露天温泉，包场露天温泉可作为「另一处汤池」使用。若想足不出户享受桑拿，亦有自带桑拿的客房。',
+  },
+  reserve: {
+    ja: 'ご宿泊のご予約はこちらから。',
+    en: 'To book your stay, see the reservation page.',
+    zh: '住宿预约请见预约页面。',
+  },
+  reserveLabel: { ja: 'ご予約ページへ', en: 'Reservation page', zh: '前往预约页面' },
+};
+
+function renderSaunaBath() {
+  const saunaRooms = ROOM_ORDER.filter((s) => /サウナ/.test(ROOMS[s].bath.ja));
+  const roomLinks = saunaRooms
+    .map((s) => `<a href="rooms/${s}.html">${esc(ROOMS[s].kanji)} ${esc(ROOMS[s].roman)}</a>`)
+    .join('・');
+  return `
+    <section class="block anim">
+      <div class="section-title"><h2>${spans(T2.how)}</h2></div>
+      <p>${spans(T2.howBody)}</p>
+    </section>
+    <section class="block anim">
+      <div class="section-title"><h2>${spans(T2.water)}</h2></div>
+      <p>${spans(T2.waterBody)}</p>
+    </section>
+    <section class="block anim">
+      <div class="section-title"><h2>${spans(T2.rooms)}</h2></div>
+      <p>${spans(T2.roomsBody)}</p>
+      ${roomLinks ? `<p class="jl-group">${roomLinks}</p>` : ''}
+      <p>${spans(T2.reserve)} <a href="reservation.html">${spans(T2.reserveLabel)}</a></p>
+    </section>`;
+}
+
 /** 記事の一覧。新しいものを先頭に。 */
 export const ARTICLES = [
+  {
+    slug: 'private-sauna-bath',
+    date: '2026-09-15',
+    title: T2.title,
+    lead: T2.lead,
+    og: '/assets/facilities_main.jpg',
+    render: renderSaunaBath,
+  },
   {
     slug: 'choosing-your-villa',
     date: '2026-08-25',
@@ -97,7 +166,7 @@ export function journalPageMeta() {
   for (const a of ARTICLES) {
     out[`${JOURNAL_BASE}/${a.slug}`] = {
       journal: a.slug,
-      og: '/assets/onsen_main.jpg',
+      og: a.og || '/assets/onsen_main.jpg',
       published: a.date,
       nav: a.title,
       ja: { title: `${a.title.ja} ｜ 源翠瓏`, desc: a.lead.ja.slice(0, 150) },
