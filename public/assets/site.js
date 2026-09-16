@@ -16,6 +16,28 @@ var GS_ORDER = ['ja', 'en', 'zh'];
 // Google 翻訳が書き換えるので当てにしない。
 var GS = { lang: document.documentElement.getAttribute('data-srv')
                  || document.documentElement.getAttribute('lang') || 'ja' };
+
+// ── 流入元の初回タッチ記録 (全ページ) ──
+// 外部サービスも cookie も使わず、このセッションで最初に着地したページと
+// リファラのホストだけを sessionStorage に覚える。別ページに着地してから
+// トップのフォームへ移動しても、真の入口が残る (2026-09-16、計測ゼロの是正)。
+(function(){
+  try {
+    var s = sessionStorage.getItem('gs_src');
+    if(s){ window.GS_TOUCH = JSON.parse(s); return; }
+  } catch(e){}
+  var src = 'direct', land = location.pathname;
+  try {
+    var utm = new URL(location.href).searchParams.get('utm_source');
+    if(utm) src = 'utm:' + utm.slice(0, 40);
+    else if(document.referrer){
+      var rh = new URL(document.referrer).host;
+      if(rh && rh !== location.host) src = rh;
+    }
+  } catch(e){}
+  window.GS_TOUCH = { src: src, land: land };
+  try { sessionStorage.setItem('gs_src', JSON.stringify(window.GS_TOUCH)); } catch(e){}
+})();
 GS.prefix = GS.lang === 'ja' ? '' : '/' + GS.lang;
 
 // クリーンパス → いまの言語での URL。'/' のときだけ接頭辞だけを返す。
@@ -398,12 +420,17 @@ window.addEventListener('scroll', function(){
     try { if(window.turnstile) window.turnstile.reset(); } catch(e){}
   }
 
+  // 流入元は window.GS_TOUCH (site.js 冒頭で全ページ着地時に記録) から読む。
+  var touch = window.GS_TOUCH || { src: 'direct', land: location.pathname };
+
   form.addEventListener('submit', function(e){
     e.preventDefault();
     busy(true);
     say('', '');
     var fd = new FormData(form);
     fd.append('lang', GS.lang);
+    fd.append('source', touch.src);
+    fd.append('landing', touch.land);
     fetch('/api/enquiry', { method:'POST', body: fd, headers:{ 'Accept':'application/json' } })
       .then(function(r){ return r.json().catch(function(){ return { ok:false }; }); })
       .then(function(d){

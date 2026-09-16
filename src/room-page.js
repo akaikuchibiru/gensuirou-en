@@ -211,7 +211,7 @@ export function renderRoomPage(slug) {
            これまで客室ページには予約への導線が本文に 1 つも無く、
            room-nav の 3 つのボタンは全部よそへ行っていた。 -->
       <div class="room-cta">
-        <a class="reserve-btn" href="${BOOKING_URL}" target="_blank" rel="noopener">
+        <a class="reserve-btn" data-book-cta href="${BOOKING_URL}" target="_blank" rel="noopener">
           ${spans({ ja: 'このお部屋の空室・料金を見る', en: 'Check dates and rates', zh: '查看空房与价格' })}
         </a>
         <a class="reserve-btn" href="reservation.html">

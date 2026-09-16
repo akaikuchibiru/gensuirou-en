@@ -21,6 +21,8 @@ CREATE TABLE IF NOT EXISTS enquiries (
   villa       TEXT,                   -- 希望の客室 (slug)
   message     TEXT,
   cf_country  TEXT,                   -- 接続元の国コード。海外からの比率を見るため
+  source      TEXT,                   -- 流入元 (初回リファラのホスト or 'direct')。成約の出所を知る
+  landing     TEXT,                   -- 最初に着地したページのパス。何が入口かを知る
   mail_status TEXT NOT NULL DEFAULT 'pending',  -- pending | sent | failed | disabled
   mail_error  TEXT
 );

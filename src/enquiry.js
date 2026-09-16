@@ -126,6 +126,10 @@ export async function handleEnquiry(request, env, ctx) {
     villa,
     message: get('message'),
     cf_country: (request.cf && request.cf.country) || '',
+    // 流入元。フォームが送ってくる初回リファラのホストと着地ページ。
+    // 値は自由入力ではなくクライアントが組んだ短い文字列だが、念のため長さを切る。
+    source: get('source').slice(0, 120),
+    landing: get('landing').slice(0, 200),
   };
 
   // 同じアドレスからの連投を弾く。二重送信でスタッフに 2 通届くのを防ぐだけで、
@@ -141,11 +145,12 @@ export async function handleEnquiry(request, env, ctx) {
   try {
     await env.DB.prepare(
       `INSERT INTO enquiries
-        (id, created_at, lang, name, email, phone, country, checkin, nights, guests, villa, message, cf_country, mail_status)
-       VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,'pending')`,
+        (id, created_at, lang, name, email, phone, country, checkin, nights, guests, villa, message, cf_country, source, landing, mail_status)
+       VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,'pending')`,
     ).bind(
       rec.id, rec.created_at, rec.lang, rec.name, rec.email, rec.phone, rec.country,
       rec.checkin, rec.nights, rec.guests, rec.villa, rec.message, rec.cf_country,
+      rec.source, rec.landing,
     ).run();
   } catch (e) {
     // 保存できないなら受け付けたと言ってはいけない。
@@ -207,6 +212,8 @@ function notificationBody(rec) {
     ['ご希望の客室', villa],
     ['表示言語', rec.lang],
     ['接続元', rec.cf_country],
+    ['流入元', rec.source],
+    ['入口ページ', rec.landing],
   ].filter(([, v]) => v);
 
   const text = [

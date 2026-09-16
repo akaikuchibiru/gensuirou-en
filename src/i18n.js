@@ -431,6 +431,22 @@ export function localizePage(res, { lang, path, origin, host, enquiry, sitekey }
     });
   }
 
+  // ── 外国語は日本語専用の予約エンジンを出口にしない ──
+  // 2026-09-16 実データ: 問い合わせ 10 件は全部日本語、英語・中国語 0 件。
+  // 原因は予約エンジン sec.489.jp が日本語のみで、外国語ゲストが最後に
+  // 日本語の壁に当たること。英語・中国語では主要 CTA を 3 言語対応の
+  // 問い合わせフォーム (トップの #reserve) へ向ける。電話 (+81) はそのまま。
+  if (lang !== 'ja') {
+    const formUrl = langPath(lang, '/') + '#reserve';
+    rw = rw.on('a[data-book-cta]', {
+      element: (el) => {
+        el.setAttribute('href', formUrl);
+        el.removeAttribute('target');
+        el.removeAttribute('rel');
+      },
+    });
+  }
+
   // ── モバイルの予約 CTA (狭い幅だけ、site.css の .mcta) ──
   // 65% がモバイルで、成約ページは /reservation (2026-09-03 実測で最多表示)。
   // 深い階層 (客室詳細・読み物) からワンタップで戻れる導線を全ページに置く。
