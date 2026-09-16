@@ -39,14 +39,17 @@ const INDEXNOW_KEY = '10673798367d7df03fc9c3df29cef4cd';
 const CSP_DIRECTIVES = [
   "default-src 'self'",
   // Turnstile。api.js を読み、検証は iframe で描画される。
-  "script-src 'self' https://challenges.cloudflare.com",
+  // static.cloudflareinsights.com は Cloudflare Web Analytics のビーコン
+  // (ゾーンで自動注入・cookie なしの集計解析)。強制化前の実測で唯一の違反が
+  // これだったので許可する (2026-09-16、全ページで securitypolicyviolation を走査)。
+  "script-src 'self' https://challenges.cloudflare.com https://static.cloudflareinsights.com",
   // 2026-09-03: フォントを自前ホストの部分集合に移したので、
   // Google のホストは style-src / font-src から外した。
   "style-src 'self' 'unsafe-inline'",
   "font-src 'self'",
   "img-src 'self' data:",
   "media-src 'self'",
-  "connect-src 'self'",
+  "connect-src 'self' https://cloudflareinsights.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",
@@ -64,7 +67,10 @@ function securityHeaders(host) {
     'X-Frame-Options': 'DENY',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
     'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
-    'Content-Security-Policy-Report-Only':
+    // 2026-09-16: Report-Only → 強制。全ページ・全言語を走査して違反が
+    // Cloudflare のビーコン 1 種だけと確認し、それを許可リストに入れてから
+    // 切り替えた。report-uri は残し、強制後も違反を拾い続ける。
+    'Content-Security-Policy':
       CSP_DIRECTIVES.join('; ') + '; report-uri https://' + host + CSP_REPORT_PATH,
   };
 }
