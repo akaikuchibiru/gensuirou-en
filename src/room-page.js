@@ -88,6 +88,23 @@ function neighbours(slug) {
  * 3 言語入りの HTML を組み立てる。この後 localizePage が言語ごとに削る。
  * href は相対で書く (既存ページと同じ)。localizePage が言語接頭辞を付ける。
  */
+// お風呂の記述語の重なりで「近い客室」を選ぶ。定員差で同点を割る。
+// 判定語は各室ページの掲載文そのもの — 特徴を手で分類し直さない。
+const BATH_TRAITS = [/サウナ/, /プール/, /足湯/, /展望/, /桧/, /岩風呂/];
+function similarRooms(slug) {
+  const mine = BATH_TRAITS.map((t) => t.test(ROOMS[slug].bath.ja));
+  return ROOM_ORDER
+    .filter((s) => s !== slug)
+    .map((s) => ({
+      s,
+      share: BATH_TRAITS.reduce((n, t, i) => n + (mine[i] && t.test(ROOMS[s].bath.ja) ? 1 : 0), 0),
+      capDiff: Math.abs(ROOMS[s].capacity - ROOMS[slug].capacity),
+    }))
+    .sort((a, b) => b.share - a.share || a.capDiff - b.capDiff)
+    .slice(0, 3)
+    .map((x) => x.s);
+}
+
 export function renderRoomPage(slug) {
   const r = ROOMS[slug];
   const imgs = roomImages(slug);
@@ -200,6 +217,16 @@ export function renderRoomPage(slug) {
         <a class="reserve-btn" href="reservation.html">
           ${spans({ ja: 'ご予約の方法', en: 'How to book', zh: '预约方式' })}
         </a>
+      </div>
+
+      <!-- 特徴の近い客室。判定語は各室掲載文そのもの (journal と同じ手法)。
+           客室ページは画像検索の着地点なので、行き止まりにしない。 -->
+      <div class="info-grid">
+        <div class="info-block">
+          <h4>${spans({ ja: '特徴の近い客室', en: 'Similar villas', zh: '特色相近的客房' })}</h4>
+          <p class="amenity-list">${similarRooms(slug).map((s) =>
+    `<a href="rooms/${s}.html">${esc(ROOMS[s].kanji)} ${esc(ROOMS[s].roman)}</a>（${spans(ROOMS[s].bath)}）`).join('　')}</p>
+        </div>
       </div>
 
       <div class="room-nav">

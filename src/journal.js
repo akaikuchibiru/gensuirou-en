@@ -108,6 +108,59 @@ const T2 = {
   reserveLabel: { ja: 'ご予約ページへ', en: 'Reservation page', zh: '前往预约页面' },
 };
 
+// ── アクセスの記事 ──
+// 数字はすべて交通アクセスページと FAQ の掲載どおり。所要時間を作らない。
+const T3 = {
+  title: {
+    ja: '熊本空港から十五分 — 源翠瓏へのみちのり',
+    en: 'Fifteen minutes from Kumamoto Airport',
+    zh: '距熊本机场十五分钟',
+  },
+  lead: {
+    ja: '源翠瓏は熊本県阿蘇郡西原村にあります。熊本空港からお車で約十五分、JR熊本駅からは約一時間十五分。飛行機を降りてから湯に浸かるまでが近い宿です。お車とバス、それぞれのみちのりをまとめました。',
+    en: 'Gensuirou stands in Nishihara, Aso, Kumamoto — about fifteen minutes by car from Kumamoto Airport, and about an hour and fifteen minutes from JR Kumamoto Station. Few onsen ryokan are this close to a runway. Here is the way, by car and by bus.',
+    zh: '源翠瓏位于熊本县阿苏郡西原村。从熊本机场驾车约十五分钟，从 JR 熊本站约一小时十五分钟。下飞机后不久便能泡进温泉。本文整理驾车与巴士两种路线。',
+  },
+  car: { ja: 'お車で', en: 'By car', zh: '驾车' },
+  carBody: {
+    ja: '熊本空港からは約十五分。九州道は「益城熊本空港 I.C」が最寄りです。JR熊本駅からは約一時間十五分。所在地は 〒861-2402 熊本県阿蘇郡西原村小森 2113-3。',
+    en: 'From Kumamoto Airport the drive is about fifteen minutes; the nearest expressway exit is Mashiki-Kumamoto-Airport I.C. on the Kyushu Expressway. From JR Kumamoto Station, allow about one hour fifteen minutes. The address is 2113-3 Komori, Nishihara, Aso, Kumamoto 861-2402.',
+    zh: '从熊本机场驾车约十五分钟，高速最近的出口为九州道「益城熊本机场 I.C」。从 JR 熊本站约一小时十五分钟。地址：〒861-2402 熊本县阿苏郡西原村小森 2113-3。',
+  },
+  bus: { ja: 'バスで', en: 'By bus', zh: '巴士' },
+  busBody: {
+    ja: '熊本空港からは産交バス（高森中央行き）で「萌の里」まで約十一分、バス停から徒歩約十分です。JR熊本駅からのバス便もあります。詳しい乗り継ぎは交通アクセスのページをご覧ください。',
+    en: 'From Kumamoto Airport, the Sanko bus bound for Takamori-Chuo reaches the Moe-no-Sato stop in about eleven minutes; from there it is a ten-minute walk. Buses also run from JR Kumamoto Station — see the access page for connections.',
+    zh: '从熊本机场搭乘产交巴士（往高森中央）约十一分钟至「萌之里」站，下车后步行约十分钟。JR 熊本站亦有巴士可达，详细换乘请见交通指引页面。',
+  },
+  arrive: { ja: '着いてから', en: 'On arrival', zh: '抵达之后' },
+  arriveBody: {
+    ja: 'チェックインは 15:30 から（最終 18:00）。サウナ付き貸切露天風呂も 15:30 から動いているので、着いた日の午後からそのまま湯とサウナに向かえます。',
+    en: 'Check-in opens at 15:30 (latest 18:00). The private open-air bath with sauna also starts at 15:30, so the bath is ready from the afternoon you arrive.',
+    zh: '入住时间为 15:30 起（最迟 18:00）。附桑拿的包场露天温泉同样自 15:30 开放，抵达当天下午即可入汤。',
+  },
+  accessLabel: { ja: '交通アクセスの詳細へ', en: 'Full access details', zh: '交通指引详情' },
+  bathLabel: { ja: 'サウナ付き貸切露天風呂のご案内', en: 'The private bath with sauna', zh: '附桑拿的包场露天温泉' },
+};
+
+function renderAccessGuide() {
+  return `
+    <section class="block anim">
+      <div class="section-title"><h2>${spans(T3.car)}</h2></div>
+      <p>${spans(T3.carBody)}</p>
+    </section>
+    <section class="block anim">
+      <div class="section-title"><h2>${spans(T3.bus)}</h2></div>
+      <p>${spans(T3.busBody)}</p>
+      <p><a href="access.html">${spans(T3.accessLabel)}</a></p>
+    </section>
+    <section class="block anim">
+      <div class="section-title"><h2>${spans(T3.arrive)}</h2></div>
+      <p>${spans(T3.arriveBody)}</p>
+      <p><a href="journal/private-sauna-bath.html">${spans(T3.bathLabel)}</a></p>
+    </section>`;
+}
+
 function renderSaunaBath() {
   const saunaRooms = ROOM_ORDER.filter((s) => /サウナ/.test(ROOMS[s].bath.ja));
   const roomLinks = saunaRooms
@@ -132,6 +185,14 @@ function renderSaunaBath() {
 
 /** 記事の一覧。新しいものを先頭に。 */
 export const ARTICLES = [
+  {
+    slug: 'access-from-kumamoto-airport',
+    date: '2026-09-16',
+    title: T3.title,
+    lead: T3.lead,
+    og: '/assets/access_main.jpg',
+    render: renderAccessGuide,
+  },
   {
     slug: 'private-sauna-bath',
     date: '2026-09-15',
