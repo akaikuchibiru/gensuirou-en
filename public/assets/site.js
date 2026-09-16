@@ -321,11 +321,24 @@ window.addEventListener('scroll', function(){
   if(c.saveData || reduce || narrow || slow){ v.classList.add('still'); return; }
 
   // ページの他の読み込みが落ち着いてから入れる。最初の描画と競合させない。
+  // Apple 流: コントロールは絶対に出さない。自動再生が拒否されたら、
+  // ネイティブのコントロールを出す代わりにポスターの ken-burns へ落とし、
+  // 最初のスクロール／タップで一度だけ再生を試みる (拒否が解けることがある)。
   var start = function(){
+    v.controls = false;
     v.src = v.dataset.src;
     v.autoplay = true;
     var p = v.play();
-    if(p && p.catch) p.catch(function(){ v.classList.add('still'); /* 自動再生を拒否されてもポスターが残る */ });
+    if(p && p.catch) p.catch(function(){
+      v.classList.add('still');            // ポスターが動く。黒い停止画にしない
+      var retry = function(){
+        v.play().then(function(){ v.classList.remove('still'); }).catch(function(){});
+        window.removeEventListener('scroll', retry);
+        window.removeEventListener('pointerdown', retry);
+      };
+      window.addEventListener('scroll', retry, { once: true, passive: true });
+      window.addEventListener('pointerdown', retry, { once: true });
+    });
   };
   if(document.readyState === 'complete') start();
   else window.addEventListener('load', function(){ setTimeout(start, 150); });

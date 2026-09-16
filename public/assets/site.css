@@ -458,7 +458,10 @@ body[data-nav-open="true"] { overflow: hidden; }
   min-height: 32rem;
   max-height: 58rem;
 }
-.hero-block video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hero-block video { width: 100%; height: 100%; object-fit: cover; display: block;
+  /* Apple 流: 操作させない。クリックでネイティブのコントロールを呼び出せない
+     ようにして、常に「勝手に静かに流れている」状態を保つ。 */
+  pointer-events: none; }
 /* 動画を読み込まない端末 (モバイル・低速回線・省データ) では、ポスター画像に
    ken-burns を付ける。トップの 65% がモバイルで、静止画のままだと
    「動かないサイト」に見える。通信は 1 バイトも増えない。 */

@@ -27,7 +27,7 @@
          data-src にしておき、site.js が条件を見てから src を入れる。
          ⚠ preload="none" にしても video.load() は無視して読みに行くので、
             「読ませない」は src を後から入れるしかない。 -->
-    <video data-src="/assets/movie/hero.mp4" poster="assets/movie/poster.jpg" preload="none" fetchpriority="high" muted loop playsinline></video>
+    <video data-src="/assets/movie/hero.mp4" poster="assets/movie/poster.jpg" preload="none" fetchpriority="high" muted loop playsinline autoplay controlslist="nodownload noplaybackrate nofullscreen" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
     <div class="overlay"></div>
     <div class="cap">
       <!-- 和文・中文では この塊だけ 縦組みにして 右上から下ろす (site.css)。
