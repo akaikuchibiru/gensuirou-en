@@ -22,7 +22,7 @@
 
 import { jsonLdTag } from './schema.js';
 import { roomPageMeta } from './room-page.js';
-import { journalPageMeta } from './journal.js';
+import { ARTICLES, JOURNAL_BASE, journalPageMeta } from './journal.js';
 import { LASTMOD } from './lastmod.js';
 
 export const LANGS = ['ja', 'en', 'zh'];
@@ -396,6 +396,34 @@ export function localizePage(res, { lang, path, origin, host, enquiry, sitekey }
       });
   } else {
     rw = rw.on('[data-enquiry="form"]', { element: (el) => el.remove() });
+  }
+
+  // ── トップの「読み物」最新 3 件 ──
+  // 記事は ARTICLES が正で、ここはそれを写すだけ。記事を足せばトップも
+  // 自動で変わる (トップを手で更新しない)。カードの見た目は /journal の
+  // 一覧と同じ class を使う。注入 HTML は rewriter の言語処理を通らないので、
+  // この場で lang の文だけを埋める。
+  if (path === '/') {
+    const H = { ja: '読み物', en: 'Journal', zh: '读物' };
+    const MORE = { ja: 'すべての読み物へ', en: 'All journal entries', zh: '查看全部读物' };
+    const cards = ARTICLES.slice(0, 3).map((a) => `
+      <li class="jl-card">
+        <a href="${langPath(lang, `${JOURNAL_BASE}/${a.slug}`)}">
+          <time datetime="${a.date}">${a.date}</time>
+          <h3>${esc(a.title[lang])}</h3>
+          <p>${esc(a.lead[lang])}</p>
+        </a>
+      </li>`).join('');
+    rw = rw.on('[data-journal-latest]', {
+      element: (el) => el.setInnerContent(
+        `<section class="block anim">
+          <div class="section-title"><h2>${esc(H[lang])}</h2></div>
+          <ul class="jl-list">${cards}</ul>
+          <p class="jl-more"><a href="${langPath(lang, JOURNAL_BASE)}">${esc(MORE[lang])}</a></p>
+        </section>`,
+        { html: true },
+      ),
+    });
   }
 
   // ── モバイルの予約 CTA (狭い幅だけ、site.css の .mcta) ──

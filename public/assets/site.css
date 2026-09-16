@@ -459,6 +459,10 @@ body[data-nav-open="true"] { overflow: hidden; }
   max-height: 58rem;
 }
 .hero-block video { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* 動画を読み込まない端末 (モバイル・低速回線・省データ) では、ポスター画像に
+   ken-burns を付ける。トップの 65% がモバイルで、静止画のままだと
+   「動かないサイト」に見える。通信は 1 バイトも増えない。 */
+.hero-block video.still { animation: kenburns 26s var(--ease-in-out) alternate infinite; }
 /* ── ヒーローの遮光 ───────────────────────────────────────────────────
    映像の上の文字は、**明るいフレームが来た瞬間** に消える。実測 (8 フレーム):
    遮光を敷く前は 見出し 1.35:1 / 小見出し 1.15:1 — ほぼ見えない。

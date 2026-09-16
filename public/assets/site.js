@@ -315,14 +315,17 @@ window.addEventListener('scroll', function(){
   var slow = ['slow-2g','2g','3g'].indexOf(c.effectiveType) >= 0;
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var narrow = window.matchMedia('(max-width: 48rem)').matches;
-  if(c.saveData || reduce || narrow || slow) return;   // ポスターのまま
+  // ポスターのまま残す場合は ken-burns を付ける (site.css の video.still)。
+  // 動画を読まない端末 (モバイルの 65%) でもトップが静止画にならないように。
+  // 通信は増えない。reduced-motion では CSS 側の共通ルールで畳まれる。
+  if(c.saveData || reduce || narrow || slow){ v.classList.add('still'); return; }
 
   // ページの他の読み込みが落ち着いてから入れる。最初の描画と競合させない。
   var start = function(){
     v.src = v.dataset.src;
     v.autoplay = true;
     var p = v.play();
-    if(p && p.catch) p.catch(function(){ /* 自動再生を拒否されてもポスターが残る */ });
+    if(p && p.catch) p.catch(function(){ v.classList.add('still'); /* 自動再生を拒否されてもポスターが残る */ });
   };
   if(document.readyState === 'complete') start();
   else window.addEventListener('load', function(){ setTimeout(start, 150); });
