@@ -27,7 +27,9 @@ inv = json.load(io.open(work + "/inventory.json", encoding="utf-8"))
 PLAN = {
     "Sawarabi Mincho":     ("SawarabiMincho.ttf",    "gensuirou-ja.woff2",      None,       "ja"),
     "Noto Serif SC":       ("NotoSerifSC.ttf",       "gensuirou-zh.woff2",      "wght=400", "zh"),
-    "Cormorant Garamond":  ("CormorantGaramond.ttf", "gensuirou-latin.woff2",   "wght=400", "latin"),
+    # 2026-09-16: wght=400 は暗い地の本文で細すぎた (オーナー指摘)。500 に上げる。
+    # 大見出しでも 500 の Cormorant は上品さを保つ。
+    "Cormorant Garamond":  ("CormorantGaramond.ttf", "gensuirou-latin.woff2",   "wght=500", "latin"),
     # 英語・中国語の面に出る和文は客室名と言語切替だけ。そこだけこの小さい方に差し替える。
     "Gensuirou Kanji":     ("SawarabiMincho.ttf",    "gensuirou-ja-mini.woff2", None,       None),
     # どの原本にも無いぶんの補い。屋号の「瓏」もここに入る。

@@ -103,7 +103,10 @@
   /* Sawarabi Mincho には客室名の 凛・瑩 が無い。足りないぶんだけを
      Noto Serif JP から作った 3KB を後ろに置く (scripts/make-fonts.sh)。 */
   --font-ja:       'Sawarabi Mincho', 'Gensuirou Kanji Extra', ui-serif, serif;
-  --font-zh:       'Noto Serif SC', 'Gensuirou Kanji Extra', ui-serif, serif;
+  /* 2026-09-16: 読込中・Google 翻訳の介入時に CJK が空白にならないよう、
+     tiny な補助サブセット (Gensuirou Kanji Extra) より前に実システム CJK 明朝を
+     置く。これで Noto Serif SC が来る前でも本物の字が出る。 */
+  --font-zh:       'Noto Serif SC', 'Songti SC', 'Noto Serif CJK SC', ui-serif, serif, 'Gensuirou Kanji Extra';
   --font-wordmark: var(--font-latin);
   --font-display:  var(--font-latin);
   --font-body:     var(--font-latin);
@@ -211,5 +214,5 @@ html[lang="en"] {
 }
 html[lang="zh"] {
   --font-ja:    'Gensuirou Kanji', 'Gensuirou Kanji Extra', ui-serif, serif;
-  --font-latin: 'Cormorant Garamond', 'Noto Serif SC', 'Gensuirou Kanji Extra', ui-serif, Georgia, serif;
+  --font-latin: 'Cormorant Garamond', 'Noto Serif SC', 'Songti SC', ui-serif, Georgia, serif;
 }
