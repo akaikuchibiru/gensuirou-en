@@ -1385,6 +1385,18 @@ html:not([lang="en"]) [data-en],
 html:not([lang="zh"]) [data-zh] { display: none; }
 option [data-en], option [data-zh], option [data-ja] { display: inline; }
 
+/* ⚠ Google 翻訳対策 (2026-09-16、実障害)。
+   本番では worker が現在言語以外の data-* span を除去済みなので、ページに
+   残っているのは 1 言語ぶんだけ。ところが Google 翻訳は <html> の lang を
+   書き換える (zh→ja 等) ので、上の出し分けが **唯一残っている現在言語の
+   span まで display:none にして本文が丸ごと空白になる** (数字など span 外は
+   生き残る)。翻訳中は <html> に translated-ltr/-rtl が付くので、そのときは
+   出し分けを止めて残りを全部見せる (1 言語しか無いので正しい)。 */
+html.translated-ltr [data-ja], html.translated-ltr [data-en], html.translated-ltr [data-zh],
+html.translated-rtl [data-ja], html.translated-rtl [data-en], html.translated-rtl [data-zh] {
+  display: revert !important;
+}
+
 /* ============================================================
    Reveal — one quiet settle: opacity + a 10px sink into place.
    The old sheet translated every section 40px on intersection; the page

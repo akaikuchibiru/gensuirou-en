@@ -189,15 +189,30 @@ function gsLangHref(l){
   });
 })();
 
-// ---- one quiet settle on first view ----
-document.addEventListener('DOMContentLoaded', function(){
-  var els = document.querySelectorAll('.anim');
-  if(!('IntersectionObserver' in window)){ els.forEach(function(el){el.classList.add('on');}); return; }
-  var io = new IntersectionObserver(function(entries){
-    entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('on'); io.unobserve(en.target); } });
-  }, {threshold:.12});
-  els.forEach(function(el){ io.observe(el); });
-});
+// ---- one quiet settle on first view (fail-open) ----
+// ⚠ content は CSS で opacity:0 から始まる。IntersectionObserver が
+//   発火しない状況 (背面タブ・JS の競合・翻訳拡張の介入) だと、.on が付かず
+//   **本文が永久に空白のまま残る**。それが最悪なので、必ず見せる安全網を置く:
+//   2 秒後の一括 reveal と、タブが前面に戻ったときの回収。design.md も
+//   「content は arrive でなく be there」なので、取りこぼしは即 opacity:1 で正しい。
+(function(){
+  function revealAll(){
+    var els = document.querySelectorAll('.anim');
+    for(var i=0;i<els.length;i++) els[i].classList.add('on');
+  }
+  function run(){
+    var els = document.querySelectorAll('.anim');
+    if(!('IntersectionObserver' in window)){ revealAll(); return; }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('on'); io.unobserve(en.target); } });
+    }, {threshold:.12});
+    for(var i=0;i<els.length;i++) io.observe(els[i]);
+    setTimeout(revealAll, 2000);                       // 安全網
+    document.addEventListener('visibilitychange', function(){ if(!document.hidden) revealAll(); });
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+  else run();
+})();
 
 // ---- thumbnail gallery: swap main image ----
 document.addEventListener('click', function(e){
