@@ -12,7 +12,10 @@
 // localStorage には戻さない (URL と食い違う状態を作らないため)。
 var GS_LABEL = { ja: '日本語', en: 'EN', zh: '中文' };
 var GS_ORDER = ['ja', 'en', 'zh'];
-var GS = { lang: document.documentElement.getAttribute('lang') || 'ja' };
+// 現在言語は data-srv (worker が焼く、翻訳が触らない) を優先。lang は
+// Google 翻訳が書き換えるので当てにしない。
+var GS = { lang: document.documentElement.getAttribute('data-srv')
+                 || document.documentElement.getAttribute('lang') || 'ja' };
 GS.prefix = GS.lang === 'ja' ? '' : '/' + GS.lang;
 
 // クリーンパス → いまの言語での URL。'/' のときだけ接頭辞だけを返す。
@@ -50,8 +53,11 @@ function gsLangHref(l){
   function isCurrent(key){
     return (document.body ? document.body.dataset.page : '') === key;
   }
+  // JS が組む文言は **現在言語だけ** を出す。3 言語ぶんの data-* span を出して
+  // CSS の出し分けに頼ると、Google 翻訳が <html lang> を書き換えたときに全部
+  // 消える (2026-09-16 実障害)。単一言語なら翻訳耐性があり、隠す CSS も要らない。
   function langSpans(en, zh, ja){
-    return '<span data-en>'+en+'</span><span data-zh>'+zh+'</span><span data-ja>'+ja+'</span>';
+    return GS.lang === 'en' ? en : GS.lang === 'zh' ? zh : ja;
   }
   function link(d, extraAttr){
     var cur = isCurrent(d[1]) ? ' aria-current="page"' : '';
@@ -80,7 +86,7 @@ function gsLangHref(l){
     }).join('');
 
     return ''+
-    '<a class="skip" href="#main"><span data-en>Skip to content</span><span data-zh>跳至正文</span><span data-ja>本文へ</span></a>'+
+    '<a class="skip" href="#main">'+langSpans('Skip to content', '跳至正文', '本文へ')+'</a>'+
     '<header class="nav"><div class="nav-inner">'+
       '<a class="brand" href="'+gsHref('/')+'">'+
         // ロゴ画像は 430x80 の組みロゴで、すでに「源翠瓏 -RYOKAN GENSUIROU-」まで
@@ -116,9 +122,9 @@ function gsLangHref(l){
         '<div>'+
           '<div class="foot-logo"><img src="/assets/imgs/logo_gensuirou.png" alt="源翠瓏" width="240" height="106" loading="lazy"></div>'+
           '<address class="addr">'+
-            '<span data-en>2113-3 Komori, Nishihara-mura, Aso-gun, Kumamoto 861-2402, Japan</span>'+
-            '<span data-zh>日本国 熊本县 阿苏郡 西原村 小森 2113-3（〒861-2402）</span>'+
-            '<span data-ja>〒861-2402　熊本県阿蘇郡西原村小森 2113-3</span>'+
+            langSpans('2113-3 Komori, Nishihara-mura, Aso-gun, Kumamoto 861-2402, Japan',
+                      '日本国 熊本县 阿苏郡 西原村 小森 2113-3（〒861-2402）',
+                      '〒861-2402　熊本県阿蘇郡西原村小森 2113-3')+
             '<br>TEL <a href="tel:+81962791800">+81 (0)96-279-1800</a> · 10:00–18:00 JST'+
           '</address>'+
         '</div>'+

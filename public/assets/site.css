@@ -1380,22 +1380,16 @@ footer .fine {
 /* ============================================================
    Language visibility
    ============================================================ */
-html:not([lang="ja"]) [data-ja],
-html:not([lang="en"]) [data-en],
-html:not([lang="zh"]) [data-zh] { display: none; }
+/* ⚠ 出し分けは **data-srv の無いページ (= 生の静的ファイル・ローカル検査) だけ**。
+   本番は worker が他言語の data-* span を除去し <html> に data-srv を付けるので、
+   残るのは 1 言語ぶんだけ = 隠す対象が無い。ここを lang 依存のままにすると、
+   Google 翻訳が <html lang> を書き換えた瞬間に、唯一残っている現在言語の
+   span まで display:none にして本文が丸ごと空白になった (2026-09-16 実障害。
+   数字など span 外だけ生き残る症状)。data-srv で本番を除外して恒久的に防ぐ。 */
+html:not([data-srv]):not([lang="ja"]) [data-ja],
+html:not([data-srv]):not([lang="en"]) [data-en],
+html:not([data-srv]):not([lang="zh"]) [data-zh] { display: none; }
 option [data-en], option [data-zh], option [data-ja] { display: inline; }
-
-/* ⚠ Google 翻訳対策 (2026-09-16、実障害)。
-   本番では worker が現在言語以外の data-* span を除去済みなので、ページに
-   残っているのは 1 言語ぶんだけ。ところが Google 翻訳は <html> の lang を
-   書き換える (zh→ja 等) ので、上の出し分けが **唯一残っている現在言語の
-   span まで display:none にして本文が丸ごと空白になる** (数字など span 外は
-   生き残る)。翻訳中は <html> に translated-ltr/-rtl が付くので、そのときは
-   出し分けを止めて残りを全部見せる (1 言語しか無いので正しい)。 */
-html.translated-ltr [data-ja], html.translated-ltr [data-en], html.translated-ltr [data-zh],
-html.translated-rtl [data-ja], html.translated-rtl [data-en], html.translated-rtl [data-zh] {
-  display: revert !important;
-}
 
 /* ============================================================
    Reveal — one quiet settle: opacity + a 10px sink into place.

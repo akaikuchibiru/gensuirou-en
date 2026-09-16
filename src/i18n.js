@@ -271,7 +271,12 @@ const isRelative = (v) =>
  */
 function buildRewriter(lang) {
   let rw = new HTMLRewriter()
-    .on('html', { element: (el) => el.setAttribute('lang', lang) })
+    // lang に加えて data-srv を付ける。worker は下で他言語の data-* span を
+    // 除去するので、本番のページには現在言語ぶんしか残らない。言語出し分けの
+    // CSS を data-srv のあるページには一切かけないことで、Google 翻訳が
+    // <html lang> を書き換えても現在言語の span が消えない (2026-09-16 実障害。
+    // translated-ltr クラス検出は新しい Chrome 翻訳 UI で効かなかった)。
+    .on('html', { element: (el) => { el.setAttribute('lang', lang); el.setAttribute('data-srv', lang); } })
     // HTML コメントは配信しない。ソースの注記は開発者のためのもので、
     // お客さまのページに出す必要はない。移行や不具合の経緯を書いた
     // 内部メモがそのまま見えていた (2026-08-28 実測: トップで 1,439 字)。
