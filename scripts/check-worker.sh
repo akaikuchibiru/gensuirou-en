@@ -65,9 +65,11 @@ echo "── セキュリティヘッダ (通常 / ナビゲーション / 画�
 check_hdr(){
   local label="$1"; shift
   local h; h=$(curl -sSI "$@" --max-time 25 2>/dev/null | tr 'A-Z' 'a-z')
-  for k in strict-transport-security x-content-type-options x-frame-options referrer-policy content-security-policy-report-only; do
+  for k in strict-transport-security x-content-type-options x-frame-options referrer-policy content-security-policy; do
     grep -q "^$k:" <<<"$h" && ok "$label $k" || ng "$label $k が無い"
   done
+  # 044ecc6 で Report-Only から強制へ切り替えた。逆戻りを検出する
+  grep -q '^content-security-policy-report-only:' <<<"$h" && ng "$label CSP が Report-Only に戻っている" || ok "$label CSP は強制 (report-only 無し)"
 }
 check_hdr "html"  "$BASE/"
 check_hdr "nav "  -H "Sec-Fetch-Mode: navigate" "$BASE/rooms"

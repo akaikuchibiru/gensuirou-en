@@ -47,4 +47,4 @@ node scripts/check-enquiry.mjs     # 予約フォーム。他の検査は README
 - 問い合わせは宛先 (`ENQUIRY_TO`) と Turnstile sitekey が揃ったときだけフォームを出す fail-closed。保存 (D1) が先・メールが後の順序を崩さず、送信の ok を「届いた」と書かない。
 - `/reservation` を `/#reserve` に飛ばさない。旧サイトの `/reservation` には予約エンジンへの導線があり、飛ばした 4 日間「料金も空室も確認できない」状態を作った (2026-08-28)。旧 URL は 301 で全部生かす。
 - 書体は自前ホストの部分集合。入っていない字はページ 200 のままシステム書体で静かに出る。文章を足したら `./scripts/make-fonts.sh` → `check-fonts.mjs`、写真を足したら `./scripts/make-webp.sh` (JPEG と同名 `.webp` の twin)、本文を変えたら `gen-content-data.mjs` と `gen-lastmod.mjs`。
-- Custom Domain は宣言的管理。`wrangler.jsonc` に書いていないドメインは deploy で DNS ごと消える。CSP はまだ Report-Only。
+- Custom Domain は宣言的管理。`wrangler.jsonc` に書いていないドメインは deploy で DNS ごと消える。CSP は強制 (044ecc6 で Report-Only から切替)。
