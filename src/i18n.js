@@ -59,15 +59,15 @@ const BASE_PAGES = {
     nav: { ja: 'ご予約', en: 'Reservation', zh: '预约' },
     ja: {
       title: 'ご予約 Reservation ｜ 源翠瓏 - プラン・料金・空室のご確認',
-      desc: '源翠瓏のご予約。プラン・料金・空室状況はWEB予約ページよりご確認いただけます。お電話（096-279-1800／10:00–18:00）でも承ります。',
+      desc: '源翠瓏のご予約。プラン・料金・空室状況はWEB予約ページよりご確認いただけます。',
     },
     en: {
       title: 'Reservations | Gensuirou — Plans, Rates and Availability',
-      desc: 'Book Gensuirou online to see plans, rates and availability, or reserve by telephone on +81 (0)96-279-1800 (10:00–18:00 JST).',
+      desc: 'Book Gensuirou online to see plans, rates and availability.',
     },
     zh: {
       title: '预约 ｜ 源翠瓏 — 方案・价格・空房查询',
-      desc: '源翠瓏预约。方案、价格与空房状况请于网络预约页面确认，亦可来电 +81 (0)96-279-1800（10:00–18:00 日本时间）。',
+      desc: '源翠瓏预约。方案、价格与空房状况请于网络预约页面确认。',
     },
   },
   '/rooms': {
