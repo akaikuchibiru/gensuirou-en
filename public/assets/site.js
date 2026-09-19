@@ -51,6 +51,54 @@ function gsLangHref(l){
   return (p || '/') + location.search + location.hash;
 }
 
+// ── 日本語話者が外国語の面に着地したときの案内 ──
+// 実測 (2026-09-16〜18、Web Analytics): Instagram と Facebook の
+// プロフィールのリンクが **/en/reservation** を指しており、日本の携帯から
+// 1,270 回そのまま英語ページに着地していた (サイト最多閲覧ページ)。
+// SNS 側のリンクはこちらで直せないので、着いた画面から日本語へ渡す。
+//
+// ⚠ **リダイレクトはしない**。日本にいる英語話者を弾いてしまい、
+//   検索エンジンからも言語別 URL が辿れなくなる。出すのは案内だけ。
+// 文字は data-ja 等を付けずに JS で組む。worker の言語出し分けは
+// data-* の span を落とすので、付けると英語面で消える。
+(function(){
+  if(GS.lang === 'ja') return;
+  var prefs = (navigator.languages && navigator.languages.length)
+                ? navigator.languages : [navigator.language || ''];
+  // 「日本語が第一希望か」で見る。['en-US','ja'] の人には出さない。
+  var top = null;
+  for(var i = 0; i < prefs.length && !top; i++){
+    var m = /^(ja|zh|en)/i.exec(prefs[i] || '');
+    if(m) top = m[1].toLowerCase();
+  }
+  if(top !== 'ja') return;
+  try { if(sessionStorage.getItem('gs_langsug') === 'off') return; } catch(e){}
+
+  function show(){
+    var d = document.createElement('div');
+    d.className = 'langsug';
+    var a = document.createElement('a');
+    a.href = gsLangHref('ja');
+    a.textContent = '日本語のページはこちら →';
+    var x = document.createElement('button');
+    x.type = 'button';
+    x.className = 'langsug-x';
+    x.setAttribute('aria-label', '閉じる');
+    x.textContent = '×';
+    x.addEventListener('click', function(){
+      d.remove();
+      document.body.classList.remove('has-langsug');
+      try { sessionStorage.setItem('gs_langsug', 'off'); } catch(e){}
+    });
+    d.appendChild(a); d.appendChild(x);
+    document.body.appendChild(d);
+    // 画面下に固定して出すので本文はずれない (CLS 0)。狭い幅の予約ボタンだけ
+    // 重なるので、この class で持ち上げる (site.css)。
+    document.body.classList.add('has-langsug');
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', show); else show();
+})();
+
 // ---- shared header/footer injection ----
 (function(){
   // かつて data-base で相対パスの起点を渡していたが廃止した。

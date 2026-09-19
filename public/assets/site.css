@@ -1582,6 +1582,58 @@ html[lang="en"] .form-section h3.form-h3-sub { font-size: var(--text-lg); }
   .mcta { display: inline-flex; }
 }
 
+/* ── 日本語話者が外国語の面に着地したときの案内帯 (site.js が組む) ──
+   SNS のプロフィールのリンクが /en/reservation を指しており、こちらでは
+   直せない。着いた画面から日本語へ渡すための帯。**リダイレクトはしない**
+   (在日の英語話者を弾き、検索エンジンからも言語別 URL が辿れなくなる)。
+   画面下への固定なので既存の本文は動かない = CLS 0。帯のぶんだけ
+   body に余白を足すのは、最下部まで読んだときに帯が footer の最終行を
+   隠さないようにするため (足すのは文書の末尾なので何もずれない)。 */
+.langsug {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 160; /* .mcta (150) の上、nav ドロワー (--z-overlay 200) の下 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2xs) 52px calc(var(--space-2xs) + env(safe-area-inset-bottom, 0px));
+  background: var(--color-paper);
+  border-top: var(--rule-hair) solid var(--color-rule-strong);
+  box-shadow: 0 -4px 18px oklch(var(--ch-shade) / 0.45);
+}
+.langsug a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px; /* 指で押せる下限 */
+  /* ⚠ var(--font-ja) を使わない。英語・中国語の面ではそれが 21 字の部分集合
+     (Gensuirou Kanji) に差し替わり、この文言は「日本語」だけが部分集合・
+     「のページはこちら」が端末まかせ、という混ざった見た目になる
+     (2026-09-19 に cmap で実測: 12 字中 9 字が subset に無い)。帯は
+     ブランドの面ではなく道具なので、文字列ごと端末の明朝で統一する。 */
+  font-family: ui-serif, 'Hiragino Mincho ProN', 'Noto Serif JP', serif;
+  font-size: var(--text-sm);
+  letter-spacing: 0.08em;
+  color: var(--color-accent-hi);
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+.langsug-x {
+  position: absolute;
+  inset-inline-end: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px; height: 44px;
+  padding: 0; border: 0; background: none;
+  color: var(--color-muted);
+  font-size: var(--text-base);
+  line-height: 1;
+  cursor: pointer;
+}
+.langsug-x:focus-visible { outline: var(--rule-hair) solid var(--color-accent-hi); outline-offset: 2px; }
+body.has-langsug { padding-bottom: 64px; }
+/* 360px 以下でだけ出る floating 予約 CTA が帯に埋もれるので持ち上げる */
+body.has-langsug .mcta { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.001ms !important;
