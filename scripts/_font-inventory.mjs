@@ -10,14 +10,29 @@
 import { chromium } from 'playwright-core';
 
 const BASE = process.argv[2] || 'https://gensuirou.com';
-const sm = await (await fetch(BASE + '/sitemap.xml')).text();
-const urls = [...sm.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+// ローカルの wrangler dev (http) は worker の https 強制に捕まって 301 になる。
+// cf-visitor で https を名乗ると通る。**本番 (https) では付かない**ので影響なし。
+// これが無いと、文章を足したときの部分集合の作り直しが「本番へ deploy して
+// から」しかできず、deploy を 2 回に割る羽目になる (その間だけ足した字が
+// 端末の書体で出る)。ローカルで作れれば文面とフォントを一度に出せる。
+const LOCAL_HEADERS = BASE.startsWith('http://') ? { 'cf-visitor': '{"scheme":"https"}' } : {};
+const sm = await (await fetch(BASE + '/sitemap.xml', { headers: LOCAL_HEADERS })).text();
+// ⚠ sitemap の <loc> は **走査先とは限らない**。wrangler dev はリクエストを
+// custom domain (gensuirou.com) のホストで処理するので、ローカルを叩いても
+// 中身は本番の URL で返ってくる。そのまま巡回すると、ローカルを指定したのに
+// 本番を走査してしまう (= 手元の変更がフォントに入らない)。パスだけ採って
+// BASE に付け替える。
+const urls = [...sm.matchAll(/<loc>([^<]+)<\/loc>/g)]
+  .map((m) => { const u = new URL(m[1]); return BASE + u.pathname + u.search; });
 // 客室テレビの館内案内。sitemap に載せない (noindex) が、明朝で描くので
 // ここに出る字も部分集合に入れる。?bg=0 でローテを止めて走査する。
 urls.push(BASE + '/gensuiro/?bg=0');
 
 const b = await chromium.launch();
-const page = await (await b.newContext({ viewport: { width: 1280, height: 900 } })).newPage();
+const page = await (await b.newContext({
+  viewport: { width: 1280, height: 900 },
+  extraHTTPHeaders: LOCAL_HEADERS,
+})).newPage();
 const stacks = new Map();          // "A|B|C" -> Set(char)
 
 for (const u of urls) {

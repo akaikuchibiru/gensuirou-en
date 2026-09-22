@@ -113,5 +113,25 @@ if orphan:
     print(f"  ! どの原本にも無い字 {len(orphan)} 文字: {''.join(orphan)}", file=sys.stderr)
     print("    (端末まかせの書体で出る。原稿を直すか、原本を足すこと)", file=sys.stderr)
 
-io.open("scripts/fonts-coverage.json", "w", encoding="utf-8").write(
+# ── 退行の検査: 前回より字が減っていたら黙って通さない ──
+#
+# 走査は「実際に描かれた字」しか拾わない。つまり **走査のときに出ていなかった
+# 画面の字は、静かに部分集合から消える**。2026-09-22 に実際に起きた:
+# ローカルの wrangler dev には ENQUIRY_TO が無く問い合わせフォームが
+# fail-closed で描画されず、中文フォームのラベル (姓名・邮箱・国家/地区・
+# 希望客房・留言) が丸ごと落ちた。ページは 200 のままなので目では気付けない。
+# 文面を消したぶんが減るのは正常なので、止めずに **必ず目に入る形で出す**。
+prev_path = "scripts/fonts-coverage.json"
+try:
+    prev = json.load(io.open(prev_path, encoding="utf-8"))
+except Exception:
+    prev = {}
+for family, cur in manifest.items():
+    lost = sorted(set(prev.get(family, {}).get("chars", "")) - set(cur["chars"]))
+    if lost:
+        print(f"  ! {family}: 前回より {len(lost)} 字 減った: {''.join(lost)}", file=sys.stderr)
+        print("    消した文面のぶんなら正常。**心当たりが無ければ走査漏れ**", file=sys.stderr)
+        print("    (その画面が走査時に出ていたか — フォーム・言語・認証を確かめる)", file=sys.stderr)
+
+io.open(prev_path, "w", encoding="utf-8").write(
     json.dumps(manifest, ensure_ascii=False, indent=1) + "\n")
