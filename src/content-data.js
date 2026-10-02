@@ -145,9 +145,9 @@ export const FAQ = [
       "zh": "可以当天预约吗？"
     },
     "a": {
-      "ja": "当日のご予約は、旅館へ直接お電話にてお問い合わせ下さいませ。",
-      "en": "For same-day reservations, please telephone the ryokan directly.",
-      "zh": "当天预约请直接致电本馆洽询。"
+      "ja": "当日のご予約は、ウェブでのご予約が確実です。空室状況はご予約ページでご確認くださいませ。",
+      "en": "For same-day stays, booking online is the most reliable. Please check availability on the reservation page.",
+      "zh": "当天预约，建议通过网站预订。空房情况请在预约页面确认。"
     }
   },
   {
