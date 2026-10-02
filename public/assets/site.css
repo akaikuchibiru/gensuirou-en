@@ -1644,3 +1644,19 @@ body.has-langsug .mcta { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); 
   .anim { opacity: 1; }
   .hero-block .cap > * { opacity: 1; animation: none; }
 }
+
+/* ============================================================
+   読みやすさ — 和文・中文の「読む文」 (2026-10-02)
+   見出し・ラベル用の広い字間 (0.1〜0.26em) が文章にもかかっていて、
+   スマホで一字ずつ離れて読みにくかった。文章だけ 0.04〜0.06em に戻す。
+   見出し・ロゴ・欧文ラベルは触らない。英語の面は大きさを変えない
+   (2026-08-26 に「欧文が大きすぎる」とオーナー判断が出ている)。
+   ============================================================ */
+html:is([lang="ja"], [lang="zh"]) .price-card p.sub {
+  font-family: var(--font-ja); font-size: var(--text-sm); color: var(--color-ink-2);
+  letter-spacing: 0.04em; text-transform: none; line-height: var(--leading-loose);
+}
+html[lang="zh"] .price-card p.sub { font-family: var(--font-zh); }
+html:is([lang="ja"], [lang="zh"]) .fade-body { letter-spacing: 0.04em; }
+html:is([lang="ja"], [lang="zh"]) footer .addr { letter-spacing: 0.04em; }
+html:is([lang="ja"], [lang="zh"]) footer .fine { font-size: var(--text-sm); letter-spacing: 0.06em; }

@@ -23,7 +23,7 @@
 
   --color-ink:          oklch(93% 0.012 85);
   --color-ink-2:        oklch(78% 0.014 82);
-  --color-muted:        oklch(62% 0.014 80);
+  --color-muted:        oklch(71% 0.014 80);   /* 2026-10-02: 62→71。紙地に対し 7:1 (AAA)。年配のお客様が読む説明文・注記の色 */
   --color-neutral:      oklch(48% 0.012 78);
 
   --color-rule:         oklch(30% 0.014 75);

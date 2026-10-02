@@ -28,7 +28,7 @@ Dark paper, single gold accent. Nothing else carries chroma.
 | `--color-paper-2` / `-3` | `oklch(17% / 21% …)` | elevation steps — brighter is higher |
 | `--color-ink` | `oklch(93% 0.012 85)` | primary text |
 | `--color-ink-2` | `oklch(78% 0.014 82)` | body default |
-| `--color-muted` | `oklch(62% 0.014 80)` | secondary copy — **the floor for text** |
+| `--color-muted` | `oklch(71% 0.014 80)` | secondary copy — **the floor for text**. Raised from 62 % on 2026-10-02 so every reading line clears 7:1 (AAA) for older guests |
 | `--color-neutral` | `oklch(48% 0.012 78)` | rules and non-text only (fails 4.5:1 as copy) |
 | `--color-rule` / `-2` | `oklch(30% / 25% …)` | hairlines |
 | `--color-rule-strong` | `oklch(44% 0.022 78)` | UI boundaries (≥3:1) |
