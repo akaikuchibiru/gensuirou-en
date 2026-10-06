@@ -1122,6 +1122,8 @@ html[lang="zh"] .price-card h4 { font-family: var(--font-zh); letter-spacing: 0.
   font-size: var(--text-base);
   color: var(--color-ink-2);
 }
+/* 品名の下の内訳 (例: 馬刺し 盛り合わせ「3種類×3貫」、2026-10-06 旅館の依頼) */
+.price-card li .menu-note { display: block; margin-top: 0.15em; font-size: var(--text-sm); color: var(--color-muted); letter-spacing: 0.04em; }
 .price-card li span:last-child {
   color: var(--color-accent-hi);
   font-family: var(--font-wordmark);
