@@ -1,0 +1,71 @@
+// Haru Private (50595f10…) 用。旧 = wrangler.jsonc (個人 0125d37b…)。
+// 移行手順は tools/migrate-haru/PHASE_B.md。deploy は必ず `-c wrangler.haru.jsonc` を付ける。
+{
+  "name": "gensuirou",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-08-24",
+  "account_id": "50595f1036818ad7d4e1312c193f1ae8",
+
+  // 検証用。gensuirou.com を Custom Domain に載せた後も、比較のために残す。
+  "workers_dev": true,
+
+  // 静的サイト本体。44MB / 106 ファイル、最大は hero.mp4 の 18.8MB
+  // (Static Assets の上限は 20,000 ファイル・1 ファイル 25MiB なので収まる)。
+  //
+  // run_worker_first を true にしているのは、**出口を 1 か所にする**ため。
+  // false だとアセットに一致したリクエストは Worker を通らずに返るので、
+  // セキュリティヘッダが画像や CSS に付かない。付け漏れを構造的に無くす。
+  "assets": {
+    "directory": "./public/",
+    "binding": "ASSETS",
+    "run_worker_first": true,
+    // Pages が吸収していた /rooms → /rooms.html の対応を保つ。
+    // 移行で URL が変わると既存の被リンクと sitemap が全部切れる。
+    "html_handling": "auto-trailing-slash",
+    // 未知の URL には public/404.html を 404 ステータスで返す。
+    // Pages は既定で「200 でトップページ」を返しており (2026-08-25 実測)、
+    // 存在しない URL が全部 200 の重複ページになる soft-404 だった。
+    "not_found_handling": "404-page"
+  },
+
+  // 予約・お問い合わせの保存先。**メールより先にここへ書く**。
+  // 送信の ok は「Cloudflare が受け取った」であって「届いた」ではないので、
+  // 送信が失敗しても問い合わせが消えない形にしておく。
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "gensuirou-enquiries",
+      "database_id": "dd1660f9-b745-4136-9e12-bc748867c5a0"
+    }
+  ],
+
+  // Cloudflare Email Sending。gensuirou.com を Email Sending に登録するまでは
+  // 送信が失敗するので、コード側で必ず結果を見て画面に出し分ける。
+  //   npx wrangler email sending enable gensuirou.com
+  // ⚠ Email **Routing** は有効化しないこと。apex の MX を奪って旅館の
+  //   既存メールボックスが全滅する。受信箱は WADAX 側に既にある。
+  "send_email": [{ "name": "EMAIL" }],
+
+  "vars": {
+    // Turnstile の sitekey は公開値 (HTML に出る)。secret は wrangler secret 側。
+    "TURNSTILE_SITEKEY": "0x4AAAAAAFRKBwO2jDfmm3cx"
+  },
+
+  // ⚠ Custom Domain は **宣言的**。ここに書いていない Custom Domain は
+  //   deploy で DNS ごと削除される (2026-07-20 に別プロジェクトで 7 分の停止事故)。
+  //   足すときは必ずここにも書く。
+  //
+  //   apex と www だけを Worker に向ける。mail / webmail / smtp / pop は
+  //   DNS only のまま WADAX に残す (旅館のメールはそのまま動き続ける)。
+  // phase A (2026-10-08): workers.dev だけで公開。phase B の手順 4 でこのコメントを外す。
+  // "routes": [
+  //   { "pattern": "gensuirou.com",     "custom_domain": true },
+  //   { "pattern": "www.gensuirou.com", "custom_domain": true }
+  // ],
+
+  "observability": { "enabled": true }
+
+  // ⚠ Custom Domain は宣言的管理。ここに書き漏らすと deploy で DNS ごと消える
+  //   (2026-07-20 に別プロジェクトで 7 分の停止事故)。
+  //   gensuirou.com / www.gensuirou.com は DNS 切替と検証が済んでから足す。
+}

@@ -1,0 +1,41 @@
+;; gensuirou.com — Haru Private (50595f10…) の新 zone に「Import」で取り込む BIND ファイル
+;;
+;; 出典 (2026-10-08 17:30 MYT 時点の旧 zone 95b38dc9…, 個人アカウント 0125d37b…):
+;;   1) 旧ダッシュボード DNS > Records の一覧 (「18 of 200」= 全 18 件、Proxy 状態つき) を目視で写した
+;;   2) Google DoH と Cloudflare DoH で 62 名 × 9 型を引き、両者一致 (* と存在しない名前は NXDOMAIN = wildcard 無し、CAA 無し)
+;;   ※ この作業環境は 53/udp・tcp を横取りするので dig @angela.ns… は権威の応答にならない (aa 無し)。
+;;
+;; 旧 zone 18 件の内訳と、このファイルでの扱い:
+;;   取り込む 11 件 ……… 下に書いたもの全部。**すべて DNS only (グレー雲)**
+;;   取り込まない 7 件 … 自動で作られるので手で作らない
+;;     - gensuirou.com / www.gensuirou.com  Worker (Proxied)   → 新 worker の custom domain deploy が作る
+;;     - cf-bounce MX ×3 (route1/2/3.mx.cloudflare.net, 23/42/43) と cf-bounce TXT (SPF)
+;;     - cf-bounce._domainkey TXT (DKIM)    → `wrangler email sending enable gensuirou.com` が作る。
+;;                                           **新 zone では DKIM 鍵が変わる**ので旧の値を写してはいけない
+;;
+;; ⚠ Import 画面の「Proxy imported DNS records」は **チェックを外す**。
+;;    外し忘れると mail / webmail / smtp / pop が Proxied になり、旅館のメール (SMTP/POP/IMAP) が止まる。
+;;    (2026-08-25 の初回取り込みでは CF が A と CNAME を勝手に Proxied にした前例あり。取り込み後に一覧で 11 件とも DNS only を目視)
+;; ⚠ apex の MX / SPF は WADAX (Plesk 153.123.7.215) のメール受信のためのもの。
+;;    Email **Routing** は絶対に有効化しない (apex の MX/SPF を書き換えて旅館の受信箱が全滅する)。
+;; ⚠ _dmarc は p=none 据え置き。Email Sending が p=reject を勧めても入れない。
+;;
+;; TTL: 旧で「Auto」のものは 1 (= Cloudflare の自動)、「1 hr」のものは 3600。
+$ORIGIN gensuirou.com.
+
+;; ── メール (WADAX Plesk)。絶対に Proxied にしない ──
+mail                  1     IN  A      153.123.7.215          ; cf_tags=cf-proxied:false
+webmail               1     IN  A      153.123.7.215          ; cf_tags=cf-proxied:false
+pop                   1     IN  CNAME  mail.gensuirou.com.    ; cf_tags=cf-proxied:false
+smtp                  1     IN  CNAME  mail.gensuirou.com.    ; cf_tags=cf-proxied:false
+@                     3600  IN  MX  10 mail.gensuirou.com.
+
+;; ── 送信認証 ──
+@                     3600  IN  TXT    "v=spf1 ip4:153.123.7.215 mx include:wpmx.wadax.ne.jp include:_pmg.wadax-sv.jp include:_spf.mx.cloudflare.net ~all"
+_dmarc                3600  IN  TXT    "v=DMARC1; p=none"
+_domainkey            3600  IN  TXT    "o=-"
+default._domainkey    3600  IN  TXT    "v=DKIM1; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlgi3iCb8v6PDwoyY/vYLBGQxARLbRCR1wO8fCzDowhFPEMuvNeh0TvO736BVet6+bcsgqsN59F0Zz3RIp9tZK0jjV5UIRS/lBe1HREpqT4lHPjibOhKdxQMdfhP+7sgA+KP8UY/mPL9g15NP3Fqc+7/Q2aKHgWB2xvfHaAlVP/7WUr3w+MUfa7fy9iVLFSQ/cjJaRHRX" "fafd/QP+dBvM+tbRimFtx6LEi1HsLJEobllXfvBlGlIrZX8lvU7S2LoaO4PKzP2gM7pBgN9sXKJTFvWQCZk+SGid58PYHAdfn3/YZJBBsU9oLpwOkMLfkvDVb1WyNCeJR4f6ph8ZaDSFFQIDAQAB;"
+
+;; ── 所有確認 (Google Search Console。2 本とも必要: 旧 URL プレフィックス + sc-domain) ──
+@                     3600  IN  TXT    "google-site-verification=Tc1om5xtcZ7atoqKONO0rbhsgxVfIi0Cr36M3hPM8cY"
+@                     3600  IN  TXT    "google-site-verification=gWOYBhk99GySHOT3qJ74agJFUtXCwLQ363DiKKfNlDk"
