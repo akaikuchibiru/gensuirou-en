@@ -125,6 +125,12 @@ D1 差分 (`--no-delete`) → 新で `mail_status<>'sent'` の行を id と時�
 - 計測: Web Analytics の siteTag と zone id が変わる (旧 siteTag `f40bef8f…` / zone `95b38dc9…`)。新 zone で Web Analytics が自動で有効か確認し、rum.mjs 等の値を差し替え。CSP は本番で securitypolicyviolation を実測
 - Google Search Console は DNS TXT 2 本を運んだので所有確認は継続するはず (Settings → Ownership で確認)
 
+**済 (2026-10-09)**: `wrangler.jsonc` を新アカウントの値に一本化し `wrangler.haru.jsonc` を削除。scripts/*.mjs と
+`check-worker.sh` の既定 BASE を `https://gensuirou.hp-works.workers.dev` に。repo には siteTag / zone id を持つファイルが無い
+(ビーコンは edge 挿入)。切替直後の https://gensuirou.com/ の HTML にはビーコンが出ておらず、wrangler の OAuth では
+`rum/site_info/list` が 10000 で読めないため、新 zone の Web Analytics の有効化と siteTag はダッシュボードで本人が確認する。
+この手順書と `phase-b.sh` は `wrangler.haru.jsonc` を前提にした当時の記録として残す (再実行しない)。
+
 ## 7. 旧の後片付け (1 週間後、本人判断。分類器が削除を止めるので本人が押す)
 
 旧アカウント 0125d37b: worker `gensuirou`、D1 `gensuirou-enquiries` (fc8b9465)、Turnstile widget `0x4AAAAAAEa5kQkJe6__etjG`、

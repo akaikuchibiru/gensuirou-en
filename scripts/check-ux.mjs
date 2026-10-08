@@ -13,7 +13,7 @@ import { chromium } from 'playwright-core';
 //   既定で見るのは display:none と content-visibility だけ (2026-08-28 に実測)。
 //   閉じたスライドインパネルの中身まで数えてしまうので、必ず全オプションを渡す。
 
-const BASE = process.argv[2] || 'https://gensuirou.japanese-government-official.workers.dev';
+const BASE = process.argv[2] || 'https://gensuirou.hp-works.workers.dev';
 let bad = 0;
 const ok = (m) => console.log('  OK  ' + m);
 const ng = (m) => { console.log('  NG  ' + m); bad++; };

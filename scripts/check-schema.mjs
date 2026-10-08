@@ -17,7 +17,7 @@ import { LANGS, PAGES, langPath } from '../src/i18n.js';
 import { FAQ, ROOMS } from '../src/content-data.js';
 import { jsonLd } from '../src/schema.js';
 
-const BASE = process.argv[2] || 'https://gensuirou.japanese-government-official.workers.dev';
+const BASE = process.argv[2] || 'https://gensuirou.hp-works.workers.dev';
 let bad = 0;
 const ok = (m) => console.log('  OK  ' + m);
 const ng = (m) => { console.log('  NG  ' + m); bad++; };

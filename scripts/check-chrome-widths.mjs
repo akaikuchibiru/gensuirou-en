@@ -8,7 +8,7 @@ import { chromium } from 'playwright-core';
 // ⚠ checkVisibility() は **素で呼ぶと visibility:hidden と opacity:0 を「見えている」と返す**。
 //   既定で見るのは display:none と content-visibility だけ (2026-08-28 に実測)。
 //   閉じたスライドインパネルの中身まで数えてしまうので、必ず全オプションを渡す。
-const BASE = process.argv[2] || 'https://gensuirou.japanese-government-official.workers.dev';
+const BASE = process.argv[2] || 'https://gensuirou.hp-works.workers.dev';
 const WIDTHS = [320, 360, 375, 390, 414, 480, 560, 640, 720, 768, 820, 900, 1024, 1180, 1280, 1440, 1600, 1920];
 let bad = 0;
 const b = await chromium.launch({ channel: 'chrome' });

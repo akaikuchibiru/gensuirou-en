@@ -2,7 +2,7 @@
   "name": "gensuirou",
   "main": "src/worker.js",
   "compatibility_date": "2026-08-24",
-  "account_id": "0125d37b087a1ff7525be7cc7cb99f79",
+  "account_id": "50595f1036818ad7d4e1312c193f1ae8",  // Haru Private (2026-10-09 に旧 0125d37b から移行)
 
   // 検証用。gensuirou.com を Custom Domain に載せた後も、比較のために残す。
   "workers_dev": true,
@@ -33,7 +33,7 @@
     {
       "binding": "DB",
       "database_name": "gensuirou-enquiries",
-      "database_id": "fc8b9465-ad22-4162-872f-18073138cc62"
+      "database_id": "dd1660f9-b745-4136-9e12-bc748867c5a0"
     }
   ],
 
@@ -46,7 +46,7 @@
 
   "vars": {
     // Turnstile の sitekey は公開値 (HTML に出る)。secret は wrangler secret 側。
-    "TURNSTILE_SITEKEY": "0x4AAAAAAEa5kQkJe6__etjG"
+    "TURNSTILE_SITEKEY": "0x4AAAAAAFRKBwO2jDfmm3cx"
   },
 
   // ⚠ Custom Domain は **宣言的**。ここに書いていない Custom Domain は
@@ -61,8 +61,4 @@
   ],
 
   "observability": { "enabled": true }
-
-  // ⚠ Custom Domain は宣言的管理。ここに書き漏らすと deploy で DNS ごと消える
-  //   (2026-07-20 に別プロジェクトで 7 分の停止事故)。
-  //   gensuirou.com / www.gensuirou.com は DNS 切替と検証が済んでから足す。
 }

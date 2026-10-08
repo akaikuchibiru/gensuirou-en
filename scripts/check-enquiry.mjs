@@ -6,7 +6,7 @@
 // ので、ここは「送信できた」ではなく「表示が嘘でない」を検査する。
 import { chromium } from 'playwright-core';
 
-const BASE = process.argv[2] || 'https://gensuirou.japanese-government-official.workers.dev';
+const BASE = process.argv[2] || 'https://gensuirou.hp-works.workers.dev';
 let bad = 0;
 const ok = (m) => console.log('  OK  ' + m);
 const ng = (m) => { console.log('  NG  ' + m); bad++; };

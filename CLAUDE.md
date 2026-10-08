@@ -12,7 +12,7 @@
 | `src/i18n.js` / `rooms.js` / `room-page.js` / `journal.js` / `schema.js` | 3 言語の URL とページ定義 (`PAGES`/`parsePath`/`allUrls`) / 客室 12 室 / 読み物 / JSON-LD |
 | `src/legacy.js` | 旧サーバ (WADAX) への中継。客室テレビの館内案内 `/gensuiro/` は中身がこちらに無く、旧サーバが止まればテレビも止まる (延命であって移行ではない) |
 | `public/` | 配信される静的資産すべて (Static Assets の directory) |
-| `wrangler.jsonc` | routes(custom_domain) / assets / D1 `DB` / `send_email` |
+| `wrangler.jsonc` | Cloudflare アカウント Haru Private (`50595f10…`、2026-10-09 移行) / routes(custom_domain) / assets / D1 `DB` / `send_email` |
 
 配信の正は `wrangler.jsonc` の `routes` (apex + www を custom_domain) と `assets.directory`。
 ⚠ grep で似た名前のファイルを最初に見つけても、それが本番とは限らない (`public/*.html` は静的、言語別 URL と客室ページは Worker が組み立てている)。
