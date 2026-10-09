@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Worker 版そのものの挙動検査。Pages との差分のうち「意図した改善」を明示的に確認する。
-BASE="${BASE:-https://gensuirou.japanese-government-official.workers.dev}"
+BASE="${BASE:-https://gensuirou.hp-works.workers.dev}"
 bad=0
 ok(){ printf "  OK   %s\n" "$1"; }
 ng(){ printf "  NG   %s\n" "$1"; bad=$((bad+1)); }
